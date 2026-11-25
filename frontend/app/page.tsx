@@ -183,7 +183,7 @@ export default function LandingPage() {
       <section className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2" aria-labelledby="evidence">
         <div>
           <p className="text-sm font-semibold tracking-wide text-primary uppercase">Why AI screening</p>
-          <h2 id="evidence" className="mt-2 text-3xl font-semibold tracking-tight">Autonomous DR screening is proven</h2>
+          <h2 id="evidence" className="mt-2 text-3xl font-semibold tracking-tight">AI screening already has a regulatory precedent</h2>
           <p className="mt-4 leading-relaxed text-muted-foreground">
             IDx-DR (now LumineticsCore) became the first FDA-authorised autonomous AI diagnostic system in April 2018,
             used in primary care without an eye specialist reading the images. In its 900-patient trial it reached{" "}
@@ -205,10 +205,10 @@ export default function LandingPage() {
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           {[
-            { icon: ShieldCheck, t: "Sensitivity first", d: "Referral threshold tuned for ≥ 87% sensitivity; borderline cases are referred, never told they are fine." },
+            { icon: ShieldCheck, t: "Sensitivity first", d: "Referral threshold set on validation data for ≥ 90% sensitivity; borderline cases are referred, never told they are fine." },
             { icon: ListOrdered, t: "Ordinal grading", d: "One regression output with validation-optimised thresholds (Quadratic Weighted Kappa)." },
             { icon: Eye, t: "External validation", d: "Tested on IDRiD (India), never used for training or threshold tuning." },
-            { icon: FileText, t: "Grounded reports", d: "Claude only explains the model's result; grade and referral text are fixed templates." },
+            { icon: FileText, t: "Grounded reports", d: "Grade, referral and explanation come from fixed Urdu / English templates built from the stored result; nothing is invented." },
           ].map((f) => (
             <div key={f.t} className="rounded-2xl border border-border bg-card p-5">
               <f.icon className="size-5 text-primary" aria-hidden="true" />

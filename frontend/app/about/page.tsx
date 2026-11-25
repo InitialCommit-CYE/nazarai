@@ -62,7 +62,7 @@ const SECTIONS = [
       "EfficientNet-B3 (timm, ImageNet-pretrained) with one regression output for the 0–4 grade (ordinal regression).",
       "Shared preprocessing for training and inference: border crop, 384 px resize, Ben Graham enhancement, circular mask.",
       "Grade thresholds optimised for quadratic weighted kappa; served with ONNX Runtime on CPU with flip test-time augmentation.",
-      "Patient reports written by Anthropic's Claude from the stored result, with a fixed-template fallback.",
+      "Patient reports come from fixed Urdu / English templates filled from the stored result. An optional language model may reword the explanation paragraph only; it is not enabled in this deployment.",
     ],
   },
   {
@@ -84,8 +84,8 @@ export default function AboutPage() {
         <p className="text-sm font-semibold tracking-wide text-primary uppercase">About & safety</p>
         <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">Built to support clinicians, not replace them</h1>
         <p className="mt-3 text-lg text-muted-foreground">
-          NazarAI is a prototype built for the Capital Youth Expo Hackathon 2026 (Healthcare track). It brings the proven
-          idea of autonomous diabetic-retinopathy screening to the setting where it is most needed: Pakistani diabetes
+          NazarAI is a prototype built for the Capital Youth Expo Hackathon 2026 (Healthcare track). It brings the regulator-tested
+          idea of AI diabetic-retinopathy screening to the setting where it is most needed: Pakistani diabetes
           clinics without an eye specialist.
         </p>
       </div>
