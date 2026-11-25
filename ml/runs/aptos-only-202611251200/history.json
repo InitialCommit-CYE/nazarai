@@ -1,0 +1,92 @@
+[
+  {
+    "epoch": 0,
+    "train_loss": 2.5552972270892216,
+    "val_qwk_default_thresholds": 0.4072017715587791,
+    "seconds": 272.2
+  },
+  {
+    "epoch": 1,
+    "train_loss": 1.200314650627283,
+    "val_qwk_default_thresholds": 0.45223156305942647,
+    "seconds": 257.9
+  },
+  {
+    "epoch": 2,
+    "train_loss": 1.0362447862441724,
+    "val_qwk_default_thresholds": 0.6715210425582245,
+    "seconds": 254.4
+  },
+  {
+    "epoch": 3,
+    "train_loss": 0.738893828025231,
+    "val_qwk_default_thresholds": 0.7418089632693686,
+    "seconds": 255.7
+  },
+  {
+    "epoch": 4,
+    "train_loss": 0.5815316807765227,
+    "val_qwk_default_thresholds": 0.726140301132732,
+    "seconds": 257.3
+  },
+  {
+    "epoch": 5,
+    "train_loss": 0.4382097004697873,
+    "val_qwk_default_thresholds": 0.7780944482143306,
+    "seconds": 255.9
+  },
+  {
+    "epoch": 6,
+    "train_loss": 0.40337790571726284,
+    "val_qwk_default_thresholds": 0.76653910620166,
+    "seconds": 256.5
+  },
+  {
+    "epoch": 7,
+    "train_loss": 0.3342703367655094,
+    "val_qwk_default_thresholds": 0.8268501016187946,
+    "seconds": 256.0
+  },
+  {
+    "epoch": 8,
+    "train_loss": 0.29823042177236997,
+    "val_qwk_default_thresholds": 0.8081085816065328,
+    "seconds": 254.7
+  },
+  {
+    "epoch": 9,
+    "train_loss": 0.27939053934354047,
+    "val_qwk_default_thresholds": 0.8101810517688041,
+    "seconds": 250.5
+  },
+  {
+    "epoch": 10,
+    "train_loss": 0.2664176449752771,
+    "val_qwk_default_thresholds": 0.8144778071106067,
+    "seconds": 250.7
+  },
+  {
+    "epoch": 11,
+    "train_loss": 0.2524487713781687,
+    "val_qwk_default_thresholds": 0.8339150313039988,
+    "seconds": 255.8
+  },
+  {
+    "epoch": 12,
+    "train_loss": 0.2540273861816296,
+    "val_qwk_default_thresholds": 0.8206837164388607,
+    "seconds": 256.3
+  },
+  {
+    "epoch": 13,
+    "train_loss": 0.24085429654671595,
+    "val_qwk_default_thresholds": 0.7959254665900359,
+    "seconds": 255.1
+  },
+  {
+    "epoch": 14,
+    "train_loss": 0.24922914568048257,
+    "val_qwk_default_thresholds": 0.8302466769706337,
+    "seconds": 255.1
+  }
+]

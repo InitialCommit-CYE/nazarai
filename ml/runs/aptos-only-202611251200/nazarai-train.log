@@ -1,0 +1,155 @@
+[{"stream_name":"stderr","time":8.379182315,"data":"/usr/local/lib/python3.13/dist-packages/nbformat/validator.py:434: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.\n"}
+,{"stream_name":"stderr","time":8.379241131,"data":"  _validate(nbdict, ref, version, version_minor, relax_add_props)\n"}
+,{"stream_name":"stderr","time":9.517511651,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":9.517548903,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":9.517554747,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":9.51755942,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":10.167694968,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":10.167735954,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":10.16774072,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":10.16774439,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":16.54302358,"data":"  Installing build dependencies ... \u001b[?25l\u001b[?25hdone\r\n"}
+,{"stream_name":"stdout","time":16.947114758,"data":"  Getting requirements to build wheel ... \u001b[?25l\u001b[?25hdone\r\n"}
+,{"stream_name":"stdout","time":17.201114456,"data":"  Preparing metadata (pyproject.toml) ... \u001b[?25l\u001b[?25hdone\r\n"}
+,{"stream_name":"stdout","time":18.061585566,"data":"  Building wheel for grad-cam (pyproject.toml) ... \u001b[?25l\u001b[?25hdone\r\n"}
+,{"stream_name":"stdout","time":32.881039603,"data":"nazarai_ml from /kaggle/working/src | torch 2.11.0+cu130 | cuda True Tesla T4\n"}
+,{"stream_name":"stdout","time":34.315229102,"data":"APTOS: /kaggle/input/aptos2019-blindness-detection\n"}
+,{"stream_name":"stdout","time":34.31526613,"data":"training sources: APTOS 2019 only\n"}
+,{"stream_name":"stdout","time":36.775648068,"data":"Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\r\n"}
+,{"stream_name":"stdout","time":37.080042305,"data":"\r\n"}
+,{"stream_name":"stdout","time":39.262499408,"data":"\rdata/train-00000-of-00001-d81b05cdbfbe95(…): reconstructing file:   0%| |  0.00B\u001b[A\rdata/train-00000-of-00001-d81b05cdbfbe95(…): downloading bytes:  |  0.00B       \rdata/train-00000-of-00001-d81b05cdbfbe95(…): downloading bytes:  | 7.69MB       \rdata/train-00000-of-00001-d81b05cdbfbe95(…): downloading bytes: ▏| 29.3MB,  738k\rdata/train-00000-of-00001-d81b05cdbfbe95(…): downloading bytes: ▍| 62.2MB, 2.80M\rdata/train-00000-of-00001-d81b05cdbfbe95(…): downloading bytes: ▋| 99.9MB, 5.92M\r\n"}
+,{"stream_name":"stdout","time":39.769933494,"data":"\rdata/train-00000-of-00001-d81b05cdbfbe95(…): reconstructing file:  42%|▍| 67.1MB\u001b[A\rdata/train-00000-of-00001-d81b05cdbfbe95(…): downloading bytes: ▊|  130MB, 11.6M\rdata/train-00000-of-00001-d81b05cdbfbe95(…): downloading bytes: ▉|  155MB, 13.7M\r\n"}
+,{"stream_name":"stdout","time":39.921892217,"data":"\rdata/train-00000-of-00001-d81b05cdbfbe95(…): reconstructing file: 100%|█|  158MB\u001b[A\rdata/train-00000-of-00001-d81b05cdbfbe95(…): downloading bytes: █|  157MB, 14.2M\rdata/train-00000-of-00001-d81b05cdbfbe95(…): downloading bytes: █|  157MB, 14.2M\r\n"}
+,{"stream_name":"stdout","time":39.921931939,"data":"\rdata/train-00000-of-00001-d81b05cdbfbe95(…): reconstructing file: 100%|█|  158MB\r\n"}
+,{"stream_name":"stdout","time":40.78106334,"data":"\r\n"}
+,{"stream_name":"stdout","time":42.40063279,"data":"\rdata/test-00000-of-00001-3eaaa0286c6f240(…): reconstructing file:   0%| |  0.00B\u001b[A\rdata/test-00000-of-00001-3eaaa0286c6f240(…): downloading bytes:  |  0.00B       \rdata/test-00000-of-00001-3eaaa0286c6f240(…): downloading bytes:  | 2.10MB       \rdata/test-00000-of-00001-3eaaa0286c6f240(…): downloading bytes: ▏| 9.67MB,  203k\rdata/test-00000-of-00001-3eaaa0286c6f240(…): downloading bytes: ▌| 24.7MB,  932k\rdata/test-00000-of-00001-3eaaa0286c6f240(…): downloading bytes: ▉| 44.7MB, 2.37M\r\n"}
+,{"stream_name":"stdout","time":42.552885737,"data":"\rdata/test-00000-of-00001-3eaaa0286c6f240(…): reconstructing file: 100%|█| 45.1MB\u001b[A\rdata/test-00000-of-00001-3eaaa0286c6f240(…): downloading bytes: █| 44.8MB, 4.23M\rdata/test-00000-of-00001-3eaaa0286c6f240(…): downloading bytes: █| 44.8MB, 4.23M\r\n"}
+,{"stream_name":"stdout","time":42.552914861,"data":"\rdata/test-00000-of-00001-3eaaa0286c6f240(…): reconstructing file: 100%|█| 45.1MB\r\n"}
+,{"stream_name":"stdout","time":43.674059449,"data":"exported 516 IDRiD images to /kaggle/working/idrid/images\r\n"}
+,{"stream_name":"stdout","time":50.200166049,"data":"train=3138 val=524\r\n"}
+,{"stream_name":"stdout","time":50.200195775,"data":"train grades: [1532, 324, 866, 168, 248]\r\n"}
+,{"stream_name":"stdout","time":50.200200958,"data":"val grades:   [273, 46, 133, 25, 47]\r\n"}
+,{"stream_name":"stdout","time":50.200205113,"data":"external test (IDRiD) = 516 [168, 25, 168, 93, 62]\r\n"}
+,{"stream_name":"stdout","time":54.192428943,"data":"CPU times: user 121 ms, sys: 33.8 ms, total: 155 ms\n"}
+,{"stream_name":"stdout","time":54.192462952,"data":"Wall time: 10.2 s\n"}
+,{"stream_name":"stdout","time":67.498035831,"data":"\r\n"}
+,{"stream_name":"stdout","time":69.219628974,"data":"\rmodel.safetensors: reconstructing file:   0%|      |  0.00B / 49.3MB            \u001b[A\rmodel.safetensors: downloading bytes:                       |  0.00B            \rmodel.safetensors: downloading bytes: █▊                    | 3.96MB            \rmodel.safetensors: downloading bytes: ███████▉              | 17.8MB,  402kB/s  \rmodel.safetensors: downloading bytes: ██████████████▍       | 32.4MB, 1.71MB/s  \rmodel.safetensors: downloading bytes: ████████████████████▊ | 46.6MB, 3.10MB/s  \r\n"}
+,{"stream_name":"stdout","time":69.371449934,"data":"\rmodel.safetensors: reconstructing file: 100%|██████| 49.3MB / 49.3MB            \u001b[A\rmodel.safetensors: downloading bytes: ██████████████████████| 46.7MB, 4.39MB/s  \rmodel.safetensors: downloading bytes: ██████████████████████| 46.7MB, 4.39MB/s  \r\n"}
+,{"stream_name":"stdout","time":69.371484959,"data":"\rmodel.safetensors: reconstructing file: 100%|██████| 49.3MB / 49.3MB, 4.69MB/s  \r\n"}
+,{"stream_name":"stdout","time":91.465820844,"data":"/kaggle/working/src/nazarai_ml/train.py:116: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate\r\n"}
+,{"stream_name":"stdout","time":91.465875536,"data":"  scheduler.step()\r\n"}
+,{"stream_name":"stdout","time":91.465889942,"data":"epoch 0 step 0/130 loss 3.7335\r\n"}
+,{"stream_name":"stdout","time":257.613165725,"data":"epoch 0 step 100/130 loss 1.8018\r\n"}
+,{"stream_name":"stdout","time":342.145912331,"data":"{\"epoch\": 0, \"train_loss\": 2.5552972270892216, \"val_qwk_default_thresholds\": 0.4072017715587791, \"seconds\": 272.2}\r\n"}
+,{"stream_name":"stdout","time":348.683600787,"data":"epoch 1 step 0/130 loss 1.3799\r\n"}
+,{"stream_name":"stdout","time":519.56949048,"data":"epoch 1 step 100/130 loss 0.7799\r\n"}
+,{"stream_name":"stdout","time":600.136708061,"data":"{\"epoch\": 1, \"train_loss\": 1.200314650627283, \"val_qwk_default_thresholds\": 0.45223156305942647, \"seconds\": 257.9}\r\n"}
+,{"stream_name":"stdout","time":607.701575902,"data":"epoch 2 step 0/130 loss 1.1209\r\n"}
+,{"stream_name":"stdout","time":776.595378714,"data":"epoch 2 step 100/130 loss 0.9234\r\n"}
+,{"stream_name":"stdout","time":854.629873336,"data":"{\"epoch\": 2, \"train_loss\": 1.0362447862441724, \"val_qwk_default_thresholds\": 0.6715210425582245, \"seconds\": 254.4}\r\n"}
+,{"stream_name":"stdout","time":863.650719764,"data":"epoch 3 step 0/130 loss 0.5323\r\n"}
+,{"stream_name":"stdout","time":1027.114387582,"data":"epoch 3 step 100/130 loss 0.9485\r\n"}
+,{"stream_name":"stdout","time":1110.387984222,"data":"{\"epoch\": 3, \"train_loss\": 0.738893828025231, \"val_qwk_default_thresholds\": 0.7418089632693686, \"seconds\": 255.7}\r\n"}
+,{"stream_name":"stdout","time":1116.509423072,"data":"epoch 4 step 0/130 loss 0.7344\r\n"}
+,{"stream_name":"stdout","time":1283.414256387,"data":"epoch 4 step 100/130 loss 0.5633\r\n"}
+,{"stream_name":"stdout","time":1367.816435976,"data":"{\"epoch\": 4, \"train_loss\": 0.5815316807765227, \"val_qwk_default_thresholds\": 0.726140301132732, \"seconds\": 257.3}\r\n"}
+,{"stream_name":"stdout","time":1374.086845953,"data":"epoch 5 step 0/130 loss 0.3621\r\n"}
+,{"stream_name":"stdout","time":1539.721749606,"data":"epoch 5 step 100/130 loss 0.3163\r\n"}
+,{"stream_name":"stdout","time":1623.735807597,"data":"{\"epoch\": 5, \"train_loss\": 0.4382097004697873, \"val_qwk_default_thresholds\": 0.7780944482143306, \"seconds\": 255.9}\r\n"}
+,{"stream_name":"stdout","time":1630.429545273,"data":"epoch 6 step 0/130 loss 0.5194\r\n"}
+,{"stream_name":"stdout","time":1799.162440612,"data":"epoch 6 step 100/130 loss 0.3781\r\n"}
+,{"stream_name":"stdout","time":1880.348008023,"data":"{\"epoch\": 6, \"train_loss\": 0.40337790571726284, \"val_qwk_default_thresholds\": 0.76653910620166, \"seconds\": 256.5}\r\n"}
+,{"stream_name":"stdout","time":1888.2433028,"data":"epoch 7 step 0/130 loss 0.3206\r\n"}
+,{"stream_name":"stdout","time":2057.933146622,"data":"epoch 7 step 100/130 loss 0.3408\r\n"}
+,{"stream_name":"stdout","time":2136.373069762,"data":"{\"epoch\": 7, \"train_loss\": 0.3342703367655094, \"val_qwk_default_thresholds\": 0.8268501016187946, \"seconds\": 256.0}\r\n"}
+,{"stream_name":"stdout","time":2143.488673187,"data":"epoch 8 step 0/130 loss 0.3203\r\n"}
+,{"stream_name":"stdout","time":2311.908319877,"data":"epoch 8 step 100/130 loss 0.1618\r\n"}
+,{"stream_name":"stdout","time":2391.136995606,"data":"{\"epoch\": 8, \"train_loss\": 0.29823042177236997, \"val_qwk_default_thresholds\": 0.8081085816065328, \"seconds\": 254.7}\r\n"}
+,{"stream_name":"stdout","time":2397.733873849,"data":"epoch 9 step 0/130 loss 0.2181\r\n"}
+,{"stream_name":"stdout","time":2564.428332401,"data":"epoch 9 step 100/130 loss 0.2001\r\n"}
+,{"stream_name":"stdout","time":2641.695527076,"data":"{\"epoch\": 9, \"train_loss\": 0.27939053934354047, \"val_qwk_default_thresholds\": 0.8101810517688041, \"seconds\": 250.5}\r\n"}
+,{"stream_name":"stdout","time":2648.349309636,"data":"epoch 10 step 0/130 loss 0.3168\r\n"}
+,{"stream_name":"stdout","time":2813.002351525,"data":"epoch 10 step 100/130 loss 0.2589\r\n"}
+,{"stream_name":"stdout","time":2892.386087785,"data":"{\"epoch\": 10, \"train_loss\": 0.2664176449752771, \"val_qwk_default_thresholds\": 0.8144778071106067, \"seconds\": 250.7}\r\n"}
+,{"stream_name":"stdout","time":2899.208442945,"data":"epoch 11 step 0/130 loss 0.2341\r\n"}
+,{"stream_name":"stdout","time":3067.894643649,"data":"epoch 11 step 100/130 loss 0.3892\r\n"}
+,{"stream_name":"stdout","time":3148.200420175,"data":"{\"epoch\": 11, \"train_loss\": 0.2524487713781687, \"val_qwk_default_thresholds\": 0.8339150313039988, \"seconds\": 255.8}\r\n"}
+,{"stream_name":"stdout","time":3155.312073453,"data":"epoch 12 step 0/130 loss 0.3009\r\n"}
+,{"stream_name":"stdout","time":3326.259791797,"data":"epoch 12 step 100/130 loss 0.2555\r\n"}
+,{"stream_name":"stdout","time":3404.699032194,"data":"{\"epoch\": 12, \"train_loss\": 0.2540273861816296, \"val_qwk_default_thresholds\": 0.8206837164388607, \"seconds\": 256.3}\r\n"}
+,{"stream_name":"stdout","time":3410.4500093,"data":"epoch 13 step 0/130 loss 0.1676\r\n"}
+,{"stream_name":"stdout","time":3578.599213137,"data":"epoch 13 step 100/130 loss 0.1471\r\n"}
+,{"stream_name":"stdout","time":3659.806644621,"data":"{\"epoch\": 13, \"train_loss\": 0.24085429654671595, \"val_qwk_default_thresholds\": 0.7959254665900359, \"seconds\": 255.1}\r\n"}
+,{"stream_name":"stdout","time":3666.422777828,"data":"epoch 14 step 0/130 loss 0.1800\r\n"}
+,{"stream_name":"stdout","time":3835.783371156,"data":"epoch 14 step 100/130 loss 0.2341\r\n"}
+,{"stream_name":"stdout","time":3914.822419397,"data":"{\"epoch\": 14, \"train_loss\": 0.24922914568048257, \"val_qwk_default_thresholds\": 0.8302466769706337, \"seconds\": 255.1}\r\n"}
+,{"stream_name":"stdout","time":3953.928953113,"data":"{\r\n"}
+,{"stream_name":"stdout","time":3953.928987687,"data":"  \"model_version\": \"efficientnet_b3-384-202611251200\",\r\n"}
+,{"stream_name":"stdout","time":3953.929011078,"data":"  \"trained\": true,\r\n"}
+,{"stream_name":"stdout","time":3953.9290165,"data":"  \"backbone\": \"efficientnet_b3\",\r\n"}
+,{"stream_name":"stdout","time":3953.929021697,"data":"  \"image_size\": 384,\r\n"}
+,{"stream_name":"stdout","time":3953.929026824,"data":"  \"grade_thresholds\": [\r\n"}
+,{"stream_name":"stdout","time":3953.929032269,"data":"    0.5139,\r\n"}
+,{"stream_name":"stdout","time":3953.929037569,"data":"    1.3473,\r\n"}
+,{"stream_name":"stdout","time":3953.929042722,"data":"    2.2954,\r\n"}
+,{"stream_name":"stdout","time":3953.92904698,"data":"    3.0424\r\n"}
+,{"stream_name":"stdout","time":3953.929052008,"data":"  ],\r\n"}
+,{"stream_name":"stdout","time":3953.929057584,"data":"  \"referral_threshold\": 1.3473,\r\n"}
+,{"stream_name":"stdout","time":3953.929063377,"data":"  \"referral_selection\": {\r\n"}
+,{"stream_name":"stdout","time":3953.92906851,"data":"    \"threshold\": 1.3473,\r\n"}
+,{"stream_name":"stdout","time":3953.929073025,"data":"    \"sensitivity\": 0.9073170731707317,\r\n"}
+,{"stream_name":"stdout","time":3953.929078529,"data":"    \"specificity\": 0.9341692789968652,\r\n"}
+,{"stream_name":"stdout","time":3953.929084247,"data":"    \"target_sensitivity\": 0.9,\r\n"}
+,{"stream_name":"stdout","time":3953.929088942,"data":"    \"grade2_cutoff\": 1.3473\r\n"}
+,{"stream_name":"stdout","time":3953.929094727,"data":"  },\r\n"}
+,{"stream_name":"stdout","time":3953.929099774,"data":"  \"val_qwk_default_thresholds\": 0.8339150313039988,\r\n"}
+,{"stream_name":"stdout","time":3953.929105815,"data":"  \"val_qwk_optimised_thresholds\": 0.8699778139062795,\r\n"}
+,{"stream_name":"stdout","time":3953.929119798,"data":"  \"trained_at\": \"2026-11-25T12:00:46.319344+00:00\",\r\n"}
+,{"stream_name":"stdout","time":3953.929137084,"data":"  \"train_sources\": [\r\n"}
+,{"stream_name":"stdout","time":3953.929140381,"data":"    \"aptos2019\"\r\n"}
+,{"stream_name":"stdout","time":3953.929145521,"data":"  ],\r\n"}
+,{"stream_name":"stdout","time":3953.929153783,"data":"  \"n_train\": 3138,\r\n"}
+,{"stream_name":"stdout","time":3953.929156544,"data":"  \"n_val\": 524,\r\n"}
+,{"stream_name":"stdout","time":3953.929158952,"data":"  \"epochs\": 15\r\n"}
+,{"stream_name":"stdout","time":3953.929161343,"data":"}\r\n"}
+,{"stream_name":"stdout","time":3962.411529681,"data":"/kaggle/working/src/nazarai_ml/export_onnx.py:24: DeprecationWarning: You are using the legacy TorchScript-based ONNX export. Starting in PyTorch 2.9, the new torch.export-based ONNX exporter has become the default. Learn more about the new export logic: https://docs.pytorch.org/docs/stable/onnx_export.html. For exporting control flow: https://pytorch.org/tutorials/beginner/onnx/export_control_flow_model_to_onnx_tutorial.html\r\n"}
+,{"stream_name":"stdout","time":3962.411560136,"data":"  torch.onnx.export(\r\n"}
+,{"stream_name":"stdout","time":3966.429020288,"data":"ONNX parity max |diff| = 1.42e-06\r\n"}
+,{"stream_name":"stdout","time":3969.08932784,"data":"scoring validation 524\r\n"}
+,{"stream_name":"stdout","time":3969.649309586,"data":"  0/524\r\n"}
+,{"stream_name":"stdout","time":4052.338824755,"data":"  200/524\r\n"}
+,{"stream_name":"stdout","time":4129.958282706,"data":"  400/524\r\n"}
+,{"stream_name":"stdout","time":4176.910752773,"data":"scoring external test 516\r\n"}
+,{"stream_name":"stdout","time":4177.315272459,"data":"  0/516\r\n"}
+,{"stream_name":"stdout","time":4265.833778089,"data":"  200/516\r\n"}
+,{"stream_name":"stdout","time":4356.278314939,"data":"  400/516\r\n"}
+,{"stream_name":"stdout","time":4409.779355868,"data":"{\r\n"}
+,{"stream_name":"stdout","time":4409.779388283,"data":"  \"validation\": {\r\n"}
+,{"stream_name":"stdout","time":4409.779393769,"data":"    \"qwk\": 0.8688,\r\n"}
+,{"stream_name":"stdout","time":4409.779398757,"data":"    \"sensitivity\": 0.9073,\r\n"}
+,{"stream_name":"stdout","time":4409.779403382,"data":"    \"specificity\": 0.9373,\r\n"}
+,{"stream_name":"stdout","time":4409.779409765,"data":"    \"auc\": 0.9793\r\n"}
+,{"stream_name":"stdout","time":4409.779417843,"data":"  },\r\n"}
+,{"stream_name":"stdout","time":4409.779435843,"data":"  \"external_test\": {\r\n"}
+,{"stream_name":"stdout","time":4409.779440997,"data":"    \"qwk\": 0.683,\r\n"}
+,{"stream_name":"stdout","time":4409.779446321,"data":"    \"sensitivity\": 0.7616,\r\n"}
+,{"stream_name":"stdout","time":4409.779451495,"data":"    \"specificity\": 0.9119,\r\n"}
+,{"stream_name":"stdout","time":4409.779456691,"data":"    \"auc\": 0.9261\r\n"}
+,{"stream_name":"stdout","time":4409.779461099,"data":"  }\r\n"}
+,{"stream_name":"stdout","time":4409.779465398,"data":"}\r\n"}
+,{"stream_name":"stdout","time":4410.175800469,"data":"Validation                   n=  524  QWK=0.869  sens=0.9073  spec=0.9373  AUC=0.9793\n"}
+,{"stream_name":"stdout","time":4410.175835382,"data":"External test (IDRiD)        n=  516  QWK=0.683  sens=0.7616  spec=0.9119  AUC=0.9261\n"}
+,{"stream_name":"stdout","time":4410.175848858,"data":"IDx-DR reference: sens 0.87 / spec 0.90 | mean CPU latency: 449.2 ms\n"}
+,{"stream_name":"stdout","time":4410.21083252,"data":"Download /kaggle/working/release: commit metrics.json + PNGs to ml/reports/, upload weights with scripts/upload_model.py\n"}
+,{"stream_name":"stdout","time":4410.237214918,"data":"HF upload skipped: set HF_MODEL_REPO to publish the weights (or use scripts/upload_model.py locally)\n"}
+,{"stream_name":"stderr","time":4413.558052823,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":4413.558088898,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":4413.738984566,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":4413.739011503,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":4414.64311702,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":4414.73524895,"data":"[NbConvertApp] Writing 96266 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":4417.373882303,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":4417.940496439,"data":"[NbConvertApp] Support files will be in __results___files/\n"}
+,{"stream_name":"stderr","time":4417.940545631,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":4417.940810447,"data":"[NbConvertApp] Writing 312666 bytes to __results__.html\n"}
+]
