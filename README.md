@@ -8,7 +8,7 @@
 
 | | |
 |---|---|
-| Live app | _to be added after deployment_ |
+| Live app | https://nazarai-jade.vercel.app |
 | Video walkthrough (≤ 2 min) | _to be added_ |
 | Pitch deck | _to be added_ |
 
