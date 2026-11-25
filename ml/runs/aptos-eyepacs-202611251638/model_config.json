@@ -1,0 +1,30 @@
+{
+  "model_version": "efficientnet_b3-384-202611251638",
+  "trained": true,
+  "backbone": "efficientnet_b3",
+  "image_size": 384,
+  "grade_thresholds": [
+    0.516,
+    1.2144,
+    2.1738,
+    2.8723
+  ],
+  "referral_threshold": 0.3372,
+  "referral_selection": {
+    "threshold": 0.3372,
+    "sensitivity": 0.9005799502899752,
+    "specificity": 0.8604060913705583,
+    "target_sensitivity": 0.9,
+    "grade2_cutoff": 1.2144
+  },
+  "val_qwk_default_thresholds": 0.819312752907771,
+  "val_qwk_optimised_thresholds": 0.8417958763935178,
+  "trained_at": "2026-11-25T16:38:02.567284+00:00",
+  "train_sources": [
+    "aptos2019",
+    "eyepacs"
+  ],
+  "n_train": 33229,
+  "n_val": 5541,
+  "epochs": 10
+}
