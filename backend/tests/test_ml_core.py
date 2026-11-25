@@ -135,3 +135,25 @@ def test_referral_threshold_picks_best_specificity():
     scores = np.concatenate([np.linspace(0, 1.0, 50), np.linspace(1.2, 2.5, 50)])
     r = choose_referral_threshold(scores, y, [0.5, 1.5, 2.5, 3.5], 0.9)
     assert r["specificity"] == 1.0 and r["sensitivity"] >= 0.9
+
+
+def test_downscale_cache_keeps_model_input(tmp_path, demo_bytes):
+    """Caching a downscaled copy (used for APTOS on Kaggle) must not change what the model sees."""
+    import pandas as pd
+
+    from nazarai_ml.dataset import cache_downscaled
+    from nazarai_ml.preprocess import read_image
+
+    big = cv2.resize(cv2.cvtColor(decode_image(demo_bytes("grade3-severe.jpg")), cv2.COLOR_RGB2BGR),
+                     (3000, 2000), interpolation=cv2.INTER_CUBIC)
+    src = tmp_path / "big.png"
+    cv2.imwrite(str(src), big)
+    out = cache_downscaled(pd.DataFrame({"path": [str(src)], "grade": [3]}), str(tmp_path / "cache"), 1024, workers=1)
+    cached = read_image(out.path[0])
+    assert max(cached.shape[:2]) == 1024
+    a, b = prepare_fundus(read_image(str(src))), prepare_fundus(cached)
+    diff = lambda x, y: np.abs(x.astype(np.float32) - y.astype(np.float32)).mean()  # grey levels /255
+    # Measured: cache 0.55 (display) / 2.1 (model input, Ben Graham amplifies x4); a JPEG q95
+    # re-save of the same image gives 2.5 / 8.5. Bounds keep the cache well below that.
+    assert diff(a.display, b.display) < 1.0
+    assert diff(a.model_input_uint8, b.model_input_uint8) < 4.0

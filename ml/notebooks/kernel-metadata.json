@@ -8,7 +8,8 @@
   "enable_gpu": true,
   "enable_internet": true,
   "dataset_sources": [
-    "hassanagddsbdxfg/nazarai-ml-src"
+    "hassanagddsbdxfg/nazarai-ml-src",
+    "tanlikesmath/diabetic-retinopathy-resized"
   ],
   "competition_sources": [
     "aptos2019-blindness-detection"

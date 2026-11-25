@@ -86,6 +86,41 @@ def idrid_manifest(csv_path: str, img_dir: str) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def _downscale_one(job: tuple[str, str, int]) -> str | None:
+    src, dst, max_side = job
+    import cv2
+
+    if not os.path.exists(dst):
+        bgr = cv2.imread(src, cv2.IMREAD_COLOR)
+        if bgr is None:
+            return None
+        h, w = bgr.shape[:2]
+        scale = max_side / max(h, w)
+        if scale < 1.0:
+            bgr = cv2.resize(bgr, (round(w * scale), round(h * scale)), interpolation=cv2.INTER_AREA)
+        cv2.imwrite(dst, bgr, [cv2.IMWRITE_PNG_COMPRESSION, 1])
+    return dst
+
+
+def cache_downscaled(df: pd.DataFrame, out_dir: str, max_side: int = 1024, workers: int = 4) -> pd.DataFrame:
+    """Write a lossless copy of each image with its longer side capped at `max_side` and point the
+    manifest at it. Raw-image resizing only (like the pre-resized EyePACS copy): the shared
+    prepare_fundus pipeline still runs unchanged on the cached file. Saves re-decoding
+    full-resolution APTOS PNGs every epoch."""
+    from multiprocessing import Pool
+
+    os.makedirs(out_dir, exist_ok=True)
+    jobs = [(p, os.path.join(out_dir, Path(p).stem + ".png"), max_side) for p in df["path"]]
+    if workers <= 1:
+        new_paths = [_downscale_one(j) for j in jobs]
+    else:
+        with Pool(workers) as pool:
+            new_paths = pool.map(_downscale_one, jobs, chunksize=16)
+    out = df.copy()
+    out["path"] = new_paths
+    return out[out["path"].notna()].reset_index(drop=True)
+
+
 def patient_level_split(df: pd.DataFrame, val_fraction: float = 0.15, seed: int = 42) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Stratified-by-grade, grouped-by-patient split."""
     from sklearn.model_selection import StratifiedGroupKFold
@@ -154,6 +189,8 @@ def main() -> None:
     sub = ap.add_subparsers(dest="cmd", required=True)
     b = sub.add_parser("build", help="build train/val/test manifests")
     b.add_argument("--aptos-root")
+    b.add_argument("--aptos-cache-dir", help="write downscaled APTOS copies here (faster epochs)")
+    b.add_argument("--cache-max-side", type=int, default=1024)
     b.add_argument("--eyepacs-csv")
     b.add_argument("--eyepacs-images")
     b.add_argument("--max-eyepacs", type=int, default=0, help="subsample EyePACS (0 = all) to fit the GPU budget")
@@ -166,7 +203,11 @@ def main() -> None:
     os.makedirs(args.out, exist_ok=True)
     parts = []
     if args.aptos_root:
-        parts.append(aptos_manifest(args.aptos_root))
+        ap_df = aptos_manifest(args.aptos_root)
+        if args.aptos_cache_dir:
+            ap_df = cache_downscaled(ap_df, args.aptos_cache_dir, args.cache_max_side, workers=os.cpu_count() or 4)
+            print(f"cached {len(ap_df)} APTOS images (longer side <= {args.cache_max_side}) in {args.aptos_cache_dir}")
+        parts.append(ap_df)
     if args.eyepacs_csv and args.eyepacs_images:
         ep = eyepacs_manifest(args.eyepacs_csv, args.eyepacs_images)
         if args.max_eyepacs and len(ep) > args.max_eyepacs:
