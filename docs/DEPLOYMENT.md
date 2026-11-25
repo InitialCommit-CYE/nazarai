@@ -4,11 +4,16 @@ Order: **Supabase → model weights → Hugging Face Space → Vercel → smoke 
 
 ## 1. Supabase
 1. Create a project (region close to Pakistan, e.g. Mumbai `ap-south-1`).
-2. SQL Editor → paste and run `supabase/migrations/20261125000000_init_screenings.sql`
-   (or with the CLI: `supabase link --project-ref <ref>` then `supabase db push`).
-3. Check: Table Editor shows `screenings` and `screening_reports` with RLS **enabled**; Storage shows the private
+2. Apply **all** migrations in `supabase/migrations/` in filename order (SQL Editor, or
+   `npx supabase db push --db-url "$SUPABASE_DB_URL"`). They create the schema, RLS, roles, audit log and views.
+3. Authentication → URL configuration: **Site URL** = the Vercel URL; add `https://<app>/auth/confirm` to the
+   **Redirect URLs**. Providers → Email: keep "Confirm email" on. For real use, set a custom SMTP sender
+   (the built-in one is rate-limited and for testing only). Staff accounts do not need email.
+4. Demo clinic (synthetic data): `cd frontend && DEMO_PASSWORD=... node --env-file=.env.local ../scripts/seed_demo.mjs`,
+   then put the printed `DEMO_ACCOUNTS` line in Vercel's environment variables (sign-in page demo buttons).
+5. Check: Table Editor shows `clinics`, `profiles`, `patients`, `screenings`, `screening_reports`, `notifications`, `audit_log`, all with RLS **enabled**; Storage shows the private
    bucket `retina-uploads`; Realtime is enabled (default).
-4. Project Settings → API keys: copy the project URL, the **publishable** key (`sb_publishable_…`) and the
+6. Project Settings → API keys: copy the project URL, the **publishable** key (`sb_publishable_…`) and the
    **secret / service-role** key. The latter is server-only.
 
 ## 2. Model weights (after the Kaggle run)

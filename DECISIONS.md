@@ -44,3 +44,15 @@ One line per significant decision (CLAUDE.md section 12). Newest last.
 - **Deployed model = APTOS 2019 (README owner's decision).** EyePACS is removed from the README and the EyePACS-only model's artefacts are archived in `ml/runs/eyepacs-fallback-202611250727/` as a fallback. The notebook's `USE_EYEPACS` flag is left as Hassan set it while his run is in progress; if the deployed run did use EyePACS, the README disclosure must be restored before submission.
 - **Reports use the fixed bilingual templates in the deployment** (no LLM key). A Gemini key may be added later; that needs a small provider swap in `frontend/lib/server/report.ts`.
 - **Git workflow: commit straight to `main`**, no pull requests. Run `npm run build` before pushing UI changes, since `main` is the live site.
+
+## Accounts, roles and patient records (team decision, 2026-11-26)
+- **Scope change: full accounts + roles + patient portal**, chosen by the team lead (supersedes "user accounts and authentication" being out of scope in CLAUDE.md §2.5). Details: `docs/SECURITY.md`.
+- **Authorisation lives in Postgres RLS**, not the UI: every table has RLS, anon gets nothing, policies call `private.*` security-definer helpers (avoids recursive RLS on `profiles`). Pages/actions/routes use a user-scoped client (`lib/supabase/server.ts`); the service role is kept only for AI results, reports, temporary storage and staff accounts.
+- **Clinic admins cannot read patient data** (brief: admins must not get unrestricted access to medical records). They see staff, aggregate stats (`clinic_stats`) and the audit log.
+- **AI results are immutable for users**: no INSERT/UPDATE grants on `screenings`; referral follow-up only via `review_screening()`, which never touches grade/urgency.
+- **Patients link records with a one-time code + birth year** instead of email matching (no SMTP dependency, no guessing by email). Code: 8 chars from a 32-symbol alphabet, SHA-256 hashed, 14-day expiry, 5 failed attempts/hour.
+- **Staff onboarding without email**: admins create accounts with a cryptographically random temporary password that must be changed at first sign-in. Supabase's default email sender is only suitable for testing (custom SMTP needed for patient confirmation/reset emails in production).
+- **Realtime moved from a public broadcast to RLS-filtered `postgres_changes`** (the old `clinic-queue` broadcast was readable by any visitor).
+- **Next.js 16 conventions**: `proxy.ts` (renamed middleware) only refreshes the session and redirects optimistically; every page re-verifies via `requireViewer()` inside `<Suspense>` (Cache Components). Native `<select>` for forms (works with Server Actions, phones and screen readers).
+- **RLS is tested in embedded Postgres (PGlite 0.5.16)** with stand-ins for Supabase's `auth`/`storage`/`realtime` schemas: `npm run test:db`.
+- **Demo clinic**: `scripts/seed_demo.mjs` creates one clinic, one account per role and synthetic patients **without screenings** (screenings only come from real model runs). Admin credentials are not shown on the sign-in page.

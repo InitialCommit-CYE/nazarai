@@ -21,6 +21,7 @@ Approved by the team; everything else in this brief is unchanged. Details and ra
 | ML inference | **FastAPI** Python service (unchanged role) on **Hugging Face Spaces (Docker)**; called server-to-server with `X-API-Key` |
 | Model weights | Hugging Face Hub model repo (`HF_MODEL_REPO`), downloaded at service startup; never committed to git |
 | Patient reports | **Anthropic Claude API** (`claude-opus-5-5`), explanation paragraph only, with fixed-template fallback |
+| Accounts & roles (2026-11-26, team lead decision; overrides §2.5 "user accounts and authentication" out of scope) | **Supabase Auth** with roles operator / specialist / clinic admin / patient, patient records per clinic, referral follow-up, patient portal, audit log. Access enforced by RLS. See `docs/SECURITY.md` |
 
 Resulting API split: the browser talks to `frontend/app/api/*` (`/api/uploads/sign`, `/api/screen`, `/api/screenings/[id]`,
 `/api/reports/[id]`, `/api/reports/[id]/pdf`, `/api/queue`, `/api/metrics`, `/api/health`); those routes call Supabase and the

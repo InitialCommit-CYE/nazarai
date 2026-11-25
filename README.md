@@ -31,8 +31,15 @@ Our own rough estimate: 27% × 34.5M ≈ **9 million** Pakistanis may have some 
 3. **Referral**: grade 0–1 rescreen in 12 months · grade 2 refer · grade 3–4 refer urgently. Sensitivity-first threshold; borderline results are referred.
 4. **Explainability**: Grad-CAM heatmap with overlay, opacity slider, side-by-side and zoom.
 5. **Patient report**: plain Urdu (Nastaliq, RTL) or English from fixed bilingual templates, built from the stored result only; PDF referral slip.
-6. **Clinic queue**: every screening sorted by urgency, live updates via Supabase Realtime.
-7. **Model performance**: real validation + external-test (IDRiD) metrics next to the IDx-DR benchmark.
+6. **Referral worklist**: the clinic's screenings, urgent first, live updates; specialists and health workers book the
+   appointment, record the outcome and add clinical notes. The AI result itself can never be edited.
+7. **Patient records**: register, search, sort, edit and delete patients of your clinic; full screening history.
+8. **Accounts and roles**: health worker, eye specialist, clinic admin and patient. Access is enforced in the database
+   with Row Level Security: clinics are isolated, admins manage staff but cannot open patient records, every record
+   access and change goes to an append-only audit log. See [docs/SECURITY.md](docs/SECURITY.md).
+9. **Patient portal**: patients see their results, reports and appointments after linking their record with a
+   one-time code from the clinic.
+10. **Model performance**: real validation + external-test (IDRiD) metrics next to the IDx-DR benchmark.
 
 ## Why APTOS 2019
 No public Pakistani DR grading dataset exists yet. APTOS 2019 comes from Aravind Eye Hospital in India: a South Asian
@@ -48,12 +55,12 @@ Browser ─► Vercel (Next.js pages + /api/* gateway) ─► Supabase (PostgreS
 Browser ─► Supabase Storage via short-lived signed upload URL (image deleted right after inference)
 ```
 Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · [docs/API_DOCUMENTATION.md](docs/API_DOCUMENTATION.md) ·
-[docs/DATABASE_SCHEMA.md](docs/DATABASE_SCHEMA.md) · [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) · [docs/TEAM_RUNBOOK.md](docs/TEAM_RUNBOOK.md) · [DECISIONS.md](DECISIONS.md)
+[docs/DATABASE_SCHEMA.md](docs/DATABASE_SCHEMA.md) · [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) · [docs/TEAM_RUNBOOK.md](docs/TEAM_RUNBOOK.md) · [docs/SECURITY.md](docs/SECURITY.md) · [DECISIONS.md](DECISIONS.md)
 
 | Layer | Technology |
 |---|---|
 | Frontend | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, shadcn/ui, lucide-react, Recharts, on Vercel |
-| Backend / data | Supabase PostgreSQL (RLS), Supabase Storage (private bucket), Supabase Realtime |
+| Backend / data | Supabase Auth, Supabase PostgreSQL (Row Level Security, audit log), Supabase Storage (private bucket), Supabase Realtime |
 | ML service | Python 3.12, FastAPI, ONNX Runtime, PyTorch + timm, OpenCV, pytorch-grad-cam, ReportLab, on Hugging Face Spaces (Docker) |
 | Training | Kaggle GPU notebooks, PyTorch, timm, albumentations, scikit-learn |
 | Patient reports | Fixed bilingual templates (Urdu / English); an optional LLM layer can reword the explanation paragraph only |
@@ -113,12 +120,12 @@ come from a different population and reference standard, so they are a reference
 **Libraries**: PyTorch, torchvision, timm, ONNX, ONNX Runtime, OpenCV, albumentations, scikit-learn, SciPy, NumPy,
 pandas, matplotlib, pytorch-grad-cam, FastAPI, Uvicorn, Pydantic, ReportLab, arabic-reshaper, python-bidi,
 huggingface_hub, pytest; Next.js, React, Tailwind CSS, shadcn/ui (Radix UI, `cn`, class-variance-authority),
-lucide-react, Recharts, Zod, @supabase/supabase-js, @anthropic-ai/sdk (optional report wording, not enabled in the
-deployment).
+lucide-react, Recharts, Zod, @supabase/supabase-js, @supabase/ssr, @anthropic-ai/sdk (optional report wording, not enabled in the
+deployment). Testing: Playwright (visual checks), PGlite (embedded Postgres for the RLS test suite), Node test runner.
 
 **Fonts**: Geist (SIL OFL), Noto Nastaliq Urdu (SIL OFL, web), Noto Naskh Arabic (SIL OFL, PDF; licence in `backend/app/fonts/OFL.txt`).
 
-**APIs & hosting**: Vercel (frontend) · Supabase (database, storage, realtime) · Hugging Face Spaces (ML service) and
+**APIs & hosting**: Vercel (frontend) · Supabase (auth, database, storage, realtime) · Hugging Face Spaces (ML service) and
 Hub (model weights) · Kaggle (training GPUs).
 
 **AI assistance**: code was written with Claude Code (Anthropic) as an AI coding assistant during the competition window.
@@ -128,7 +135,9 @@ Hub (model weights) · Kaggle (training GPUs).
 - Not validated on Pakistani clinical data or local cameras yet; no macular-oedema grading; heuristic quality gate;
   confidence is not calibrated; Grad-CAM is not proof of correctness.
 - Scores shift between cameras, so each new site needs threshold calibration, which is the first step of the planned pilot.
-- Synthetic patient references only; retinal images are deleted after inference and only metadata is stored.
+- The demo clinic holds synthetic patients only; retinal images are deleted after inference and only results are stored.
+- No regulatory compliance (e.g. data-protection law for health records) is claimed; real patient use would need a
+  privacy/legal review first. Known security limits are listed in [docs/SECURITY.md](docs/SECURITY.md).
 
 > This is an AI screening result, not a medical diagnosis. Please consult an eye specialist for confirmation and treatment.
 >

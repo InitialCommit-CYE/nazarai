@@ -8,8 +8,8 @@ export function AuthShell({ title, subtitle, children, footer }: {
   footer?: React.ReactNode;
 }) {
   return (
-    <div className="mx-auto grid min-h-[calc(100dvh-4rem)] max-w-6xl lg:grid-cols-[1fr_1.05fr]">
-      <aside className="relative hidden overflow-hidden border-r border-border bg-brand-teal-deep px-10 py-14 text-primary-foreground lg:flex lg:flex-col lg:justify-between">
+    <div className="mx-auto grid min-h-[calc(100dvh-4rem)] max-w-6xl lg:grid-cols-[1fr_1.05fr] lg:gap-8 lg:px-6 lg:py-8">
+      <aside className="relative hidden overflow-hidden rounded-2xl bg-brand-teal-deep px-10 py-12 text-primary-foreground lg:flex lg:flex-col lg:justify-between">
         <div className="space-y-6">
           <p className="text-sm font-semibold tracking-wide uppercase opacity-80">NazarAI clinic workspace</p>
           <h2 className="max-w-sm text-3xl leading-tight font-semibold tracking-tight">
