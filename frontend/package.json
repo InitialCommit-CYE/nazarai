@@ -9,6 +9,7 @@
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "smoke:e2e": "node scripts/smoke-e2e.mjs",
+    "seed:demo": "node --env-file=.env.local scripts/seed_demo.mjs",
     "test:db": "node --test tests/db/rls.test.mjs"
   },
   "dependencies": {

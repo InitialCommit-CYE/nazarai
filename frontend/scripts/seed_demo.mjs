@@ -1,6 +1,6 @@
 // Create (or update) the demo clinic and one account per role. Synthetic data only.
 //
-//   cd frontend && node --env-file=.env.local ../scripts/seed_demo.mjs
+//   cd frontend && npm run seed:demo      (reads frontend/.env.local)
 //
 // Needs NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY and DEMO_PASSWORD (>= 10 chars,
 // letters + digits). Idempotent: re-running resets the demo passwords and roles.

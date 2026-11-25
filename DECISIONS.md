@@ -55,4 +55,4 @@ One line per significant decision (CLAUDE.md section 12). Newest last.
 - **Realtime moved from a public broadcast to RLS-filtered `postgres_changes`** (the old `clinic-queue` broadcast was readable by any visitor).
 - **Next.js 16 conventions**: `proxy.ts` (renamed middleware) only refreshes the session and redirects optimistically; every page re-verifies via `requireViewer()` inside `<Suspense>` (Cache Components). Native `<select>` for forms (works with Server Actions, phones and screen readers).
 - **RLS is tested in embedded Postgres (PGlite 0.5.16)** with stand-ins for Supabase's `auth`/`storage`/`realtime` schemas: `npm run test:db`.
-- **Demo clinic**: `scripts/seed_demo.mjs` creates one clinic, one account per role and synthetic patients **without screenings** (screenings only come from real model runs). Admin credentials are not shown on the sign-in page.
+- **Demo clinic**: `frontend/scripts/seed_demo.mjs` (`npm run seed:demo`) creates one clinic, one account per role and synthetic patients **without screenings** (screenings only come from real model runs). Admin credentials are not shown on the sign-in page.
