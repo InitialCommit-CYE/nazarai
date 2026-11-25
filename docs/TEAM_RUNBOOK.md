@@ -9,9 +9,9 @@ Short version: **we train on Kaggle and run the app in the cloud. Nobody downloa
 |---|---|---|---|
 | **Training** | Kaggle notebook `nazarai-train` (GPU T4). APTOS is mounted there; IDRiD downloads inside Kaggle | Hassan (owns the Kaggle account and token) | Nothing. Optionally the `kaggle` CLI to push and check runs |
 | **Model storage** | Hugging Face model repo `<hf-user>/nazarai-dr-model` (private) | Hassan uploads after each accepted run | Nothing |
-| **Inference (the model answering)** | Hugging Face Space `<hf-user>/nazarai-ml`, FastAPI + ONNX on CPU. Downloads the weights from the model repo at startup | ML-3 deploys the Space | Nothing |
-| **Website + API gateway** | Vercel (root `frontend/`), redeploys automatically on every push to `main` | ML-4 | Nothing |
-| **Database + temporary image upload** | Supabase (Postgres + private bucket `retina-uploads`) | ML-3 (one-time setup) | Nothing |
+| **Inference (the model answering)** | Hugging Face Space `<hf-user>/nazarai-ml`, FastAPI + ONNX on CPU. Downloads the weights from the model repo at startup | Hassan deploys the Space | Nothing |
+| **Website + API gateway** | Vercel (root `frontend/`), redeploys automatically on every push to `main` | Mohid | Nothing |
+| **Database + temporary image upload** | Supabase (Postgres + private bucket `retina-uploads`) | Mohid (one-time setup) | Nothing |
 | **Patient report text** | Anthropic Claude API, called by the Vercel server routes | none (automatic) | Nothing |
 
 ```
@@ -26,11 +26,11 @@ laptops pull it from there if needed. Never pass weights around on WhatsApp or U
 
 ## 2. Setup still to do (in this order)
 
-1. **Supabase project** (ML-3): run the migration and copy the 3 keys (`docs/DEPLOYMENT.md` §1).
+1. **Supabase project** (Mohid): run the migration and copy the 3 keys (`docs/DEPLOYMENT.md` §1).
 2. **APTOS training run finishes** (Hassan): check the numbers, then upload weights to the HF model repo (§2).
-3. **HF Space** (ML-3): `scripts/deploy_hf_space.py`, then set `ML_SERVICE_API_KEY`, `HF_MODEL_REPO`, `HF_TOKEN` (§3).
+3. **HF Space** (Hassan): `scripts/deploy_hf_space.py`, then set `ML_SERVICE_API_KEY`, `HF_MODEL_REPO`, `HF_TOKEN` (§3).
    Done when `https://<hf-user>-nazarai-ml.hf.space/health` shows `"trained": true`.
-4. **Vercel** (ML-4): import `InitialCommit-CYE/nazarai`, root `frontend`, add the env vars (§4).
+4. **Vercel** (Mohid): import `InitialCommit-CYE/nazarai`, root `frontend`, add the env vars (§4).
 5. **Smoke test** (anyone): `npm run smoke:e2e` against the live URL (§5). Then F tests it by hand like a real user.
 
 ## 3. Day-to-day: how each person tests
@@ -40,16 +40,17 @@ laptops pull it from there if needed. Never pass weights around on WhatsApp or U
 | You are working on | Do this | Model used |
 |---|---|---|
 | Testing the app as a user (F, everyone) | Open the Vercel URL. Use the "Try a sample image" buttons | Live model on the HF Space |
-| Frontend (ML-4) | `cd frontend && npm ci && npm run dev`, with `.env.local` pointing `ML_SERVICE_URL` at the **live Space** | Live model. No Python needed |
+| Frontend (Mohid) | `cd frontend && npm ci && npm run dev`, with `.env.local` pointing `ML_SERVICE_URL` at the **live Space** | Live model. No Python needed |
 | Backend / ML service (ML-3) | Run FastAPI locally (`docs/DEPLOYMENT.md` → Local development), with real weights in `ml/weights` (`hf download <hf-user>/nazarai-dr-model --local-dir ml/weights`) | Real model on your CPU |
 | ML code (Hassan, ML-2) | Edit `ml/src/nazarai_ml`, run `backend/.venv/Scripts/python -m pytest -q`, then re-version the Kaggle dataset and push the notebook (`docs/DEPLOYMENT.md` §2) | Trains on Kaggle |
 
-- **Git:** work on a branch and open a pull request. Vercel builds a preview URL for each branch. Merge to `main` only
-  when it works, because `main` is what the judges see.
-- **Secrets:** Hassan shares one `.env.local` by direct message (never in the repo or a group chat). Copy
+- **Git:** commit straight to `main`, no pull requests (hackathon speed). Every push redeploys the live site the
+  judges see, so run `npm run build` in `frontend/` before pushing UI changes, and `git pull --rebase` first.
+  The README is owned by Mohid; send README changes to him instead of editing it in parallel.
+- **Secrets:** Mohid shares one `.env.local` by direct message (never in the repo or a group chat). Copy
   `.env.example` and fill it in. `ALLOW_UNTRAINED_MODEL` stays `false` everywhere except a local pipeline test.
-- Preview deployments write to the **same** Supabase database, so test screenings show up in the live clinic queue.
-  That is fine until the final-day reset (§5).
+- Local dev and the live site write to the **same** Supabase database, so test screenings show up in the live clinic
+  queue. That is fine until the final-day reset (§5).
 
 ## 4. Changing the model
 

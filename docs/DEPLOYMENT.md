@@ -47,7 +47,7 @@ Local alternative: `docker build -f backend/Dockerfile -t nazarai-ml . && docker
    `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_APP_URL`,
    `SUPABASE_SERVICE_ROLE_KEY`, `ML_SERVICE_URL=https://<hf-user>-nazarai-ml.hf.space`, `ML_SERVICE_API_KEY`,
    `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL=claude-opus-5-5`. Do **not** set `ALLOW_UNTRAINED_MODEL` in production.
-4. Production branch `main` deploys automatically; other branches get preview deployments.
+4. Production branch `main` deploys automatically on every push (the team commits straight to `main`).
 5. Function duration: `/api/screen` declares `maxDuration = 120` (Fluid Compute default on new projects). If the
    plan caps it lower, cold ML starts may time out on the first request; warm the Space first.
 
