@@ -90,6 +90,11 @@ alter table public.screening_reports enable row level security;
 revoke all on public.screenings from anon, authenticated;
 revoke all on public.screening_reports from anon, authenticated;
 
+-- Explicit grants for the server-side role. Newer Supabase projects can be created with
+-- "Grant API access to new tables automatically" turned off, so do not rely on default privileges.
+grant select, insert, update, delete on public.screenings to service_role;
+grant select, insert, update, delete on public.screening_reports to service_role;
+
 -- ---------------------------------------------------------------------------
 -- Realtime: broadcast a minimal "something changed" event on the public topic
 -- 'clinic-queue'. Clients refetch /api/queue (server-side) when they receive it.
