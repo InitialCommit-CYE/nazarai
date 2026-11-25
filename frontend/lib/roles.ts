@@ -26,7 +26,6 @@ export function navFor(role: AppRole | null): NavLink[] {
       return [
         { href: "/dashboard", label: "Dashboard" },
         { href: "/patients", label: "Patients" },
-        { href: "/screen", label: "Screen" },
         { href: "/queue", label: "Referrals" },
       ];
     case "specialist":
@@ -34,7 +33,6 @@ export function navFor(role: AppRole | null): NavLink[] {
         { href: "/dashboard", label: "Dashboard" },
         { href: "/queue", label: "Referrals" },
         { href: "/patients", label: "Patients" },
-        { href: "/screen", label: "Screen" },
       ];
     case "admin":
       return [

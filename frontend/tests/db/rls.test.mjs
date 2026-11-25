@@ -15,9 +15,7 @@ create role anon nologin;
 create role authenticated nologin;
 create role service_role nologin bypassrls;
 grant usage on schema public to anon, authenticated, service_role;
-alter default privileges in schema public grant all on tables to anon, authenticated, service_role;
-alter default privileges in schema public grant all on functions to anon, authenticated, service_role;
-alter default privileges in schema public grant all on sequences to anon, authenticated, service_role;
+-- Like newer Supabase projects: NO automatic grants on new tables (migrations must grant explicitly).
 create schema auth;
 create table auth.users (id uuid primary key, email text, raw_user_meta_data jsonb not null default '{}');
 create function auth.uid() returns uuid language sql stable as $$
@@ -101,7 +99,6 @@ before(async () => {
   for (const f of readdirSync(MIGRATIONS).filter((f) => f.endsWith(".sql")).sort()) {
     await db.exec(readFileSync(join(MIGRATIONS, f), "utf8"));
   }
-  await db.exec(`grant all on all tables in schema public to service_role;`);
 
   await db.query("insert into public.clinics (id, name) values ($1, 'Clinic A'), ($2, 'Clinic B')", [ids.clinicA, ids.clinicB]);
   for (const [k, id] of Object.entries(ids)) if (!k.startsWith("clinic")) await createUser(id, `${k}@example.test`);
