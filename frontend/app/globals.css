@@ -16,10 +16,11 @@
   --font-urdu: var(--font-nastaliq);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-plex-sans);
+  --font-sans: var(--font-archivo);
   --font-mono: var(--font-plex-mono);
-  --font-heading: var(--font-plex-sans);
-  --font-display: var(--font-newsreader);
+  --font-heading: var(--font-archivo);
+  --font-display: var(--font-archivo);
+  --color-abyss: var(--abyss);
   --color-ink: var(--ink);
   --color-ink-foreground: var(--ink-foreground);
   --color-ink-muted: var(--ink-muted);
@@ -87,7 +88,8 @@
   --ink: oklch(0.24 0.04 225);                /* deep petrol-ink bands (hero, CTA) */
   --ink-foreground: oklch(0.97 0.006 85);
   --ink-muted: oklch(0.76 0.025 220);
-  --signal: oklch(0.82 0.11 195);             /* bright clinical cyan, on ink only */
+  --signal: oklch(0.82 0.11 195);             /* bright clinical cyan */
+  --abyss: oklch(0.16 0.025 230);             /* near-black, for the darkest bands */
   --chart-1: oklch(0.52 0.09 190);
   --chart-2: oklch(0.55 0.15 255);
   --chart-3: oklch(0.7 0.13 75);
@@ -140,16 +142,26 @@
   }
   /* Editorial display type (headlines only). */
   .font-display {
-    font-family: var(--font-newsreader), Georgia, serif;
-    font-optical-sizing: auto;
-    letter-spacing: -0.015em;
+    font-family: var(--font-archivo), system-ui, sans-serif;
+    font-variation-settings: "wdth" 112;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1.02;
   }
-  /* Small mono label used for section numbers and data captions. */
+  /* Short section label: bold, sentence case, led by a rule. */
   .eyebrow {
-    font-family: var(--font-plex-mono), ui-monospace, monospace;
-    font-size: 0.75rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 1.5rem;
+    height: 2px;
+    background: currentColor;
   }
   .hero-grid {
     background-image:
