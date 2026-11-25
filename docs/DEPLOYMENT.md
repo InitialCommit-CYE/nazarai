@@ -17,7 +17,7 @@ Live project: ref `iwrvmubftokmkixknuth`, region Asia-Pacific (Singapore, `ap-so
    `https://nazarai-jade.vercel.app/**` (covers `/auth/confirm`) and `http://localhost:3000/**`.
    Providers → Email: keep "Confirm email" on. For real use, set a custom SMTP sender (the built-in one is
    rate-limited and for testing only). Staff accounts do not need email.
-5. Demo clinic (synthetic data): put `DEMO_PASSWORD=...` in `frontend/.env.local`, then `cd frontend && npm run seed:demo`,
+5. Demo clinic (synthetic data): put `DEMO_PASSWORD=...` and a different `DEMO_ADMIN_PASSWORD=...` in `frontend/.env.local`, then `cd frontend && npm run seed:demo`,
    then put the printed `DEMO_ACCOUNTS` line in Vercel's environment variables (sign-in page demo buttons).
 6. Check: Table Editor shows `clinics`, `profiles`, `patients`, `screenings`, `screening_reports`, `notifications`,
    `audit_log`, all with RLS **enabled**; Storage shows the private bucket `retina-uploads`; Realtime is enabled.

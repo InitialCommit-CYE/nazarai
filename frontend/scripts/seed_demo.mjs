@@ -4,6 +4,9 @@
 //
 // Needs NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY and DEMO_PASSWORD (>= 10 chars,
 // letters + digits). Idempotent: re-running resets the demo passwords and roles.
+// DEMO_PASSWORD is public (the sign-in page's demo buttons send it to every browser), so the admin account
+// uses DEMO_ADMIN_PASSWORD instead. Without it, an existing admin keeps its password and a new admin gets a
+// random one that is printed once.
 // Patients are created WITHOUT screenings: every screening must come from a real model run.
 import { createClient } from "@supabase/supabase-js";
 
@@ -13,6 +16,10 @@ const password = process.env.DEMO_PASSWORD;
 if (!url || !key) throw new Error("NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required");
 if (!password || password.length < 10 || !/[A-Za-z]/.test(password) || !/\d/.test(password)) {
   throw new Error("Set DEMO_PASSWORD (>= 10 characters, with letters and digits)");
+}
+const adminPassword = process.env.DEMO_ADMIN_PASSWORD || null;
+if (adminPassword && (adminPassword === password || adminPassword.length < 12)) {
+  throw new Error("DEMO_ADMIN_PASSWORD must be at least 12 characters and differ from DEMO_PASSWORD");
 }
 const domain = process.env.DEMO_EMAIL_DOMAIN ?? "demo.nazarai.app";
 const db = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
@@ -53,10 +60,17 @@ for (let page = 1; ; page++) {
 const ids = {};
 for (const a of ACCOUNTS) {
   let id = existing.get(a.email);
+  const isAdmin = a.role === "admin";
   if (id) {
-    await must(db.auth.admin.updateUserById(id, { password, email_confirm: true, user_metadata: { full_name: a.name } }), `update ${a.email}`);
+    const pw = isAdmin ? adminPassword : password; // null: leave the admin's current password unchanged
+    await must(db.auth.admin.updateUserById(id, { ...(pw ? { password: pw } : {}), email_confirm: true, user_metadata: { full_name: a.name } }), `update ${a.email}`);
   } else {
-    id = (await must(db.auth.admin.createUser({ email: a.email, password, email_confirm: true, user_metadata: { full_name: a.name } }), `create ${a.email}`)).user.id;
+    let pw = isAdmin ? adminPassword : password;
+    if (!pw) {
+      pw = `Adm-${crypto.randomUUID()}`;
+      console.log(`admin password (generated, shown once): ${pw}`);
+    }
+    id = (await must(db.auth.admin.createUser({ email: a.email, password: pw, email_confirm: true, user_metadata: { full_name: a.name } }), `create ${a.email}`)).user.id;
   }
   await must(
     db.from("profiles").update({
