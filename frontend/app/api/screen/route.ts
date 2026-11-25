@@ -1,6 +1,8 @@
 import { z } from "zod";
 
 import type { ScreeningRecord, ScreenResponse } from "@/lib/types";
+import { CLINICAL_ROLES } from "@/lib/roles";
+import { requireApiViewer } from "@/lib/server/auth";
 import { env } from "@/lib/server/env";
 import { handleRouteError, HttpError } from "@/lib/server/http";
 import { mlPredict } from "@/lib/server/ml-client";
@@ -9,6 +11,7 @@ import { SCREENING_COLUMNS, supabaseAdmin } from "@/lib/server/supabase";
 
 /**
  * POST /api/screen
+ * 0. signed-in clinical staff only; the patient must be visible to them through RLS (same clinic)
  * 1. validates the temporary storage path   2. downloads the image server-side
  * 3. calls the FastAPI ML service           4. deletes the temporary upload (always)
  * 5. stores the screening metadata          6. returns result + images (images are NOT stored)
@@ -20,14 +23,7 @@ const MAX_BYTES = 10 * 1024 * 1024;
 const Body = z.object({
   uploadPath: z.string().regex(/^incoming\/[0-9a-f-]{36}\.(jpg|png|webp)$/i),
   imageSource: z.enum(["upload", "sample", "camera"]).default("upload"),
-  demoPatientCode: z
-    .string()
-    .trim()
-    .regex(/^[A-Za-z0-9_-]{1,40}$/, "Use letters, numbers, - or _ only")
-    .optional()
-    .or(z.literal("").transform(() => undefined)),
-  age: z.number().int().min(18).max(120).optional(),
-  diabetesDurationYears: z.number().int().min(0).max(80).optional(),
+  patientId: z.string().uuid(),
 });
 
 const MIME: Record<string, string> = { jpg: "image/jpeg", png: "image/png", webp: "image/webp" };
@@ -39,6 +35,7 @@ export async function POST(req: Request) {
   let uploadPath: string | null = null;
 
   try {
+    const { viewer, db } = await requireApiViewer(CLINICAL_ROLES);
     const parsed = Body.safeParse(await req.json().catch(() => null));
     if (!parsed.success) {
       const msg = parsed.error.issues[0]?.message ?? "Invalid request.";
@@ -46,6 +43,15 @@ export async function POST(req: Request) {
     }
     const body = parsed.data;
     uploadPath = body.uploadPath;
+
+    // RLS returns the patient only if they belong to the caller's clinic.
+    const { data: patient } = await db
+      .from("patients")
+      .select("id, clinic_id, mrn, birth_year, diabetes_since_year")
+      .eq("id", body.patientId)
+      .maybeSingle<{ id: string; clinic_id: string; mrn: string; birth_year: number; diabetes_since_year: number | null }>();
+    if (!patient) throw new HttpError(404, "Patient not found in your clinic.", "patient_not_found");
+    const year = new Date().getUTCFullYear();
 
     const bucket = supabaseAdmin().storage.from(env.storageBucket());
     const { data: blob, error: dlErr } = await bucket.download(uploadPath);
@@ -71,9 +77,12 @@ export async function POST(req: Request) {
     const { ok: _ok, issues, ...metrics } = q;
     void _ok;
     const row = {
-      demo_patient_code: body.demoPatientCode ?? null,
-      age: body.age ?? null,
-      diabetes_duration_years: body.diabetesDurationYears ?? null,
+      clinic_id: patient.clinic_id,
+      patient_id: patient.id,
+      created_by: viewer.id,
+      demo_patient_code: patient.mrn,
+      age: Math.max(0, Math.min(120, year - patient.birth_year)),
+      diabetes_duration_years: patient.diabetes_since_year ? Math.max(0, Math.min(100, year - patient.diabetes_since_year)) : null,
       image_source: body.imageSource,
       quality_ok: q.ok,
       quality_issues: issues,

@@ -77,16 +77,10 @@ export async function uploadImage(file: File, onProgress: (pct: number) => void)
   return signed.path;
 }
 
-export interface PatientFields {
-  demoPatientCode?: string;
-  age?: number;
-  diabetesDurationYears?: number;
-}
-
-export function runScreening(uploadPath: string, imageSource: ImageSource, patient: PatientFields) {
+export function runScreening(uploadPath: string, imageSource: ImageSource, patientId: string) {
   return request<ScreenResponse>("/api/screen", {
     method: "POST",
-    body: JSON.stringify({ uploadPath, imageSource, ...patient }),
+    body: JSON.stringify({ uploadPath, imageSource, patientId }),
   });
 }
 
@@ -102,8 +96,8 @@ export function pdfUrl(id: string, language: Language) {
   return `/api/reports/${id}/pdf?lang=${language}`;
 }
 
-export function getQueue(scope: "today" | "all") {
-  return request<QueueResponse>(`/api/queue?scope=${scope}`);
+export function getQueue(scope: "today" | "all", openOnly = false) {
+  return request<QueueResponse>(`/api/queue?scope=${scope}${openOnly ? "&referral=open" : ""}`);
 }
 
 export function getMetrics() {

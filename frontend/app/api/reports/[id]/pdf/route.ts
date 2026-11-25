@@ -1,3 +1,4 @@
+import { requireApiViewer } from "@/lib/server/auth";
 import { assertUuid, handleRouteError } from "@/lib/server/http";
 import { mlGeneratePdf } from "@/lib/server/ml-client";
 import { rateLimit } from "@/lib/server/rate-limit";
@@ -10,10 +11,11 @@ export async function GET(req: Request, ctx: RouteContext<"/api/reports/[id]/pdf
   const limited = rateLimit(req, "pdf", 20, 60_000);
   if (limited) return limited;
   try {
+    const { db } = await requireApiViewer();
     const id = assertUuid((await ctx.params).id);
     const lang = new URL(req.url).searchParams.get("lang") === "ur" ? "ur" : "en";
-    const s = await getGradedScreening(id);
-    const report = await getOrCreateReport(s, lang);
+    const s = await getGradedScreening(db, id);
+    const report = await getOrCreateReport(db, s, lang);
     const pdf = await mlGeneratePdf({
       screening_id: s.id,
       created_at: s.created_at,
@@ -34,7 +36,7 @@ export async function GET(req: Request, ctx: RouteContext<"/api/reports/[id]/pdf
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="nazarai-referral-${s.id.slice(0, 8)}-${lang}.pdf"`,
-        "Cache-Control": "no-store",
+        "Cache-Control": "private, no-store",
       },
     });
   } catch (err) {

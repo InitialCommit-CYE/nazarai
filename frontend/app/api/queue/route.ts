@@ -1,9 +1,11 @@
 import { connection } from "next/server";
 
 import type { QueueResponse, ScreeningRecord } from "@/lib/types";
+import { CLINICAL_ROLES } from "@/lib/roles";
+import { requireApiViewer } from "@/lib/server/auth";
 import { handleRouteError, HttpError } from "@/lib/server/http";
 import { rateLimit } from "@/lib/server/rate-limit";
-import { SCREENING_COLUMNS, supabaseAdmin } from "@/lib/server/supabase";
+import { SCREENING_COLUMNS } from "@/lib/server/supabase";
 
 /** Start of "today" in Pakistan Standard Time (UTC+5, no DST), as an ISO timestamp. */
 function startOfTodayPKT(): string {
@@ -13,14 +15,19 @@ function startOfTodayPKT(): string {
   return new Date(midnightPkt - PKT_OFFSET_MS).toISOString();
 }
 
-/** GET /api/queue?scope=today|all - graded screenings sorted by urgency, plus counts. */
+/**
+ * GET /api/queue?scope=today|all&referral=open - the caller's clinic screenings, urgent first.
+ * Clinical staff only; RLS limits rows to the caller's clinic.
+ */
 export async function GET(req: Request) {
   await connection();
   const limited = rateLimit(req, "queue", 120, 60_000);
   if (limited) return limited;
   try {
-    const scope = new URL(req.url).searchParams.get("scope") === "all" ? "all" : "today";
-    const db = supabaseAdmin();
+    const { db } = await requireApiViewer(CLINICAL_ROLES);
+    const params = new URL(req.url).searchParams;
+    const scope = params.get("scope") === "all" ? "all" : "today";
+    const openOnly = params.get("referral") === "open";
     let q = db
       .from("screenings")
       .select(SCREENING_COLUMNS)
@@ -28,6 +35,7 @@ export async function GET(req: Request) {
       .order("created_at", { ascending: false })
       .limit(300);
     if (scope === "today") q = q.gte("created_at", startOfTodayPKT());
+    if (openOnly) q = q.in("referral_status", ["pending", "scheduled"]);
     const { data, error } = await q;
     if (error) throw new HttpError(502, "Could not load the screening queue.", "db_error");
 
@@ -44,7 +52,7 @@ export async function GET(req: Request) {
       },
       items: rows,
     };
-    return Response.json(body, { headers: { "Cache-Control": "no-store" } });
+    return Response.json(body, { headers: { "Cache-Control": "private, no-store" } });
   } catch (err) {
     return handleRouteError(err, "queue");
   }

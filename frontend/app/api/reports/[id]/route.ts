@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { requireApiViewer } from "@/lib/server/auth";
 import { assertUuid, handleRouteError, HttpError } from "@/lib/server/http";
 import { rateLimit } from "@/lib/server/rate-limit";
 import { getGradedScreening, getOrCreateReport } from "@/lib/server/screenings";
@@ -16,12 +17,13 @@ export async function POST(req: Request, ctx: RouteContext<"/api/reports/[id]">)
   const limited = rateLimit(req, "report", 20, 60_000);
   if (limited) return limited;
   try {
+    const { db, viewer } = await requireApiViewer();
     const id = assertUuid((await ctx.params).id);
     const parsed = Body.safeParse(await req.json().catch(() => null));
     if (!parsed.success) throw new HttpError(400, "language must be 'en' or 'ur'.", "invalid_request");
-    const screening = await getGradedScreening(id);
-    const report = await getOrCreateReport(screening, parsed.data.language, parsed.data.regenerate);
-    return Response.json(report);
+    const screening = await getGradedScreening(db, id);
+    const report = await getOrCreateReport(db, screening, parsed.data.language, parsed.data.regenerate && viewer.role !== "patient");
+    return Response.json(report, { headers: { "Cache-Control": "private, no-store" } });
   } catch (err) {
     return handleRouteError(err, "reports/[id]");
   }

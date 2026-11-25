@@ -13,7 +13,7 @@ import { saveSessionImages } from "@/lib/client/session-images";
 import type { ImageSource, QualityIssue } from "@/lib/types";
 
 import { ImagePicker } from "./image-picker";
-import { PatientForm, patientErrors, randomDemoCode, type PatientDraft } from "./patient-form";
+import { PatientPicker, type PickedPatient } from "./patient-picker";
 import { QualityFeedback } from "./quality-feedback";
 import { SampleGallery, type SampleImage } from "./sample-gallery";
 import { ScreeningProgress, type Phase } from "./screening-progress";
@@ -26,9 +26,9 @@ interface Selection {
   sampleId: string | null;
 }
 
-export function ScreeningWorkspace() {
+export function ScreeningWorkspace({ initialPatient }: { initialPatient: PickedPatient | null }) {
   const router = useRouter();
-  const [patient, setPatient] = useState<PatientDraft>({ code: "", age: "", duration: "" });
+  const [patient, setPatient] = useState<PickedPatient | null>(initialPatient);
   const [selection, setSelection] = useState<Selection | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
   const [uploadPct, setUploadPct] = useState(0);
@@ -66,13 +66,10 @@ export function ScreeningWorkspace() {
 
   async function start() {
     if (!selection) return;
-    if (Object.keys(patientErrors(patient)).length) {
-      setError("Please fix the patient details first.");
+    if (!patient) {
+      setError("Choose the patient this photo belongs to.");
       return;
     }
-    // Every screening gets a synthetic reference so the clinic queue stays readable.
-    const code = patient.code || randomDemoCode();
-    if (!patient.code) setPatient((p) => ({ ...p, code }));
     setError(null);
     setRejected(null);
     setUploadPct(0);
@@ -80,11 +77,7 @@ export function ScreeningWorkspace() {
     try {
       const path = await uploadImage(selection.file, setUploadPct);
       setPhase("analyzing");
-      const res = await runScreening(path, selection.source, {
-        demoPatientCode: code,
-        age: patient.age ? Number(patient.age) : undefined,
-        diabetesDurationYears: patient.duration ? Number(patient.duration) : undefined,
-      });
+      const res = await runScreening(path, selection.source, patient.id);
       if (!res.screening.quality_ok) {
         setPhase("idle");
         setRejected(res.screening.quality_issues);
@@ -131,15 +124,15 @@ export function ScreeningWorkspace() {
       <div className="space-y-6 lg:sticky lg:top-24 lg:self-start">
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">2 · Patient (optional)</CardTitle>
-            <CardDescription>Synthetic demo reference only.</CardDescription>
+            <CardTitle className="text-lg">2 · Patient</CardTitle>
+            <CardDescription>The result is saved to this patient&apos;s record.</CardDescription>
           </CardHeader>
           <CardContent>
-            <PatientForm value={patient} onChange={setPatient} disabled={busy} />
+            <PatientPicker value={patient} onChange={setPatient} disabled={busy} />
           </CardContent>
         </Card>
 
-        <Button size="lg" className="h-12 w-full text-base" disabled={!selection || busy} onClick={start}>
+        <Button size="lg" className="h-12 w-full text-base" disabled={!selection || !patient || busy} onClick={start}>
           <ScanEye /> {phase === "error" ? "Try again" : "Run screening"} <ArrowRight />
         </Button>
 

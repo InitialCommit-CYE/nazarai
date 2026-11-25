@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { CLINICAL_ROLES } from "@/lib/roles";
+import { requireApiViewer } from "@/lib/server/auth";
 import { env } from "@/lib/server/env";
 import { handleRouteError, HttpError } from "@/lib/server/http";
 import { rateLimit } from "@/lib/server/rate-limit";
@@ -41,6 +43,7 @@ export async function POST(req: Request) {
   const limited = rateLimit(req, "sign", 30, 60_000);
   if (limited) return limited;
   try {
+    await requireApiViewer(CLINICAL_ROLES);
     const parsed = Body.safeParse(await req.json().catch(() => null));
     if (!parsed.success) {
       throw new HttpError(400, "Upload a JPEG, PNG or WebP image no larger than 10 MB.", "invalid_upload");

@@ -330,3 +330,13 @@ describe("notifications", () => {
     await denied(as(ids.patientUser, "insert into public.notifications (user_id, kind, title) values (auth.uid(), 'account', 'x')"));
   });
 });
+
+describe("latest-screening view", () => {
+  test("respects RLS of the underlying table", async () => {
+    const a = await as(ids.operatorA, "select patient_id from public.patient_latest_screening");
+    assert.ok(a.rows.length >= 1);
+    assert.equal((await as(ids.operatorB, "select patient_id from public.patient_latest_screening")).rows.length, 0);
+    assert.equal((await as(ids.adminA, "select patient_id from public.patient_latest_screening")).rows.length, 0);
+    await denied(as(null, "select 1 from public.patient_latest_screening"));
+  });
+});

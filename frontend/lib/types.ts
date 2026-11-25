@@ -78,7 +78,15 @@ export interface ScreeningRecord {
   model_version: string;
   model_trained: boolean;
   inference_time_ms: number | null;
+  clinic_id: string | null;
+  patient_id: string | null;
+  referral_status: ReferralStatus;
+  appointment_at: string | null;
+  specialist_note: string | null;
+  reviewed_at: string | null;
 }
+
+export type ReferralStatus = "not_required" | "pending" | "scheduled" | "seen" | "closed";
 
 /** Images returned once by /api/screen; kept only in the browser session, never stored. */
 export interface ScreeningImages {

@@ -28,3 +28,16 @@ export function rateLimit(req: Request, name: string, limit: number, windowMs: n
   }
   return null;
 }
+
+/** Same limiter for Server Actions (no Request object): returns true when the caller is over the limit. */
+export function overLimit(name: string, key: string, limit: number, windowMs: number): boolean {
+  const now = Date.now();
+  const k = `${name}:${key}`;
+  const b = buckets.get(k);
+  if (!b || b.reset <= now) {
+    buckets.set(k, { count: 1, reset: now + windowMs });
+    return false;
+  }
+  b.count += 1;
+  return b.count > limit;
+}
