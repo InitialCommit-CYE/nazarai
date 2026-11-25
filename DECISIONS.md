@@ -1,0 +1,37 @@
+# Decisions log
+
+One line per significant decision (CLAUDE.md section 12). Newest last.
+
+## Infrastructure (approved update, 2026-11-25)
+- **Supabase PostgreSQL** replaces SQLite/in-memory storage for screenings and reports; one database, no competing stores.
+- **Supabase Storage** private bucket `retina-uploads` (10 MB, JPEG/PNG/WebP only). Browser uploads with a short-lived signed upload URL; the server downloads, sends to the ML service and **deletes the object in a `finally` block**. Orphaned uploads older than 15 min are swept opportunistically by `/api/uploads/sign` (Supabase forbids deleting `storage.objects` rows in SQL, so a SQL cron job is not an option).
+- **Next.js route handlers are the API gateway.** The browser never sees the service-role key, ML API key or Anthropic key; FastAPI is called server-to-server with `X-API-Key`.
+- **RLS on, zero policies for `anon`/`authenticated`** (plus `REVOKE ALL`). Simplest correct posture for an app without user accounts; all reads go through server routes.
+- **Realtime via broadcast, not `postgres_changes`.** `postgres_changes` would need an anon `SELECT` policy on screenings; instead an `AFTER INSERT` trigger calls `realtime.send()` with only `{id, urgency}` on the public topic `clinic-queue`, and clients refetch `/api/queue`. Polling every 30 s is the fallback. A Realtime failure can never fail an insert (exception swallowed with a warning).
+- **FastAPI on Hugging Face Spaces (Docker, port 7860, uid 1000)**; weights downloaded at startup from a private HF model repo, never committed.
+- **Python 3.12** (not 3.11) in Docker and locally: the pinned NumPy 2.5 / PyTorch 2.15 stack was tested on 3.12, and 3.11 was not available on the dev machine.
+- **Node 24 LTS, Next.js 16.4.6 with Cache Components** (the create-next-app default). Pages that read URL params are wrapped in `<Suspense>`; GET handlers call `connection()`.
+- **v0**: `docs/V0_UI_PROMPT.md` is a complete prompt for the existing component structure. v0 was not available to Claude Code, so the UI was implemented directly; v0 output should be merged component-by-component into `frontend/components`, keeping `lib/client/api.ts` as the only data layer.
+
+## ML
+- Shared ML code is a package, `ml/src/nazarai_ml/`, imported by training, evaluation **and** the backend (`backend/app/__init__.py` adds it to `sys.path`). One preprocessing implementation.
+- Preprocessing pads the cropped fundus to a square before resizing (keeps the circle round; plain resize distorts cut-off EyePACS circles); circular mask fills with black.
+- **Decision rule shared** (`decision.py`) between evaluation and serving, so the deployed referral rule is exactly the evaluated one.
+- **Referral rule v2 (2026-11-25): referable = grade ≥ 2 OR score ≥ t_ref**, with t_ref chosen on validation predictions for ≥ 90% sensitivity under exactly this rule (`thresholds.choose_referral_threshold`, `nazarai_ml.select_operating_point`). Scores in [t_ref, grade-2 cut-off) are referred and flagged "borderline / precaution". *Why:* rule v1 additionally referred anything within 0.25 below t_ref or with unstable flip views, although t_ref had been chosen without those extras. On run 2 that double-counted safety: t_ref = 0.21 alone gave validation sensitivity 90.1% / specificity 80.6%, but the v1 margin pushed the effective cut-off below 0 (deployed specificity 0.8%). The operating point was re-selected from validation predictions only; the external test set played no part in the fix.
+- **Confidence is a heuristic**: (0.5 → 0.95 by distance from the nearest grade boundary) × (agreement of 4 flip views). Capped at 0.95 so the UI never shows "100%". Labelled "not calibrated" everywhere.
+- **Quality gate thresholds tuned on IDRiD** (103 test images): accepts 102/103 real photos (the rejected one is genuinely hazy), rejects 15/15 blurred, 15/15 dark, 12/15 3× over-exposed and 12/12 non-retina photos. Over-exposure uses the green channel (red clips even in good photos).
+- **First training run (2026-11-25) is EyePACS-only.** The Kaggle account could not attach the APTOS competition (rules not registered as accepted), so APTOS was made optional in the notebook and run 1 started on resized EyePACS. `metrics.json` records the real `train_sources`; a second run with APTOS can be pushed once the rules are accepted on the token's account (re-add `aptos2019-blindness-detection` to `competition_sources` in `ml/notebooks/kernel-metadata.json`).
+- **External test = all 516 IDRiD images** from the CC BY 4.0 Hugging Face mirror (`amin-nejad/idrid-disease-grading`); never used for training or thresholds.
+- **No mock predictions.** Instead of a mock mode, `scripts/make_pipeline_test_model.py` creates a random-weight artefact with `"trained": false`. It exercises the real ONNX + Grad-CAM code path; the backend refuses it when `APP_ENV=production`, `/api/screen` refuses it unless `ALLOW_UNTRAINED_MODEL=true` in a non-production build, rows store `model_trained=false`, and the UI shows a red "not a real prediction" banner.
+- **No seed rows and no committed metrics.json** until real evaluation exists: the performance page shows an honest "Evaluation pending" state.
+- Grad-CAM targets the scalar regression output on `conv_head` (EfficientNet) / last stage (ConvNeXt); heatmap is RGBA (alpha follows activation) so the overlay keeps low-activation areas see-through.
+
+## Product / safety
+- **LLM writes only the explanation paragraph.** Grade label, referral action, borderline note and disclaimer are rendered from fixed bilingual templates (UI and PDF). LLM output is validated (language/script, length, no contradictory "grade N", no "urgent" for non-referable, no "diagnosis" claims) and falls back to the template on failure, refusal, timeout or missing key.
+- Claude model `claude-opus-5-5`, effort `low` (short rewriting task, live-demo latency), server-side refusal fallback enabled (`fallbacks: "default"`), 30 s timeout, 1 retry.
+- PDF in the Python service with ReportLab; Urdu shaped with arabic-reshaper + python-bidi in **Noto Naskh Arabic** (ReportLab cannot shape Nastaliq). Lines are wrapped on logical text *before* bidi reordering, otherwise wrapped Urdu paragraphs come out in reverse line order. The web UI uses Noto Nastaliq Urdu.
+- Retinal images and heatmaps are never stored server-side; the browser keeps the last 4 results in `sessionStorage` for the result/explainability pages.
+- Rejected (quality-gate) screenings are stored too (`quality_ok=false`, grade NULL) so the clinic sees "retake needed" counts; DB constraints make it impossible to store a grade for a rejected image or a non-urgent grade 3–4.
+- "Today" in the clinic queue = Pakistan Standard Time (UTC+5).
+- Basic per-instance in-memory rate limiting on public routes (good enough to blunt floods on a demo; not distributed).
+- Chart palette validated with the dataviz validator: validation `#009e8f`, external test `#2f5fd0` (all checks pass, tritan ΔE 11.6); brand teal `#0f766e` failed the chroma floor for chart series.

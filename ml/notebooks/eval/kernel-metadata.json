@@ -1,0 +1,18 @@
+{
+  "id": "hassanagddsbdxfg/nazarai-eval",
+  "title": "NazarAI eval",
+  "code_file": "nazarai_eval_kaggle.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_internet": true,
+  "dataset_sources": [
+    "hassanagddsbdxfg/nazarai-ml-src",
+    "tanlikesmath/diabetic-retinopathy-resized"
+  ],
+  "competition_sources": [],
+  "kernel_sources": [
+    "hassanagddsbdxfg/nazarai-train"
+  ]
+}

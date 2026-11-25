@@ -1,0 +1,62 @@
+{
+  "license": "CC BY 4.0",
+  "attribution": "IDRiD dataset (c) Prasanna Porwal, Samiksha Pachade and Manesh Kokare, licensed CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Source: https://ieee-dataport.org/open-access/indian-diabetic-retinopathy-image-dataset-idrid via https://huggingface.co/datasets/amin-nejad/idrid-disease-grading (test split). Images were resized to 1400px width; no other changes.",
+  "images": [
+    {
+      "id": "grade0-no-dr",
+      "file": "grade0-no-dr.jpg",
+      "reference_grade": 0,
+      "expected_quality_ok": true,
+      "quality_issues": [],
+      "source": "IDRiD disease-grading test set",
+      "source_index": 1
+    },
+    {
+      "id": "grade1-mild",
+      "file": "grade1-mild.jpg",
+      "reference_grade": 1,
+      "expected_quality_ok": true,
+      "quality_issues": [],
+      "source": "IDRiD disease-grading test set",
+      "source_index": 34
+    },
+    {
+      "id": "grade2-moderate",
+      "file": "grade2-moderate.jpg",
+      "reference_grade": 2,
+      "expected_quality_ok": true,
+      "quality_issues": [],
+      "source": "IDRiD disease-grading test set",
+      "source_index": 40
+    },
+    {
+      "id": "grade3-severe",
+      "file": "grade3-severe.jpg",
+      "reference_grade": 3,
+      "expected_quality_ok": true,
+      "quality_issues": [],
+      "source": "IDRiD disease-grading test set",
+      "source_index": 74
+    },
+    {
+      "id": "grade4-proliferative",
+      "file": "grade4-proliferative.jpg",
+      "reference_grade": 4,
+      "expected_quality_ok": true,
+      "quality_issues": [],
+      "source": "IDRiD disease-grading test set",
+      "source_index": 93
+    },
+    {
+      "id": "unsuitable-low-quality",
+      "file": "unsuitable-low-quality.jpg",
+      "reference_grade": 0,
+      "expected_quality_ok": false,
+      "quality_issues": [
+        "blurry"
+      ],
+      "source": "IDRiD disease-grading test set",
+      "source_index": 31
+    }
+  ]
+}

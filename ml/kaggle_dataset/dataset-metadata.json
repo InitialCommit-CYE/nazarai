@@ -1,0 +1,7 @@
+{
+  "title": "NazarAI ML source",
+  "id": "hassanagddsbdxfg/nazarai-ml-src",
+  "subtitle": "nazarai_ml package: preprocessing, quality gate, training, evaluation",
+  "description": "Source of the nazarai_ml Python package (NazarAI diabetic retinopathy screening, Capital Youth Expo Hackathon 2026). Shared fundus preprocessing, heuristic quality gate, EfficientNet ordinal-regression training, threshold optimisation, decision rule, ONNX export and evaluation. Copied from ml/src/nazarai_ml in the NazarAI repository.",
+  "licenses": [{"name": "other"}]
+}

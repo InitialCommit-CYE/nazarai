@@ -1,0 +1,43 @@
+# Secrets: never commit
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Python
+**/.venv/
+**/__pycache__/
+**/.pytest_cache/
+*.pyc
+
+# Model weights (hosted on the Hugging Face Hub, downloaded at startup)
+ml/weights/*
+!ml/weights/.gitkeep
+ml/weights-dev/
+*.pt
+*.pth
+*.onnx
+*.ckpt
+
+# Node / Next.js
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/tsconfig.tsbuildinfo
+frontend/next-env.d.ts
+.vercel
+
+# Supabase local
+supabase/.branches
+supabase/.temp
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+
+# Claude Code local state
+.claude/scheduled_tasks.lock
+.claude/settings.local.json

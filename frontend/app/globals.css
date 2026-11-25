@@ -1,0 +1,139 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-teal-deep: var(--brand-teal-deep);
+  --color-routine: var(--routine);
+  --color-routine-soft: var(--routine-soft);
+  --color-refer: var(--refer);
+  --color-refer-soft: var(--refer-soft);
+  --color-urgent: var(--urgent);
+  --color-urgent-soft: var(--urgent-soft);
+  --font-urdu: var(--font-nastaliq);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-geist-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  /* NazarAI palette: deep teal (primary), medical blue (accent), clinical white. */
+  --background: oklch(0.995 0.002 200);
+  --foreground: oklch(0.22 0.025 230);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.025 230);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.025 230);
+  --primary: oklch(0.47 0.085 190);          /* #0f766e deep teal */
+  --primary-foreground: oklch(0.99 0.005 190);
+  --secondary: oklch(0.965 0.015 195);
+  --secondary-foreground: oklch(0.3 0.06 195);
+  --muted: oklch(0.97 0.006 220);
+  --muted-foreground: oklch(0.5 0.025 235);
+  --accent: oklch(0.955 0.025 235);
+  --accent-foreground: oklch(0.38 0.12 255);
+  --destructive: oklch(0.55 0.2 27);
+  --border: oklch(0.915 0.012 220);
+  --input: oklch(0.9 0.014 220);
+  --ring: oklch(0.6 0.09 190);
+  --chart-1: oklch(0.52 0.09 190);
+  --chart-2: oklch(0.55 0.15 255);
+  --chart-3: oklch(0.7 0.13 75);
+  --chart-4: oklch(0.58 0.19 27);
+  --chart-5: oklch(0.6 0.03 235);
+  --radius: 0.75rem;
+
+  /* Medical blue brand accent */
+  --brand-blue: oklch(0.52 0.15 255);
+  --brand-teal-deep: oklch(0.36 0.07 195);
+
+  /* Referral semantics (always paired with icon + text, never colour alone) */
+  --routine: oklch(0.52 0.13 155);
+  --routine-soft: oklch(0.965 0.035 155);
+  --refer: oklch(0.6 0.14 65);
+  --refer-soft: oklch(0.97 0.045 80);
+  --urgent: oklch(0.53 0.2 27);
+  --urgent-soft: oklch(0.965 0.03 25);
+
+  --sidebar: oklch(0.985 0.005 200);
+  --sidebar-foreground: oklch(0.22 0.025 230);
+  --sidebar-primary: oklch(0.47 0.085 190);
+  --sidebar-primary-foreground: oklch(0.99 0.005 190);
+  --sidebar-accent: oklch(0.965 0.015 195);
+  --sidebar-accent-foreground: oklch(0.3 0.06 195);
+  --sidebar-border: oklch(0.915 0.012 220);
+  --sidebar-ring: oklch(0.6 0.09 190);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  button:not(:disabled), [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+@layer components {
+  /* Urdu: Nastaliq needs generous line height; always paired with dir="rtl". */
+  .urdu {
+    font-family: var(--font-nastaliq), "Noto Naskh Arabic", serif;
+    line-height: 2.3;
+    word-spacing: 0.05em;
+  }
+  .hero-grid {
+    background-image:
+      radial-gradient(circle at 20% 10%, oklch(0.93 0.05 190 / 0.7), transparent 45%),
+      radial-gradient(circle at 85% 0%, oklch(0.93 0.05 245 / 0.6), transparent 40%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

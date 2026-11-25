@@ -1,0 +1,16 @@
+{
+  "id": "hassanagddsbdxfg/nazarai-train",
+  "title": "NazarAI train",
+  "code_file": "nazarai_train_kaggle.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": true,
+  "dataset_sources": [
+    "hassanagddsbdxfg/nazarai-ml-src",
+    "tanlikesmath/diabetic-retinopathy-resized"
+  ],
+  "competition_sources": [],
+  "kernel_sources": []
+}
