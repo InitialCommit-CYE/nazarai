@@ -1,0 +1,14 @@
+# Only frontend/ is built on Vercel (Root Directory = frontend). Keep secrets and heavy folders out of CLI uploads.
+.env
+.env.*
+**/.env
+**/.env.*
+!**/.env.example
+backend/.venv
+**/.venv
+**/__pycache__
+ml/weights*
+ml/notebooks
+kaggle_out
+frontend/.next
+**/node_modules
