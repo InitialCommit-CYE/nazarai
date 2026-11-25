@@ -16,9 +16,15 @@
   --font-urdu: var(--font-nastaliq);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-geist-sans);
+  --font-sans: var(--font-plex-sans);
+  --font-mono: var(--font-plex-mono);
+  --font-heading: var(--font-plex-sans);
+  --font-display: var(--font-newsreader);
+  --color-ink: var(--ink);
+  --color-ink-foreground: var(--ink-foreground);
+  --color-ink-muted: var(--ink-muted);
+  --color-signal: var(--signal);
+  --color-paper: var(--paper);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -58,35 +64,40 @@
 }
 
 :root {
-  /* NazarAI palette: deep teal (primary), medical blue (accent), clinical white. */
-  --background: oklch(0.995 0.002 200);
-  --foreground: oklch(0.22 0.025 230);
+  /* NazarAI palette: petrol ink on warm clinical paper. One saturated signal colour, used sparingly. */
+  --background: oklch(0.985 0.004 85);        /* warm paper */
+  --paper: oklch(0.965 0.008 85);             /* a step darker, for bands */
+  --foreground: oklch(0.21 0.022 235);        /* ink */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.025 230);
+  --card-foreground: oklch(0.21 0.022 235);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.025 230);
-  --primary: oklch(0.47 0.085 190);          /* #0f766e deep teal */
-  --primary-foreground: oklch(0.99 0.005 190);
-  --secondary: oklch(0.965 0.015 195);
-  --secondary-foreground: oklch(0.3 0.06 195);
-  --muted: oklch(0.97 0.006 220);
-  --muted-foreground: oklch(0.5 0.025 235);
-  --accent: oklch(0.955 0.025 235);
-  --accent-foreground: oklch(0.38 0.12 255);
+  --popover-foreground: oklch(0.21 0.022 235);
+  --primary: oklch(0.43 0.075 210);           /* petrol */
+  --primary-foreground: oklch(0.99 0.004 85);
+  --secondary: oklch(0.955 0.014 210);
+  --secondary-foreground: oklch(0.3 0.055 215);
+  --muted: oklch(0.955 0.006 85);
+  --muted-foreground: oklch(0.47 0.02 235);
+  --accent: oklch(0.95 0.02 210);
+  --accent-foreground: oklch(0.32 0.07 215);
   --destructive: oklch(0.55 0.2 27);
-  --border: oklch(0.915 0.012 220);
-  --input: oklch(0.9 0.014 220);
-  --ring: oklch(0.6 0.09 190);
+  --border: oklch(0.89 0.008 85);
+  --input: oklch(0.86 0.01 85);
+  --ring: oklch(0.6 0.09 210);
+  --ink: oklch(0.24 0.04 225);                /* deep petrol-ink bands (hero, CTA) */
+  --ink-foreground: oklch(0.97 0.006 85);
+  --ink-muted: oklch(0.76 0.025 220);
+  --signal: oklch(0.82 0.11 195);             /* bright clinical cyan, on ink only */
   --chart-1: oklch(0.52 0.09 190);
   --chart-2: oklch(0.55 0.15 255);
   --chart-3: oklch(0.7 0.13 75);
   --chart-4: oklch(0.58 0.19 27);
   --chart-5: oklch(0.6 0.03 235);
-  --radius: 0.75rem;
+  --radius: 0.5rem;
 
   /* Medical blue brand accent */
   --brand-blue: oklch(0.52 0.15 255);
-  --brand-teal-deep: oklch(0.36 0.07 195);
+  --brand-teal-deep: oklch(0.24 0.04 225);
 
   /* Referral semantics (always paired with icon + text, never colour alone) */
   --routine: oklch(0.52 0.13 155);
@@ -126,6 +137,19 @@
     font-family: var(--font-nastaliq), "Noto Naskh Arabic", serif;
     line-height: 2.3;
     word-spacing: 0.05em;
+  }
+  /* Editorial display type (headlines only). */
+  .font-display {
+    font-family: var(--font-newsreader), Georgia, serif;
+    font-optical-sizing: auto;
+    letter-spacing: -0.015em;
+  }
+  /* Small mono label used for section numbers and data captions. */
+  .eyebrow {
+    font-family: var(--font-plex-mono), ui-monospace, monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
   .hero-grid {
     background-image:
