@@ -43,7 +43,7 @@ Browser ─► Vercel (Next.js pages + /api/* gateway) ─► Supabase (PostgreS
 Browser ─► Supabase Storage via short-lived signed upload URL (image deleted right after inference)
 ```
 Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · [docs/API_DOCUMENTATION.md](docs/API_DOCUMENTATION.md) ·
-[docs/DATABASE_SCHEMA.md](docs/DATABASE_SCHEMA.md) · [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) · [DECISIONS.md](DECISIONS.md)
+[docs/DATABASE_SCHEMA.md](docs/DATABASE_SCHEMA.md) · [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) · [docs/TEAM_RUNBOOK.md](docs/TEAM_RUNBOOK.md) · [DECISIONS.md](DECISIONS.md)
 
 | Layer | Technology |
 |---|---|

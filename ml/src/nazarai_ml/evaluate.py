@@ -113,9 +113,12 @@ def main() -> None:
     val_df = pd.read_csv(Path(args.manifests) / "val.csv")
     print("scoring validation", len(val_df))
     s, v = score_manifest(scorer, val_df)
+    sources = sorted(val_df.source.unique())
+    # APTOS releases no patient IDs, so its split is image-level (both eyes of one person may be split).
+    level = "Image-level" if sources == ["aptos2019"] else "Grade-stratified, patient-grouped where IDs exist,"
     splits["validation"] = split_metrics(
         "Validation", val_df.grade.to_numpy(), s, v, dcfg,
-        f"Patient-level held-out split of {', '.join(sorted(val_df.source.unique()))}; used to fit thresholds.")
+        f"{level} held-out split of {', '.join(sources)}; used to fit thresholds.")
 
     test_path = Path(args.manifests) / "test_idrid.csv"
     if test_path.exists():
