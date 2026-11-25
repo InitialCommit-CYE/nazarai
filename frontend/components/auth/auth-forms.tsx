@@ -45,8 +45,6 @@ export function SignInForm({ next, notice, demo, autoDemo }: {
     if (!account) return;
     autoTried.current = true;
     fill(account);
-    // fill() only reads the form ref, which is attached after the first render.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoDemo, demo]);
 
   function fill(a: DemoAccount) {
