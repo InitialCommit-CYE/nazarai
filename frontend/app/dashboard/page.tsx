@@ -9,7 +9,7 @@ import { EmptyState, PageContainer, StatsSkeleton, TableSkeleton } from "@/compo
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatDateTime, timeAgo } from "@/lib/format";
+import { formatDateTime, greetingName, timeAgo } from "@/lib/format";
 import { ROLE_LABEL, STAFF_ROLES } from "@/lib/roles";
 import { requireViewer, type Viewer } from "@/lib/server/auth";
 import { actionLabel } from "@/lib/audit-labels";
@@ -57,7 +57,7 @@ async function Dashboard() {
   const stats = (data ?? null) as Stats | null;
   const hour = Number(new Intl.DateTimeFormat("en-GB", { hour: "numeric", hourCycle: "h23", timeZone: "Asia/Karachi" }).format(new Date()));
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
-  const firstName = viewer.fullName.split(" ")[0] || "";
+  const firstName = greetingName(viewer.fullName);
 
   return (
     <div className="space-y-8">

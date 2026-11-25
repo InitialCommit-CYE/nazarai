@@ -31,3 +31,19 @@ export function timeAgo(iso: string, now = Date.now()): string {
   if (s < 172800) return "yesterday";
   return formatDate(iso);
 }
+
+const TITLES = /^(dr|prof|mr|mrs|ms|miss)\.?$/i;
+
+/**
+ * How to greet someone by name: "Ayesha" for "Ayesha Khan", but "Dr. Ahmed" for "Dr. Bilal Ahmed"
+ * (a bare title is not a name). Trailing "(demo)" style notes are dropped.
+ */
+export function greetingName(fullName: string | null | undefined): string {
+  const parts = (fullName ?? "").replace(/\(.*?\)/g, "").trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "";
+  if (TITLES.test(parts[0]!)) {
+    const title = parts[0]!.replace(/\.?$/, ".");
+    return parts.length > 1 ? `${title[0]!.toUpperCase()}${title.slice(1)} ${parts[parts.length - 1]}` : "";
+  }
+  return parts[0]!;
+}

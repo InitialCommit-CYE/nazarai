@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { URGENCY_INFO } from "@/lib/clinical";
-import { formatDate, formatDateTime } from "@/lib/format";
+import { formatDate, formatDateTime, greetingName } from "@/lib/format";
 import { requireViewer } from "@/lib/server/auth";
 import type { ReferralStatus, Urgency } from "@/lib/types";
 
@@ -56,7 +56,7 @@ async function MyResults({ searchParams }: { searchParams: PageProps<"/my">["sea
     <div className="space-y-6">
       <PageHeader
         eyebrow="Patient"
-        title={`Hello${viewer.fullName ? `, ${viewer.fullName.split(" ")[0]}` : ""}`}
+        title={`Hello${greetingName(viewer.fullName) ? `, ${greetingName(viewer.fullName)}` : ""}`}
         description="Your retinal screening results and eye specialist appointments."
         actions={
           <Button asChild variant="outline" size="lg" className="h-9 px-3">
