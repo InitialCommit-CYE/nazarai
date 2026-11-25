@@ -43,10 +43,10 @@ const compact = new Intl.NumberFormat("en", { notation: "compact", maximumFracti
 
 function StatTile({ label, value, note }: { label: string; value: number; note?: string }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
+    <div className="border-b border-border py-5 sm:px-6 lg:border-b-0 lg:border-l lg:first:border-l-0 lg:first:pl-0">
       <p className="text-sm text-muted-foreground">{label}</p>
-      <p className="mt-2 text-3xl font-semibold tracking-tight tabular-nums">{compact.format(value)}</p>
-      {note && <p className="mt-1 text-xs text-muted-foreground">{note}</p>}
+      <p className="font-display mt-2 text-5xl font-normal tabular-nums">{compact.format(value)}</p>
+      {note && <p className="mt-2 font-mono text-xs text-muted-foreground">{note}</p>}
     </div>
   );
 }
@@ -63,11 +63,11 @@ async function Dashboard() {
     <div className="space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm font-semibold tracking-wide text-primary uppercase">
+          <p className="eyebrow text-primary">
             {ROLE_LABEL[viewer.role]}
             {viewer.clinicName ? ` · ${viewer.clinicName}` : ""}
           </p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">
+          <h1 className="font-display mt-2 text-4xl font-normal sm:text-5xl">
             {greeting}
             {firstName ? `, ${firstName}` : ""}
           </h1>
@@ -77,7 +77,7 @@ async function Dashboard() {
 
       {stats ? (
         <section aria-label="Last 30 days">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid border-t border-foreground/80 sm:grid-cols-2 lg:grid-cols-4">
             <StatTile label="Screenings, last 30 days" value={stats.screenings} note={stats.rejected ? `${stats.rejected} needed a retake` : undefined} />
             <StatTile label="Referable results" value={stats.urgent + stats.refer} note={`${stats.urgent} urgent · ${stats.refer} routine referral`} />
             <StatTile label="Open referrals" value={stats.open_referrals} note="Awaiting or booked follow-up" />

@@ -24,7 +24,7 @@ export function AuthShell({ title, subtitle, children, footer }: {
         </div>
 
         {/* A real fundus, cropped like the view through a slit lamp */}
-        <div className="pointer-events-none absolute top-1/2 -right-40 size-[30rem] -translate-y-1/2 opacity-90" aria-hidden="true">
+        <div className="pointer-events-none absolute top-[38%] -right-52 size-[28rem] -translate-y-1/2 opacity-80" aria-hidden="true">
           <div className="absolute inset-0 rounded-full ring-1 ring-white/10" />
           <div className="absolute inset-[7%] overflow-hidden rounded-full bg-black">
             <Image src="/demo/grade2-moderate.jpg" alt="" fill sizes="420px" className="scale-[1.3] object-cover" />
