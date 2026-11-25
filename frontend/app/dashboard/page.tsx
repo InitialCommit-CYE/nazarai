@@ -46,7 +46,7 @@ function StatTile({ label, value, note }: { label: string; value: number; note?:
     <div className="border-b border-border py-5 sm:px-6 lg:border-b-0 lg:border-l lg:first:border-l-0 lg:first:pl-0">
       <p className="text-sm text-muted-foreground">{label}</p>
       <p className="font-display mt-2 text-5xl tabular-nums">{compact.format(value)}</p>
-      {note && <p className="mt-2 font-mono text-xs text-muted-foreground">{note}</p>}
+      {note && <p className="mt-2 text-xs text-muted-foreground">{note}</p>}
     </div>
   );
 }
