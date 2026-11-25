@@ -82,7 +82,7 @@ export default function AboutPage() {
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <div className="max-w-3xl">
         <p className="eyebrow text-primary">About & safety</p>
-        <h1 className="font-display mt-2 text-4xl font-normal sm:text-5xl">Built to support clinicians, not replace them</h1>
+        <h1 className="font-display mt-2 text-4xl sm:text-5xl">Built to support clinicians, not replace them</h1>
         <p className="mt-3 text-lg text-muted-foreground">
           NazarAI is a prototype built for the Capital Youth Expo Hackathon 2026 (Healthcare track). It brings the regulator-tested
           idea of AI diabetic-retinopathy screening to the setting where it is most needed: Pakistani diabetes

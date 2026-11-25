@@ -97,7 +97,7 @@ async function PatientDetail({ params, searchParams }: { params: PageProps<"/pat
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="font-mono text-sm text-muted-foreground">{p.mrn}</p>
-          <h1 className="font-display mt-2 text-3xl font-normal sm:text-4xl">{p.full_name}</h1>
+          <h1 className="font-display mt-2 text-3xl sm:text-4xl">{p.full_name}</h1>
           <p className="mt-1 text-muted-foreground">
             {year - p.birth_year} years{p.sex ? ` · ${SEX_LABEL[p.sex]}` : ""} · {DIABETES_LABEL[p.diabetes_type]} diabetes
             {p.diabetes_since_year ? ` for ${Math.max(0, year - p.diabetes_since_year)} years` : ""}

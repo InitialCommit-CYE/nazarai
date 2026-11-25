@@ -45,7 +45,7 @@ function StatTile({ label, value, note }: { label: string; value: number; note?:
   return (
     <div className="border-b border-border py-5 sm:px-6 lg:border-b-0 lg:border-l lg:first:border-l-0 lg:first:pl-0">
       <p className="text-sm text-muted-foreground">{label}</p>
-      <p className="font-display mt-2 text-5xl font-normal tabular-nums">{compact.format(value)}</p>
+      <p className="font-display mt-2 text-5xl tabular-nums">{compact.format(value)}</p>
       {note && <p className="mt-2 font-mono text-xs text-muted-foreground">{note}</p>}
     </div>
   );
@@ -67,7 +67,7 @@ async function Dashboard() {
             {ROLE_LABEL[viewer.role]}
             {viewer.clinicName ? ` · ${viewer.clinicName}` : ""}
           </p>
-          <h1 className="font-display mt-2 text-4xl font-normal sm:text-5xl">
+          <h1 className="font-display mt-2 text-4xl sm:text-5xl">
             {greeting}
             {firstName ? `, ${firstName}` : ""}
           </h1>

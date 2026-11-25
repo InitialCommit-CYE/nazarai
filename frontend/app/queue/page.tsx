@@ -14,7 +14,7 @@ export default function QueuePage() {
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
       <div className="mb-8 max-w-2xl">
         <p className="eyebrow text-primary">Clinic worklist</p>
-        <h1 className="font-display mt-2 text-3xl font-normal sm:text-4xl">Referrals and screenings</h1>
+        <h1 className="font-display mt-2 text-3xl sm:text-4xl">Referrals and screenings</h1>
         <p className="mt-2 text-muted-foreground">
           Your clinic&apos;s screenings, urgent referrals first. Open a result to book the specialist appointment or record the outcome. Updates live.
         </p>

@@ -18,7 +18,7 @@ export function AuthShell({ title, subtitle, children, footer }: {
       <aside className="relative hidden overflow-hidden rounded-lg bg-ink px-10 py-12 text-ink-foreground lg:flex lg:flex-col lg:justify-between">
         <div className="relative z-10">
           <p className="eyebrow text-signal">NazarAI clinic workspace</p>
-          <h2 className="font-display mt-6 max-w-md text-4xl leading-[1.1] font-normal text-balance">
+          <h2 className="font-display mt-6 max-w-md text-4xl leading-[1.1] text-balance">
             Retinal screening that sends the right patients to the eye specialist.
           </h2>
         </div>
@@ -43,7 +43,7 @@ export function AuthShell({ title, subtitle, children, footer }: {
       <section className="flex items-center justify-center px-4 py-12 sm:px-8">
         <div className="w-full max-w-sm space-y-7">
           <div className="space-y-2">
-            <h1 className="font-display text-4xl font-normal">{title}</h1>
+            <h1 className="font-display text-4xl">{title}</h1>
             <p className="text-sm leading-relaxed text-muted-foreground">{subtitle}</p>
           </div>
           {children}
