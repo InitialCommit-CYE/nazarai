@@ -32,8 +32,8 @@ export function Footer() {
           <h2 className="text-sm font-semibold">Data &amp; credits</h2>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
             <li>Demo images: IDRiD (CC BY 4.0), Porwal et al.</li>
-            <li>Training data: EyePACS (Kaggle DR 2015)</li>
-            <li>Reports: Anthropic Claude API</li>
+            <li>Training data: APTOS 2019 (India)</li>
+            <li>Reports: fixed Urdu / English templates</li>
             <li>Hosting: Vercel · Supabase · Hugging Face</li>
           </ul>
         </div>

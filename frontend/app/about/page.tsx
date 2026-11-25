@@ -29,8 +29,8 @@ const SECTIONS = [
     icon: TriangleAlert,
     title: "Limitations",
     items: [
-      "Trained on EyePACS (US screening photos) and tested on IDRiD (India); not yet validated on Pakistani clinical data or local cameras.",
-      "The referral cut-off was set on EyePACS validation data. On IDRiD (different cameras) it still caught every referable case but referred about half of the non-referable ones: each new site or camera needs threshold calibration.",
+      "Trained on APTOS 2019 (India) and tested externally on IDRiD (India); not yet validated on Pakistani clinical data or local cameras.",
+      "The referral cut-off is chosen on validation data only. Scores shift between cameras, so each new site or camera needs threshold calibration before use.",
       "Does not grade diabetic macular oedema or detect other eye diseases (glaucoma, cataract, vein occlusion).",
       "Image-quality checks are heuristics tuned on a small set of images; unusual cameras may be rejected or mis-assessed.",
       "Confidence is a heuristic (boundary margin × agreement between views), not a calibrated probability.",
@@ -51,8 +51,7 @@ const SECTIONS = [
     icon: Database,
     title: "Data sources",
     items: [
-      "EyePACS / Kaggle Diabetic Retinopathy Detection (2015): training and validation (patient-level split).",
-      "APTOS 2019 Blindness Detection (India): supported by the pipeline, planned for the next training run.",
+      "APTOS 2019 Blindness Detection (Aravind Eye Hospital, India): training and validation (stratified by grade).",
       "IDRiD (Porwal et al., CC BY 4.0): external test set and the bundled demo images.",
     ],
   },
