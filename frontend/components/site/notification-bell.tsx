@@ -36,7 +36,7 @@ export function NotificationBell({ userId, pathname }: { userId: string; pathnam
   return (
     <Link
       href="/notifications"
-      className="relative flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+      className="relative flex size-8 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
       aria-label={unread ? `Notifications: ${unread} unread` : "Notifications"}
     >
       <Bell className="size-[18px]" />
