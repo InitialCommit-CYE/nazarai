@@ -48,8 +48,10 @@ export function navFor(role: AppRole | null): NavLink[] {
       ];
     default:
       return [
-        { href: "/performance", label: "Model performance" },
-        { href: "/about", label: "About & safety" },
+        { href: "/#problem", label: "The problem" },
+        { href: "/#how-it-works", label: "How it works" },
+        { href: "/performance", label: "Evidence" },
+        { href: "/about", label: "Safety" },
       ];
   }
 }

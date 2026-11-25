@@ -74,22 +74,22 @@ function NavbarView({ viewer, loading, pathname }: { viewer: NavViewer | null; l
       (href === "/queue" && pathname.startsWith("/screenings")));
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/85">
       <form ref={signOutRef} action="/auth/sign-out" method="post" className="hidden" />
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6" aria-label="Main">
-        <div className="flex min-w-0 items-center gap-6">
+        <div className="flex min-w-0 items-center gap-8">
           <Link href={viewer ? (viewer.role === "patient" ? "/my" : "/dashboard") : "/"} className="shrink-0 rounded-md focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none">
             <Logo />
           </Link>
-          <div className="hidden items-center gap-1 md:flex">
+          <div className="hidden h-16 items-stretch gap-6 md:flex">
             {links.map((l) => (
               <Link
                 key={l.href}
                 href={l.href}
                 aria-current={isActive(l.href) ? "page" : undefined}
                 className={cn(
-                  "rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground",
-                  isActive(l.href) && "bg-secondary text-secondary-foreground",
+                  "flex items-center border-b-2 border-transparent pt-0.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground",
+                  isActive(l.href) && "border-primary text-foreground",
                 )}
               >
                 {l.label}
@@ -149,11 +149,13 @@ function NavbarView({ viewer, loading, pathname }: { viewer: NavViewer | null; l
             </>
           ) : (
             <>
-              <Button asChild variant="ghost" size="sm" className="hidden h-8 px-3 sm:inline-flex">
-                <Link href="/auth/sign-up">Patient sign-up</Link>
-              </Button>
-              <Button asChild size="sm" className="h-8 px-3">
+              <Button asChild variant="ghost" size="sm" className="hidden h-9 px-3 sm:inline-flex">
                 <Link href="/auth/sign-in">Sign in</Link>
+              </Button>
+              <Button asChild size="sm" className="h-9 px-4">
+                <Link href="/auth/sign-in?demo=health-worker">
+                  <ScanEye /> Try the demo
+                </Link>
               </Button>
             </>
           )}
@@ -211,8 +213,8 @@ function NavbarView({ viewer, loading, pathname }: { viewer: NavViewer | null; l
               </li>
             ) : (
               <li>
-                <Link href="/auth/sign-up" className="block rounded-lg px-3 py-2.5 text-base font-medium hover:bg-muted">
-                  Patient sign-up
+                <Link href="/auth/sign-in" className="block rounded-lg px-3 py-2.5 text-base font-medium hover:bg-muted">
+                  Sign in
                 </Link>
               </li>
             )}

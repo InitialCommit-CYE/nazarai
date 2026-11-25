@@ -1,30 +1,33 @@
 import { cn } from "@/lib/utils";
 
-/** NazarAI mark: an eye whose iris is a stylised retina (vessels from the optic disc). */
-export function LogoMark({ className }: { className?: string }) {
+/**
+ * NazarAI mark: a fundus seen through the pupil. Ink disc, the optic disc (bright, off-centre, as in a real
+ * retina photo) and two vessel arcs leaving it. Flat colours only, so it survives favicons and print.
+ */
+export function LogoMark({ className, inverted = false }: { className?: string; inverted?: boolean }) {
   return (
     <svg viewBox="0 0 40 40" aria-hidden="true" className={cn("size-8", className)}>
-      <defs>
-        <linearGradient id="nz-g" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="oklch(0.55 0.1 190)" />
-          <stop offset="1" stopColor="oklch(0.5 0.14 250)" />
-        </linearGradient>
-      </defs>
-      <rect width="40" height="40" rx="11" fill="url(#nz-g)" />
-      <path d="M6 20c3.6-6 8.4-9 14-9s10.4 3 14 9c-3.6 6-8.4 9-14 9S9.6 26 6 20Z" fill="white" opacity="0.95" />
-      <circle cx="20" cy="20" r="6.6" fill="oklch(0.42 0.08 195)" />
-      <circle cx="22.2" cy="18.6" r="1.7" fill="oklch(0.93 0.09 85)" />
-      <path d="M22 18.8c-2 .6-4 .2-5.6-1.2M22.4 19.6c-1 1.9-2.8 3-5 3.2" stroke="oklch(0.8 0.12 30)" strokeWidth="0.8" fill="none" strokeLinecap="round" />
+      <circle cx="20" cy="20" r="19" fill={inverted ? "var(--ink-foreground)" : "var(--ink)"} />
+      <path
+        d="M25.5 17.2C20 13.5 13 13.8 8.6 18.4M26 22.6c-4.6 4.4-11.4 5.2-16.8 1.8"
+        stroke={inverted ? "var(--ink)" : "var(--signal)"}
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        fill="none"
+        opacity="0.9"
+      />
+      <circle cx="27" cy="20" r="4.2" fill={inverted ? "var(--primary)" : "var(--ink-foreground)"} />
     </svg>
   );
 }
 
-export function Logo({ className }: { className?: string }) {
+export function Logo({ className, inverted = false }: { className?: string; inverted?: boolean }) {
   return (
     <span className={cn("flex items-center gap-2.5", className)}>
-      <LogoMark />
-      <span className="text-lg font-semibold tracking-tight">
-        Nazar<span className="text-primary">AI</span>
+      <LogoMark inverted={inverted} />
+      <span className="flex items-baseline gap-1">
+        <span className="font-display text-[1.35rem] leading-none font-medium">Nazar</span>
+        <span className={cn("eyebrow text-[0.65rem] font-medium", inverted ? "text-signal" : "text-primary")}>AI</span>
       </span>
     </span>
   );
