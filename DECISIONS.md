@@ -38,3 +38,9 @@ One line per significant decision (CLAUDE.md section 12). Newest last.
 - "Today" in the clinic queue = Pakistan Standard Time (UTC+5).
 - Basic per-instance in-memory rate limiting on public routes (good enough to blunt floods on a demo; not distributed).
 - Chart palette validated with the dataviz validator: validation `#009e8f`, external test `#2f5fd0` (all checks pass, tritan ΔE 11.6); brand teal `#0f766e` failed the chroma floor for chart series.
+
+## Hosting and data (Mohid, 2026-11-25 evening)
+- **Free-tier hosting confirmed after comparing options:** Vercel Hobby (web + API gateway), Supabase Free (only free option with Postgres + private storage + realtime together; Neon lacks storage/realtime, Firebase would need a rewrite), Hugging Face Spaces CPU (16 GB RAM; Render free has 512 MB, too small for PyTorch Grad-CAM). Supabase Free pauses after 7 days without traffic, so keep it active until the Dec 2 finale.
+- **Deployed model = APTOS 2019 (README owner's decision).** EyePACS is removed from the README and the EyePACS-only model's artefacts are archived in `ml/runs/eyepacs-fallback-202611250727/` as a fallback. The notebook's `USE_EYEPACS` flag is left as Hassan set it while his run is in progress; if the deployed run did use EyePACS, the README disclosure must be restored before submission.
+- **Reports use the fixed bilingual templates in the deployment** (no LLM key). A Gemini key may be added later; that needs a small provider swap in `frontend/lib/server/report.ts`.
+- **Git workflow: commit straight to `main`**, no pull requests. Run `npm run build` before pushing UI changes, since `main` is the live site.
