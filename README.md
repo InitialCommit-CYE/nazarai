@@ -128,7 +128,7 @@ coding assistant during the competition window.
 - For screening adults with diabetes by trained health workers; every referral should be confirmed by an eye specialist.
 - Not validated on Pakistani clinical data or local cameras yet; no macular-oedema grading; heuristic quality gate;
   confidence is not calibrated; Grad-CAM is not proof of correctness.
-- Synthetic patient references only; retinal images are deleted after inference; only metadata is stored.
+- Synthetic patient references only; retinal images are deleted after inference and only metadata is stored.
 
 > This is an AI screening result, not a medical diagnosis. Please consult an eye specialist for confirmation and treatment.
 >
