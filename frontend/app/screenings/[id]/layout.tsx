@@ -2,6 +2,7 @@ import { Suspense } from "react";
 
 import { ScreeningShell } from "@/components/results/screening-shell";
 import { Skeleton } from "@/components/ui/skeleton";
+import { requireViewer } from "@/lib/server/auth";
 
 function ShellFallback() {
   return (
@@ -16,10 +17,17 @@ function ShellFallback() {
   );
 }
 
-export default function ScreeningLayout({ children }: LayoutProps<"/screenings/[id]">) {
+export default function ScreeningLayout({ children, params }: LayoutProps<"/screenings/[id]">) {
   return (
     <Suspense fallback={<ShellFallback />}>
-      <ScreeningShell>{children}</ScreeningShell>
+      <Shell params={params}>{children}</Shell>
     </Suspense>
   );
+}
+
+async function Shell({ children, params }: { children: React.ReactNode; params: LayoutProps<"/screenings/[id]">["params"] }) {
+  const { id } = await params;
+  const { viewer, db } = await requireViewer({ next: `/screenings/${id}` });
+  if (viewer.role !== "patient") await db.rpc("log_record_access", { p_entity: "screening", p_id: id });
+  return <ScreeningShell role={viewer.role}>{children}</ScreeningShell>;
 }

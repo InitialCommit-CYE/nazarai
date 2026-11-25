@@ -1,20 +1,32 @@
 import type { Metadata } from "next";
 
-import { ClinicQueue } from "@/components/queue/clinic-queue";
+import { Suspense } from "react";
 
-export const metadata: Metadata = { title: "Clinic queue" };
+import { ClinicQueue } from "@/components/queue/clinic-queue";
+import { TableSkeleton } from "@/components/site/page-bits";
+import { CLINICAL_ROLES } from "@/lib/roles";
+import { requireViewer } from "@/lib/server/auth";
+
+export const metadata: Metadata = { title: "Referrals" };
 
 export default function QueuePage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
       <div className="mb-8 max-w-2xl">
-        <p className="text-sm font-semibold tracking-wide text-primary uppercase">Clinic dashboard</p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight sm:text-4xl">Screening queue</h1>
+        <p className="text-sm font-semibold tracking-wide text-primary uppercase">Clinic worklist</p>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">Referrals and screenings</h1>
         <p className="mt-2 text-muted-foreground">
-          Every screening, sorted so urgent referrals come first. Stored in Supabase; updates live as new screenings arrive.
+          Your clinic&apos;s screenings, urgent referrals first. Open a result to book the specialist appointment or record the outcome. Updates live.
         </p>
       </div>
-      <ClinicQueue />
+      <Suspense fallback={<TableSkeleton />}>
+        <Guard />
+      </Suspense>
     </div>
   );
+}
+
+async function Guard() {
+  await requireViewer({ next: "/queue", roles: CLINICAL_ROLES });
+  return <ClinicQueue />;
 }

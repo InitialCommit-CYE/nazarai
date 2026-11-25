@@ -2,11 +2,14 @@
 
 import { createContext, useContext } from "react";
 
+import type { AppRole } from "@/lib/roles";
 import type { ScreeningImages, ScreeningRecord } from "@/lib/types";
 
 export interface ScreeningContextValue {
   screening: ScreeningRecord;
   images: ScreeningImages | null;
+  role: AppRole;
+  update: (patch: Partial<ScreeningRecord>) => void;
 }
 
 export const ScreeningContext = createContext<ScreeningContextValue | null>(null);

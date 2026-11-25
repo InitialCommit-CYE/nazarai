@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ReferralBadge } from "@/components/clinical/referral-badge";
+import { ReferralStatusBadge } from "@/components/clinical/referral-status";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -34,7 +35,7 @@ const LIVE_LABEL: Record<RealtimeStatus, string> = { connecting: "Connecting…"
 
 export function ClinicQueue() {
   const router = useRouter();
-  const [scope, setScope] = useState<"today" | "all">("today");
+  const [scope, setScope] = useState<"open" | "today" | "all">("open");
   const [data, setData] = useState<QueueResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -57,7 +58,7 @@ export function ClinicQueue() {
   const load = useCallback(async () => {
     setRefreshing(true);
     try {
-      apply(await getQueue(scope));
+      apply(await getQueue(scope === "today" ? "today" : "all", scope === "open"));
     } catch (e) {
       fail(e);
     } finally {
@@ -67,7 +68,7 @@ export function ClinicQueue() {
 
   useEffect(() => {
     let cancelled = false;
-    getQueue(scope)
+    getQueue(scope === "today" ? "today" : "all", scope === "open")
       .then((q) => !cancelled && apply(q))
       .catch((e) => !cancelled && fail(e));
     return () => {
@@ -85,8 +86,8 @@ export function ClinicQueue() {
     <div className="space-y-6">
       {/* One filter row above everything it scopes */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div role="radiogroup" aria-label="Time range" className="inline-flex rounded-xl border border-border bg-muted p-1">
-          {(["today", "all"] as const).map((s) => (
+        <div role="radiogroup" aria-label="Show" className="inline-flex rounded-xl border border-border bg-muted p-1">
+          {(["open", "today", "all"] as const).map((s) => (
             <button
               key={s}
               role="radio"
@@ -100,7 +101,7 @@ export function ClinicQueue() {
                 scope === s ? "bg-card shadow-sm" : "text-muted-foreground hover:text-foreground",
               )}
             >
-              {s === "today" ? "Today (PKT)" : "All screenings"}
+              {s === "open" ? "Open referrals" : s === "today" ? "Today (PKT)" : "All screenings"}
             </button>
           ))}
         </div>
@@ -131,7 +132,7 @@ export function ClinicQueue() {
         </Alert>
       )}
 
-      <div className={cn("overflow-hidden rounded-2xl border border-border bg-card transition-opacity", data && (refreshing || data.scope !== scope) && "opacity-60")}>
+      <div className={cn("overflow-hidden rounded-2xl border border-border bg-card transition-opacity", data && refreshing && "opacity-60")}>
         <div className="overflow-x-auto">
           <Table>
             <caption className="sr-only">Screenings sorted by urgency, then most recent first</caption>
@@ -140,7 +141,7 @@ export function ClinicQueue() {
                 <TableHead className="pl-5">Priority</TableHead>
                 <TableHead>Patient ref.</TableHead>
                 <TableHead>AI grade</TableHead>
-                <TableHead>Confidence</TableHead>
+                <TableHead>Follow-up</TableHead>
                 <TableHead>Screened</TableHead>
                 <TableHead className="pr-5"><span className="sr-only">Open</span></TableHead>
               </TableRow>
@@ -157,8 +158,10 @@ export function ClinicQueue() {
                 <TableRow>
                   <TableCell colSpan={6} className="py-14 text-center">
                     <Inbox className="mx-auto size-8 text-muted-foreground" aria-hidden="true" />
-                    <p className="mt-2 font-medium">No screenings {scope === "today" ? "today" : "yet"}</p>
-                    <p className="text-sm text-muted-foreground">Screened patients appear here automatically, most urgent first.</p>
+                    <p className="mt-2 font-medium">{scope === "open" ? "No open referrals" : `No screenings ${scope === "today" ? "today" : "yet"}`}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {scope === "open" ? "Referable results waiting for specialist follow-up appear here, urgent first." : "Screened patients appear here automatically, most urgent first."}
+                    </p>
                     <Button asChild className="mt-4" size="sm"><Link href="/screen">Screen a patient</Link></Button>
                   </TableCell>
                 </TableRow>
@@ -183,7 +186,13 @@ export function ClinicQueue() {
                     {!r.model_trained && <Badge variant="destructive" className="ml-2">dev model</Badge>}
                   </TableCell>
                   <TableCell>{r.grade != null ? `${r.grade} · ${GRADES[r.grade].short}` : "Not graded"}</TableCell>
-                  <TableCell className="tabular-nums">{pct(r.confidence, 0)}</TableCell>
+                  <TableCell>
+                    {r.quality_ok && r.referral_status !== "not_required" ? (
+                      <ReferralStatusBadge status={r.referral_status} />
+                    ) : (
+                      <span className="text-xs text-muted-foreground">{r.quality_ok ? `Confidence ${pct(r.confidence, 0)}` : "–"}</span>
+                    )}
+                  </TableCell>
                   <TableCell className="text-muted-foreground" title={formatDateTime(r.created_at)}>
                     {scope === "today" ? formatTime(r.created_at) : formatDateTime(r.created_at)}
                   </TableCell>

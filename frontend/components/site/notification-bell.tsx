@@ -2,7 +2,7 @@
 
 import { Bell } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { cn } from "@/lib/utils";
@@ -11,28 +11,27 @@ import { cn } from "@/lib/utils";
 export function NotificationBell({ userId, pathname }: { userId: string; pathname: string | null }) {
   const [unread, setUnread] = useState(0);
 
-  const refresh = useCallback(async () => {
-    const sb = supabaseBrowser();
-    if (!sb) return;
-    const { count } = await sb.from("notifications").select("id", { count: "exact", head: true }).is("read_at", null);
-    setUnread(count ?? 0);
-  }, []);
-
-  useEffect(() => {
-    void refresh();
-  }, [refresh, pathname]);
-
+  // Re-count on navigation and whenever one of the user's notifications changes (Realtime, RLS-filtered).
   useEffect(() => {
     const sb = supabaseBrowser();
     if (!sb) return;
+    let active = true;
+    const count = () =>
+      sb
+        .from("notifications")
+        .select("id", { count: "exact", head: true })
+        .is("read_at", null)
+        .then(({ count: n }) => active && setUnread(n ?? 0));
+    void count();
     const channel = sb
       .channel(`notifications:${userId}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` }, () => void refresh())
+      .on("postgres_changes", { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` }, () => void count())
       .subscribe();
     return () => {
+      active = false;
       void sb.removeChannel(channel);
     };
-  }, [userId, refresh]);
+  }, [userId, pathname]);
 
   return (
     <Link

@@ -122,6 +122,25 @@ export default function AboutPage() {
         ))}
       </div>
 
+      <section id="privacy" className="mt-12 scroll-mt-24 rounded-2xl border border-border bg-card p-6">
+        <h2 className="text-xl font-semibold">Privacy and data protection</h2>
+        <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground">
+          {[
+            "Retina photos are uploaded to a private bucket, analysed, and deleted immediately. Only the screening result is kept.",
+            "Patient records hold the minimum needed for follow-up: name, clinic reference, birth year, diabetes history and an optional phone number.",
+            "Access is enforced in the database (Row Level Security): staff see only their own clinic; clinic admins manage staff but cannot open patient records; patients see only records they linked with a one-time code.",
+            "Opening, changing or deleting a record is written to an append-only audit log that the clinic admin can review. The log never contains patient details.",
+            "Data is stored with Supabase (PostgreSQL, encrypted at rest by the provider) and served over HTTPS. AI explanations receive only the model result, never names or contact details.",
+            "This demo uses synthetic patients and public-dataset images only. It has not been assessed for compliance with any medical-data regulation and must not be used with real patient data without that review.",
+          ].map((i) => (
+            <li key={i} className="flex gap-2">
+              <span className="mt-2 size-1.5 shrink-0 rounded-full bg-primary/60" aria-hidden="true" />
+              {i}
+            </li>
+          ))}
+        </ul>
+      </section>
+
       <h2 className="mt-12 text-xl font-semibold">Medical disclaimer</h2>
       <SafetyDisclaimer className="mt-3 text-base" />
     </div>

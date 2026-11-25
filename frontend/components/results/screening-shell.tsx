@@ -12,15 +12,19 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ApiError, getScreening } from "@/lib/client/api";
 import { loadSessionImages } from "@/lib/client/session-images";
 import { formatDateTime } from "@/lib/format";
+import type { AppRole } from "@/lib/roles";
+import type { ScreeningRecord } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 import { ScreeningContext, type ScreeningContextValue } from "./screening-context";
 
-export function ScreeningShell({ children }: { children: React.ReactNode }) {
+export function ScreeningShell({ children, role }: { children: React.ReactNode; role: AppRole }) {
   const { id } = useParams<{ id: string }>();
   const pathname = usePathname();
   // Results are keyed by id, so navigating to another screening never shows stale data.
-  const [loaded, setLoaded] = useState<{ id: string; value?: ScreeningContextValue; error?: string } | null>(null);
+  const [loaded, setLoaded] = useState<{ id: string; value?: Omit<ScreeningContextValue, "role" | "update">; error?: string } | null>(null);
+  const update = (patch: Partial<ScreeningRecord>) =>
+    setLoaded((l) => (l?.value ? { ...l, value: { ...l.value, screening: { ...l.value.screening, ...patch } } } : l));
 
   useEffect(() => {
     let cancelled = false;
@@ -33,7 +37,8 @@ export function ScreeningShell({ children }: { children: React.ReactNode }) {
   }, [id]);
 
   const current = loaded?.id === id ? loaded : null;
-  const state = current?.value ?? null;
+  const state: ScreeningContextValue | null = current?.value ? { ...current.value, role, update } : null;
+  const staff = role !== "patient";
   const error = current?.error ?? null;
 
   const tabs = [
@@ -50,7 +55,14 @@ export function ScreeningShell({ children }: { children: React.ReactNode }) {
           {state ? (
             <div className="mt-1 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-muted-foreground">
               <span className="flex items-center gap-1.5 text-base font-semibold text-foreground">
-                <UserRound className="size-4" /> {state.screening.demo_patient_code ?? "No reference"}
+                <UserRound className="size-4" />
+                {staff && state.screening.patient_id ? (
+                  <Link href={`/patients/${state.screening.patient_id}`} className="hover:underline">
+                    {state.screening.demo_patient_code ?? "Patient record"}
+                  </Link>
+                ) : (
+                  (state.screening.demo_patient_code ?? "No reference")
+                )}
               </span>
               {state.screening.age != null && <span>Age {state.screening.age}</span>}
               {state.screening.diabetes_duration_years != null && <span>{state.screening.diabetes_duration_years} yrs diabetes</span>}
@@ -62,11 +74,17 @@ export function ScreeningShell({ children }: { children: React.ReactNode }) {
             !error && <Skeleton className="mt-2 h-6 w-72" />
           )}
         </div>
-        <Button asChild variant="outline">
-          <Link href="/screen">
-            <Plus /> New screening
-          </Link>
-        </Button>
+        {staff ? (
+          <Button asChild variant="outline">
+            <Link href={state?.screening.patient_id ? `/screen?patient=${state.screening.patient_id}` : "/screen"}>
+              <Plus /> New screening
+            </Link>
+          </Button>
+        ) : (
+          <Button asChild variant="outline">
+            <Link href="/my">My results</Link>
+          </Button>
+        )}
       </div>
 
       <nav aria-label="Screening sections" className="mt-6 flex gap-1 overflow-x-auto border-b border-border">

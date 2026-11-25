@@ -29,9 +29,14 @@ export default function NewPatientPage() {
   );
 }
 
+/** A suggested clinic reference; staff can overwrite it (uniqueness is enforced by the database). */
+function suggestMrn() {
+  return `P-${new Date().getUTCFullYear().toString().slice(2)}${Math.floor(1000 + Math.random() * 9000)}`;
+}
+
 async function NewPatientForm() {
   await requireViewer({ next: "/patients/new", roles: CLINICAL_ROLES });
-  const suggested = `P-${new Date().getUTCFullYear().toString().slice(2)}${Math.floor(1000 + Math.random() * 9000)}`;
+  const suggested = suggestMrn();
   return (
     <PatientRecordForm
       action={createPatient}

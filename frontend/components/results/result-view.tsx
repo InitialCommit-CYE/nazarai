@@ -12,18 +12,22 @@ import { formatDateTime } from "@/lib/format";
 import type { ScreeningRecord, Urgency } from "@/lib/types";
 
 import { GradeCard } from "./grade-card";
+import { ReferralPanel } from "./referral-panel";
 import { useScreening } from "./screening-context";
 
 export function ResultView() {
-  const { screening: s, images } = useScreening();
+  const { screening: s, images, role, update } = useScreening();
+  const clinical = role === "operator" || role === "specialist";
 
   if (!s.quality_ok || s.grade == null || !s.urgency) {
     return (
       <div className="max-w-3xl space-y-4">
         <QualityFeedback issues={s.quality_issues} />
-        <Button asChild>
-          <Link href="/screen">Retake / choose another image</Link>
-        </Button>
+        {clinical && (
+          <Button asChild>
+            <Link href={s.patient_id ? `/screen?patient=${s.patient_id}` : "/screen"}>Retake / choose another image</Link>
+          </Button>
+        )}
       </div>
     );
   }
@@ -37,6 +41,7 @@ export function ResultView() {
       </div>
 
       <div className="space-y-6">
+        {clinical && s.referral_status !== "not_required" && <ReferralPanel screening={s} role={role} onChange={update} />}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between text-base">

@@ -241,12 +241,14 @@ export default function LandingPage() {
           </div>
           <div className="mt-12 flex flex-col items-start justify-between gap-6 rounded-3xl bg-brand-teal-deep p-8 text-white sm:flex-row sm:items-center sm:p-10">
             <div>
-              <h3 className="text-2xl font-semibold">Try the full screening workflow</h3>
-              <p className="mt-2 text-white/80">Use a bundled public-dataset image: no upload or patient data needed.</p>
+              <h3 className="text-2xl font-semibold">Try the full clinic workflow</h3>
+              <p className="mt-2 text-white/80">
+                Sign in to the demo clinic as a health worker, eye specialist, admin or patient. Synthetic records and public-dataset images only.
+              </p>
             </div>
-            <Button asChild size="lg" variant="secondary" className="h-11 px-5 text-base">
-              <Link href="/screen">
-                Start screening <ArrowRight />
+            <Button asChild size="lg" variant="secondary" className="h-11 shrink-0 px-5 text-base">
+              <Link href="/auth/sign-in?next=/screen">
+                Open the demo clinic <ArrowRight />
               </Link>
             </Button>
           </div>

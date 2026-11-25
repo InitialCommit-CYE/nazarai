@@ -24,6 +24,11 @@ const RANGES = [
   { value: "90", label: "Last 90 days" },
 ];
 
+/** Start of the selected period (request-time value; the page is dynamic). */
+function sinceIso(days: number) {
+  return new Date(Date.now() - days * 86_400_000).toISOString();
+}
+
 export default function AuditPage(props: PageProps<"/admin/audit">) {
   return (
     <PageContainer>
@@ -51,7 +56,7 @@ async function AuditTable({ searchParams }: { searchParams: PageProps<"/admin/au
   const entity = ENTITIES.some((e) => e.value === sp.entity) && sp.entity !== "all" ? (sp.entity as string) : null;
   const days = RANGES.some((r) => r.value === sp.days) ? Number(sp.days) : 30;
   const page = Math.max(1, Math.min(1000, Number(sp.page) || 1));
-  const since = new Date(Date.now() - days * 86_400_000).toISOString();
+  const since = sinceIso(days);
 
   let q = db
     .from("audit_log")

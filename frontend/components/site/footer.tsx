@@ -23,9 +23,12 @@ export function Footer() {
           <h2 className="text-sm font-semibold">Product</h2>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
             <li><Link className="hover:text-foreground" href="/screen">Screen a patient</Link></li>
-            <li><Link className="hover:text-foreground" href="/queue">Clinic queue</Link></li>
+            <li><Link className="hover:text-foreground" href="/queue">Referrals</Link></li>
+            <li><Link className="hover:text-foreground" href="/auth/sign-in">Sign in</Link></li>
+            <li><Link className="hover:text-foreground" href="/auth/sign-up">Patient sign-up</Link></li>
             <li><Link className="hover:text-foreground" href="/performance">Model performance</Link></li>
             <li><Link className="hover:text-foreground" href="/about">About &amp; safety</Link></li>
+            <li><Link className="hover:text-foreground" href="/about#privacy">Privacy</Link></li>
           </ul>
         </div>
         <div>
