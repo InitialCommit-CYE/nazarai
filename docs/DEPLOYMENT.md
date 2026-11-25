@@ -54,15 +54,18 @@ Live project: ref `iwrvmubftokmkixknuth`, region Asia-Pacific (Singapore, `ap-so
 Local alternative: `docker build -f backend/Dockerfile -t nazarai-ml . && docker run -p 7860:7860 --env-file backend/.env nazarai-ml`.
 
 ## 4. Frontend on Vercel
-1. Push the repo to GitHub. Vercel → Add New Project → import the repo.
-2. **Root Directory: `frontend`**. Framework preset: Next.js. Node 24 (or 22+).
-3. Environment variables (Production + Preview):
-   `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_APP_URL`,
-   `SUPABASE_SERVICE_ROLE_KEY`, `ML_SERVICE_URL=https://<hf-user>-nazarai-ml.hf.space`, `ML_SERVICE_API_KEY`,
-   `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL=claude-opus-5-5`. Do **not** set `ALLOW_UNTRAINED_MODEL` in production.
-4. Production branch `main` deploys automatically on every push (the team commits straight to `main`).
-5. Function duration: `/api/screen` declares `maxDuration = 120` (Fluid Compute default on new projects). If the
-   plan caps it lower, cold ML starts may time out on the first request; warm the Space first.
+Live project: `nazarai` (Mohid's Vercel account) → https://nazarai-jade.vercel.app
+1. The Vercel GitHub app is installed on the `InitialCommit-CYE` org and the repo is connected: every push to
+   `main` deploys production automatically. Manual deploy from the repo root: `vercel deploy --prod`.
+2. **Root Directory: `frontend`**. Framework preset: Next.js. **Function region: `sin1` (Singapore)**, set in
+   Project Settings → Functions so it sits next to the Supabase database (`frontend/vercel.json` mirrors it).
+3. Environment variables (Production): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`,
+   `NEXT_PUBLIC_APP_URL=https://nazarai-jade.vercel.app`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_STORAGE_BUCKET`,
+   `ML_SERVICE_URL=https://<hf-user>-nazarai-ml.hf.space`, `ML_SERVICE_API_KEY` (same value as the Space secret),
+   `DEMO_ACCOUNTS` (sign-in page demo buttons). Optional: `ANTHROPIC_API_KEY`. Do **not** set
+   `ALLOW_UNTRAINED_MODEL` in production. `NEXT_PUBLIC_*` values are baked in at build time, so redeploy after changing them.
+4. Function duration: `/api/screen` declares `maxDuration = 120` (Fluid Compute). Cold ML starts can still be slow
+   on the first request; warm the Space first.
 
 ## 5. Verify
 - `https://<app>/api/health` → every check `ok: true`.
