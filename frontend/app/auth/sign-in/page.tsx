@@ -54,5 +54,6 @@ async function SignInContent({ searchParams }: { searchParams: PageProps<"/auth/
   const next = typeof sp.next === "string" ? sp.next : undefined;
   const errorKey = typeof sp.error === "string" ? sp.error : "";
   const notice = sp.signed_out ? { ok: "You have been signed out." } : NOTICES[errorKey];
-  return <SignInForm next={next} notice={notice} demo={demoAccounts()} />;
+  const autoDemo = typeof sp.demo === "string" && !sp.signed_out ? sp.demo : undefined;
+  return <SignInForm next={next} notice={notice} demo={demoAccounts()} autoDemo={autoDemo} />;
 }

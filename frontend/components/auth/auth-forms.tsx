@@ -2,7 +2,7 @@
 
 import { LogIn, UserRound } from "lucide-react";
 import Link from "next/link";
-import { useActionState, useRef } from "react";
+import { useActionState, useEffect, useRef } from "react";
 
 import { requestPasswordReset, signIn, signUp, updatePassword, type FormState } from "@/app/auth/actions";
 import { Input } from "@/components/ui/input";
@@ -17,9 +17,37 @@ export interface DemoAccount {
   password: string;
 }
 
-export function SignInForm({ next, notice, demo }: { next?: string; notice?: { error?: string; ok?: string }; demo: DemoAccount[] }) {
+/** "Health worker" -> "health-worker": the value used in /auth/sign-in?demo=… one-click links. */
+export function demoSlug(role: string): string {
+  return role.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+const DEMO_HINT: Record<string, string> = {
+  "health-worker": "Screens patients, sends referrals",
+  "eye-specialist": "Reviews referrals, urgent first",
+  patient: "Sees own results and report",
+};
+
+export function SignInForm({ next, notice, demo, autoDemo }: {
+  next?: string;
+  notice?: { error?: string; ok?: string };
+  demo: DemoAccount[];
+  /** Slug of a demo account to sign in as immediately (one-click "Try the demo" links). */
+  autoDemo?: string;
+}) {
   const [state, action] = useActionState(signIn, initial);
   const formRef = useRef<HTMLFormElement>(null);
+  const autoTried = useRef(false);
+
+  useEffect(() => {
+    if (!autoDemo || autoTried.current) return;
+    const account = demo.find((a) => demoSlug(a.role) === autoDemo);
+    if (!account) return;
+    autoTried.current = true;
+    fill(account);
+    // fill() only reads the form ref, which is attached after the first render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoDemo, demo]);
 
   function fill(a: DemoAccount) {
     const f = formRef.current;
@@ -54,22 +82,34 @@ export function SignInForm({ next, notice, demo }: { next?: string; notice?: { e
       </form>
 
       {demo.length > 0 && (
-        <div className="rounded-xl border border-dashed border-border bg-muted/40 p-4">
-          <p className="text-sm font-medium">Demo clinic (synthetic data only)</p>
-          <p className="mt-1 text-xs text-muted-foreground">Sign in as a role to explore the workflow. Never enter real patient data.</p>
-          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+        <div className="space-y-3">
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <span className="h-px flex-1 bg-border" />
+            <span className="font-mono tracking-wider uppercase">or try the demo clinic</span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
+          <div className="grid gap-2">
             {demo.map((a) => (
               <button
                 key={a.email}
                 type="button"
                 onClick={() => fill(a)}
-                className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-left text-sm transition-colors hover:border-primary/40 hover:bg-secondary focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+                className="group flex items-center gap-3 rounded-md border border-border bg-card px-3.5 py-3 text-left transition-colors hover:border-primary/50 hover:bg-secondary/60 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
               >
-                <UserRound className="size-4 text-primary" />
-                <span className="font-medium">{a.role}</span>
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary text-primary">
+                  <UserRound className="size-4" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-semibold">Continue as {a.role.toLowerCase()}</span>
+                  {DEMO_HINT[demoSlug(a.role)] && (
+                    <span className="block text-xs text-muted-foreground">{DEMO_HINT[demoSlug(a.role)]}</span>
+                  )}
+                </span>
+                <LogIn className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
               </button>
             ))}
           </div>
+          <p className="text-xs leading-relaxed text-muted-foreground">One click, no sign-up. Synthetic patients only: never enter real patient data.</p>
         </div>
       )}
     </div>
