@@ -3,18 +3,26 @@
 Order: **Supabase → model weights → Hugging Face Space → Vercel → smoke test.** About 30 minutes once weights exist.
 
 ## 1. Supabase
-1. Create a project (region close to Pakistan, e.g. Mumbai `ap-south-1`).
-2. Apply **all** migrations in `supabase/migrations/` in filename order (SQL Editor, or
-   `npx supabase db push --db-url "$SUPABASE_DB_URL"`). They create the schema, RLS, roles, audit log and views.
-3. Authentication → URL configuration: **Site URL** = the Vercel URL; add `https://<app>/auth/confirm` to the
-   **Redirect URLs**. Providers → Email: keep "Confirm email" on. For real use, set a custom SMTP sender
-   (the built-in one is rate-limited and for testing only). Staff accounts do not need email.
-4. Demo clinic (synthetic data): `cd frontend && DEMO_PASSWORD=... node --env-file=.env.local ../scripts/seed_demo.mjs`,
+Live project: ref `iwrvmubftokmkixknuth`, region Asia-Pacific (Singapore, `ap-southeast-1`), free plan.
+1. Create a project (Asia-Pacific). Data access: tick **Enable Data API**, **Grant API access to new tables
+   automatically** and **Enable RLS on new tables automatically**. The migrations revoke anon/authenticated access
+   explicitly and re-grant only what RLS allows.
+2. Project Settings → Integrations → **GitHub**: repo `InitialCommit-CYE/nazarai`, working directory `.`,
+   **Deploy to production ON**, branch `main`. Every push to `main` applies new files in `supabase/migrations/`
+   in filename order (schema, RLS, roles, audit log, views). **Never paste migrations into the SQL Editor**:
+   untracked manual runs make the next deploy fail. New schema change = new timestamped file; never edit a deployed one.
+3. Do **not** use the Vercel Marketplace "Supabase" install: it creates a second, Vercel-billed database. Set the
+   keys by hand instead (§4).
+4. Authentication → URL Configuration: **Site URL** `https://nazarai-jade.vercel.app`; Redirect URLs
+   `https://nazarai-jade.vercel.app/**` (covers `/auth/confirm`) and `http://localhost:3000/**`.
+   Providers → Email: keep "Confirm email" on. For real use, set a custom SMTP sender (the built-in one is
+   rate-limited and for testing only). Staff accounts do not need email.
+5. Demo clinic (synthetic data): `cd frontend && DEMO_PASSWORD=... node --env-file=.env.local ../scripts/seed_demo.mjs`,
    then put the printed `DEMO_ACCOUNTS` line in Vercel's environment variables (sign-in page demo buttons).
-5. Check: Table Editor shows `clinics`, `profiles`, `patients`, `screenings`, `screening_reports`, `notifications`, `audit_log`, all with RLS **enabled**; Storage shows the private
-   bucket `retina-uploads`; Realtime is enabled (default).
-6. Project Settings → API keys: copy the project URL, the **publishable** key (`sb_publishable_…`) and the
-   **secret / service-role** key. The latter is server-only.
+6. Check: Table Editor shows `clinics`, `profiles`, `patients`, `screenings`, `screening_reports`, `notifications`,
+   `audit_log`, all with RLS **enabled**; Storage shows the private bucket `retina-uploads`; Realtime is enabled.
+7. Project Settings → API Keys: copy the project URL, the **publishable** key (`sb_publishable_…`) and a
+   **secret** key (`sb_secret_…`, server-only) into `frontend/.env.local` and Vercel.
 
 ## 2. Model weights (after the Kaggle run)
 0. Kaggle setup (once): verify your phone number (needed for GPU + internet). APTOS is optional: to include it,
