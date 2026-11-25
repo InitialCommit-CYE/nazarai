@@ -41,10 +41,12 @@ Our own rough estimate: 27% × 34.5M ≈ **9 million** Pakistanis may have some 
    one-time code from the clinic.
 10. **Model performance**: real validation + external-test (IDRiD) metrics next to the IDx-DR benchmark.
 
-## Why APTOS 2019
-No public Pakistani DR grading dataset exists yet. APTOS 2019 comes from Aravind Eye Hospital in India: a South Asian
-population photographed on many different cameras with mixed image quality, which is the closest public match to
-Pakistani diabetes clinics and Basic Health Units. IDRiD, also from India, is kept as a fully held-out external test set.
+## Training data: why APTOS 2019 + EyePACS
+No public Pakistani DR grading dataset exists yet. **APTOS 2019** comes from Aravind Eye Hospital in India: a South Asian
+population photographed on many different cameras with mixed image quality, the closest public match to Pakistani
+diabetes clinics and Basic Health Units. Alone it is small (3,662 images) and our APTOS-only run missed 77 referable
+cases on the external test, so it is combined with **EyePACS** (US screening photos, ~35k images) for volume.
+**IDRiD**, also from India, is kept as a fully held-out external test set.
 
 ## Architecture
 ```
@@ -96,23 +98,37 @@ Without trained weights, `scripts/make_pipeline_test_model.py` creates an **untr
 real pipeline; every result made with it is flagged "Development model: not a real prediction" and production refuses it.
 
 ## Training
-`ml/notebooks/nazarai_train_kaggle.ipynb` (Kaggle GPU T4): stratified split of APTOS 2019 by grade (image-level, since
-APTOS has no patient IDs) → EfficientNet-B3 (ImageNet) regression with SmoothL1, AdamW, cosine schedule, AMP,
+`ml/notebooks/nazarai_train_kaggle.ipynb` (Kaggle GPU T4): grade-stratified split of APTOS 2019 + EyePACS (patient-level
+for EyePACS; image-level for APTOS, which has no patient IDs) → EfficientNet-B3 (ImageNet) regression with SmoothL1, AdamW, cosine schedule, AMP,
 flip/rotation augmentation → best checkpoint by validation QWK → QWK-optimised grade thresholds and a ≥ 90%-sensitivity
 referral threshold on **validation only** → ONNX export with parity check → evaluation with 4-view TTA on validation
 and the external IDRiD set.
 
 ## Model performance
-_The APTOS 2019 model is training now. Results will be added here from `ml/reports/metrics.json` once it is evaluated._
+Model `efficientnet_b3-384-202611251638`: EfficientNet-B3, 384 px, trained on 33,229 APTOS 2019 + EyePACS images (Kaggle T4).
+All numbers are from `ml/reports/metrics.json`, measured with the served ONNX model (CPU, 4-view TTA) and the deployed
+referral rule (grade ≥ 2 or score ≥ 0.3372, chosen on validation for ≥ 90% sensitivity).
 
-What will be reported, for referable DR (grade ≥ 2): sensitivity, specificity, PPV / NPV, AUC-ROC and 5-grade QWK, on
-APTOS validation and on the external IDRiD test set (n = 516), next to the IDx-DR benchmark (87% sensitivity / 90%
-specificity). The referral threshold is fixed on validation data and never re-tuned on the test set. IDx-DR's figures
-come from a different population and reference standard, so they are a reference point, not a head-to-head comparison.
+| Referable DR (grade ≥ 2) | Validation (APTOS + EyePACS, n = 5,541) | External test (IDRiD, n = 516) | IDx-DR (reported) |
+|---|---|---|---|
+| Sensitivity | 90.1% | **99.4%** (321/323) | 87% |
+| Specificity | 86.0% | **61.7%** (119/193) | 90% |
+| PPV / NPV | 64.2% / 96.9% | 81.3% / 98.4% | not reported |
+| AUC-ROC | 0.949 | **0.984** | not reported |
+| QWK (5 grades) | 0.842 | **0.856** | n/a |
+
+Mean CPU inference 0.45 s/image (p95 0.58 s, without Grad-CAM). Plots: `ml/reports/roc.png`, `ml/reports/confusion_matrix_*.png`.
+
+**Reading these honestly:** on the external IDRiD set the model ranks images very well (AUC 0.984) and missed 2 of 323
+referable cases, but specificity falls to 61.7%: the referral cut-off was fixed on validation data and deliberately not
+re-tuned on the test set, and scores shift between cameras. Each new site therefore needs threshold calibration, the
+first step of the planned pilot. IDx-DR's figures come from a different population and reference standard, so they are
+a reference point, not a head-to-head comparison.
 
 ## Disclosures
 **Datasets**
 - APTOS 2019 Blindness Detection: Kaggle competition data (Aravind Eye Hospital, India), competition rules licence: https://www.kaggle.com/c/aptos2019-blindness-detection. **Training and validation data.**
+- EyePACS / Kaggle Diabetic Retinopathy Detection (2015): **training and validation data**, used via the pre-resized community copy `tanlikesmath/diabetic-retinopathy-resized`; competition rules licence: https://www.kaggle.com/c/diabetic-retinopathy-detection
 - IDRiD: Indian Diabetic Retinopathy Image Dataset, © Porwal, Pachade & Kokare, **CC BY 4.0**: https://ieee-dataport.org/open-access/indian-diabetic-retinopathy-image-dataset-idrid (mirror: https://huggingface.co/datasets/amin-nejad/idrid-disease-grading). External test set and the 6 bundled demo images (resized to 1400 px; see `demo_images/manifest.json`).
 
 **Pretrained weights**: timm `efficientnet_b3` ImageNet weights (Apache-2.0, via Hugging Face Hub).
