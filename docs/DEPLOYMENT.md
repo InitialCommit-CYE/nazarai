@@ -42,6 +42,25 @@ Live project: ref `iwrvmubftokmkixknuth`, region Asia-Pacific (Singapore, `ap-so
    (or use the notebook's last cell). The repo is private by default.
 
 ## 3. ML service on Hugging Face Spaces
+Live: Space `HASSANALI0987654/nazarai-ml` (Docker, **CPU Basic**, public) → https://hassanali0987654-nazarai-ml.hf.space,
+weights in the private model repo `HASSANALI0987654/nazarai-dr-model`. Since mid-2026 creating a Docker Space needs
+**HF PRO** ($9/month, paid on the owner account); without it the API returns 402. Keep the hardware on CPU Basic
+(upgrades are billed hourly). Cancel PRO after the Dec 2 finale. The Space sleeps after 48 h without traffic: open
+`/health` a few minutes before any demo.
+
+**Control from your machine** (Mohid): a fine-grained token scoped to the Space and the model repo (read + write, no
+account-wide permissions) lives in `../HF_TOKEN.txt`, outside the repo. Personal-account repos cannot have
+collaborators, so this token is how access is shared.
+```bash
+set -a; . ../HF_TOKEN.txt; set +a
+python scripts/space_ctl.py status                 # stage, hardware, live /health
+python scripts/space_ctl.py restart                # reload weights
+python scripts/space_ctl.py set-var APP_ENV production
+python scripts/space_ctl.py set-secret ML_SERVICE_API_KEY   # prompts for the value
+python scripts/space_ctl.py upload-weights ./kaggle_out/release   # new model -> repo, then restart
+```
+
+First-time setup:
 1. `huggingface-cli login` (write token), then
    `backend/.venv/Scripts/python scripts/deploy_hf_space.py --space <hf-user>/nazarai-ml`
 2. Space → Settings → Variables and secrets:

@@ -72,7 +72,7 @@ Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · [docs/API_DOCUMENTATION
 |---|---|---|
 | Web app + API gateway | **Vercel Hobby** | Built for Next.js; deploys from GitHub on every push. Netlify / Cloudflare Pages support Next.js 16 server routes less directly. |
 | Database, image upload, live queue | **Supabase Free** | The only free service with Postgres + private file storage + realtime in one place. Neon has no storage or realtime; Firebase would need a rewrite to a document database. |
-| ML inference | **Hugging Face Spaces (CPU, Docker)** | 16 GB RAM for free, enough for ONNX + PyTorch Grad-CAM. Render's free tier (512 MB) is too small; Railway and Fly.io have no lasting free tier. |
+| ML inference | **Hugging Face Spaces (Docker, CPU Basic: 2 vCPU, 16 GB)** | Since mid-2026 a Docker Space needs HF PRO ($9/month); the CPU Basic hardware itself has no hourly cost. Cheapest option that fits ONNX + PyTorch Grad-CAM: Render's free tier (512 MB) is too small; Railway and Fly.io have no lasting free tier. Live: https://hassanali0987654-nazarai-ml.hf.space/health |
 
 ## Repository
 ```
