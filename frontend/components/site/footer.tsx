@@ -18,7 +18,7 @@ const CREDITS = [
   "Training data: APTOS 2019 (India) + EyePACS",
   "External test and demo images: IDRiD, CC BY 4.0",
   "Reports: fixed Urdu / English templates",
-  "Hosting: Vercel · Supabase",
+  "Hosting: Vercel · Supabase · Hugging Face",
 ];
 
 export function Footer() {
