@@ -6,13 +6,62 @@
 
 ---
 
+## Current state (updated 2026-11-26). Read this first in a new chat
+
+**Owner:** Mohid Fida (GitHub `M0hid-ai`, org owner of InitialCommit-CYE) owns hosting, frontend/UI and the README. Hassan (ML lead) trains models.
+
+**Git workflow (owner's rule):** commit straight to `main`, no PRs; many small, real commits; **never add a `Co-Authored-By: Claude` trailer**; `git pull --rebase` before every push; run `npm run build` in `frontend/` before pushing UI changes (`main` auto-deploys to the live site).
+
+### Live system (all working end to end, verified 2026-11-26)
+| Part | Where | Notes |
+|---|---|---|
+| Website + API gateway | Vercel project `nazarai` (Mohid's account) → **https://nazarai-jade.vercel.app** | Root dir `frontend`, functions in `sin1` (Singapore, set on the project), GitHub auto-deploy from `main`. Manual: `vercel deploy --prod` from the **repo root** (that is where `.vercel` is linked) |
+| Database, auth, uploads | Supabase project `iwrvmubftokmkixknuth`, Asia-Pacific (Singapore), free plan | Supabase **GitHub integration applies `supabase/migrations/*` on every push to `main`**. Never paste migrations into the SQL Editor; add a new timestamped file instead |
+| ML service | HF Space `HASSANALI0987654/nazarai-ml` → https://hassanali0987654-nazarai-ml.hf.space | Docker, **CPU Basic**, public; needs **HF PRO** ($9/mo, paid, on Hassan's account; cancel after Dec 2). Every endpoint except `/health` needs `X-API-Key`. Sleeps after 48 h idle: hit `/health` before demos |
+| Model weights | Private HF repo `HASSANALI0987654/nazarai-dr-model` (model.onnx, model.pt, model_config.json) | Deployed model `efficientnet_b3-384-202611251638`, trained on **APTOS 2019 + EyePACS** (both disclosed); IDRiD external test: sens 99.4%, spec 61.7%, AUC 0.984 |
+
+**Control the Space from this machine:** `set -a; . ../HF_TOKEN.txt; set +a` then `python scripts/space_ctl.py status|restart|set-var|set-secret|upload-weights` (token is fine-grained, scoped read+write to the Space and model repo only). Mohid also has Hassan's HF (and can get Kaggle) logins if ever needed.
+
+### Secrets: where they live (never commit, never print)
+- `frontend/.env.local` (git-ignored): Supabase URL / publishable / secret keys, `ML_SERVICE_URL`, `ML_SERVICE_API_KEY`, `DEMO_PASSWORD`, `DEMO_ADMIN_PASSWORD`, `DEMO_ACCOUNTS`. Same values are set on Vercel (Production).
+- `ML_SERVICE_API_KEY.txt` and `HF_TOKEN.txt`: in the parent folder `Desktop/Nazar-ai/`, outside the repo.
+
+### Accounts and demo
+- Seeded demo clinic (`cd frontend && npm run seed:demo`): health worker, eye specialist, clinic admin, patient + 5 synthetic patients. Sign-in page shows **2 one-click buttons** (health worker, eye specialist). `/auth/sign-in?demo=health-worker` or `?demo=eye-specialist` signs in immediately (used by landing CTAs).
+- Admin `clinic.admin@demo.nazarai.app` uses the private `DEMO_ADMIN_PASSWORD` (the shared demo password is public via the buttons, so it must never open the admin).
+- Six real screenings of DEMO-1005 exist from the live test (2 urgent / 1 refer / 2 routine / 1 rejected). Clear before the finale if wanted: `delete from public.screenings;`.
+
+### Design system (keep it; the owner rejected the generic "Claude look")
+- Font: **Archivo** (heavy, `wdth` 112 via `.font-display`) for headlines and UI; Plex Mono only for record numbers. **No serif headlines, no tracked mono-caps eyebrows.** `.eyebrow` = bold sentence case led by a short rule.
+- Colours (tokens in `app/globals.css`): `abyss` near-black, `ink` petrol, `paper`/`background` warm off-white, `signal` cyan (accent, one bright band), referral `routine`/`refer`/`urgent`. Dark navbar on every page. Laptop-first.
+- Logo: variation 4 "lens" mark (Urdu ن with an iris dot) as SVG in `components/site/logo.tsx` and `app/icon.svg`; keep both in sync.
+- Landing (`app/page.tsx`): hero → problem (giant cyan stats) → Today vs With NazarAI → how it works + 5 real retina grades → evidence → where it works → cyan CTA.
+
+### Content rules
+- Only sourced or measured claims. Model numbers come from `ml/reports/metrics.json` (also bundled at `frontend/lib/server/data/metrics.json` by `scripts/sync-metrics.mjs` on prebuild, so `/performance` works without the ML service). The 9M figure is labelled an estimate. IDx-DR is a reference point, not head-to-head.
+- Reports use fixed Urdu/English templates (no LLM key set). A Gemini key may come later; that needs a provider swap in `frontend/lib/server/report.ts`.
+
+### Open items
+- README Team section: real names still missing. Feature freeze **Nov 28, 2026, 11:59 PM PKT**; finale **Dec 2** (arrive 15 min early).
+- Deeper result screens (result / explain / report) inherited the new tokens but never got a dedicated UI pass.
+- Patient self sign-up needs email confirmation; Supabase's built-in mailer is heavily rate-limited (consider turning "Confirm email" off for the demo).
+- Pre-event deck: artifact https://claude.ai/artifact/9yq3mZvhZMHJUyCGDMzLtD and `NazarAI-PreEvent.pptx` in the parent folder (Arial fonts; team names are placeholders).
+- `ONBOARDING.md` is an uncommitted draft.
+
+### Windows gotchas on this machine
+- Git Bash rewrites leading-slash args: prefix `MSYS_NO_PATHCONV=1` (e.g. `vercel api /v9/...`, URLs in scripts).
+- Files are CRLF; exact-match edits must normalise line endings.
+- Playwright: use `channel: "msedge"` (bundled Chromium version is not installed).
+
+---
+
 ## Approved infrastructure updates (2026-11-25). These take precedence over older infrastructure text below
 
 Approved by the team; everything else in this brief is unchanged. Details and rationale: `DECISIONS.md`, `docs/ARCHITECTURE.md`.
 
 | Area | Decision |
 |---|---|
-| UI/UX generation | **v0 by Vercel** generates/refines the UI (prompt: `docs/V0_UI_PROMPT.md`); v0 output is integrated into `frontend/`, not used as a separate app |
+| UI/UX generation | ~~v0 by Vercel~~ not used: the UI was built directly in `frontend/` (see Design system above) |
 | Frontend | **Next.js (App Router) + TypeScript + Tailwind + shadcn/ui**, deployed on **Vercel** (root directory `frontend/`) |
 | API gateway | **Next.js server route handlers** (`frontend/app/api/*`) are the only API the browser calls. They hold all secrets |
 | Database | **Supabase PostgreSQL** replaces SQLite/in-memory storage. Schema in `supabase/migrations/`, RLS on, no anon access |
@@ -20,7 +69,7 @@ Approved by the team; everything else in this brief is unchanged. Details and ra
 | Realtime | Supabase Realtime **broadcast** (`clinic-queue`) tells open clinic queues to refetch; carries no patient data |
 | ML inference | **FastAPI** Python service (unchanged role) on **Hugging Face Spaces (Docker)**; called server-to-server with `X-API-Key` |
 | Model weights | Hugging Face Hub model repo (`HF_MODEL_REPO`), downloaded at service startup; never committed to git |
-| Patient reports | **Anthropic Claude API** (`claude-opus-5-5`), explanation paragraph only, with fixed-template fallback |
+| Patient reports | **Fixed Urdu/English templates** in production (no LLM key). Optional LLM rewording of the explanation paragraph only (code supports Anthropic; Gemini may be added) |
 | Accounts & roles (2026-11-26, team lead decision; overrides §2.5 "user accounts and authentication" out of scope) | **Supabase Auth** with roles operator / specialist / clinic admin / patient, patient records per clinic, referral follow-up, patient portal, audit log. Access enforced by RLS. See `docs/SECURITY.md` |
 
 Resulting API split: the browser talks to `frontend/app/api/*` (`/api/uploads/sign`, `/api/screen`, `/api/screenings/[id]`,
