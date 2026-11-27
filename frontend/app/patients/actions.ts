@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { isDemoEmail, isSeededDemoPatient } from "@/lib/demo";
 import { CLINICAL_ROLES } from "@/lib/roles";
 import { requireApiViewer } from "@/lib/server/auth";
 import { HttpError } from "@/lib/server/http";
@@ -39,6 +40,18 @@ function parse(form: FormData) {
   return { values, data: parsed.data } as const;
 }
 
+/**
+ * The shared demo accounts are public (one click on the landing page), so the five seeded patients that the
+ * guide and every visitor rely on are read-only for them. New patients can still be edited and deleted.
+ */
+const DEMO_READ_ONLY = "This is one of the demo clinic's sample patients, kept the same for every visitor. Register a new patient to try editing or deleting.";
+
+async function seededPatientLocked(db: Awaited<ReturnType<typeof clinicalViewer>>["db"], email: string, id: string): Promise<boolean> {
+  if (!isDemoEmail(email)) return false;
+  const { data } = await db.from("patients").select("mrn").eq("id", id).maybeSingle<{ mrn: string }>();
+  return isSeededDemoPatient(data?.mrn);
+}
+
 function dbMessage(code: string | undefined): PatientFormState {
   if (code === "23505") return { error: "Another patient in your clinic already has this reference number.", fieldErrors: { mrn: "Already in use." } };
   if (code === "42501") return { error: "You do not have permission to do that." };
@@ -71,9 +84,10 @@ export async function createPatient(_prev: PatientFormState, form: FormData): Pr
 }
 
 export async function updatePatient(id: string, _prev: PatientFormState, form: FormData): Promise<PatientFormState> {
-  const { db } = await clinicalViewer();
+  const { viewer, db } = await clinicalViewer();
   const p = parse(form);
   if (!("data" in p)) return { values: p.values, error: p.error, fieldErrors: p.fieldErrors };
+  if (await seededPatientLocked(db, viewer.email, id)) return { values: p.values, error: DEMO_READ_ONLY };
   const d = p.data!;
   const { data, error } = await db
     .from("patients")
@@ -95,7 +109,8 @@ export async function updatePatient(id: string, _prev: PatientFormState, form: F
 }
 
 export async function deletePatient(id: string): Promise<{ error?: string }> {
-  const { db } = await clinicalViewer();
+  const { viewer, db } = await clinicalViewer();
+  if (await seededPatientLocked(db, viewer.email, id)) return { error: DEMO_READ_ONLY };
   const { data, error } = await db.from("patients").delete().eq("id", id).select("id");
   if (error) return dbMessage(error.code);
   if (!data?.length) return { error: "Patient not found in your clinic." };
