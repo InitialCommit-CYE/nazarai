@@ -33,15 +33,15 @@ export function PatientBanner({ patient, href, actions, className }: {
   return (
     <section
       aria-label="Patient"
-      className={cn("flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-white/[0.07] bg-surface px-5 py-4", className)}
+      className={cn("flex flex-wrap items-center justify-between gap-3 rounded-[20px] border border-white/[0.07] bg-surface px-5 py-4", className)}
     >
       <div className="flex min-w-0 items-center gap-3">
-        <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-foreground text-sm font-extrabold text-background" aria-hidden>
+        <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-foreground text-sm font-medium text-background" aria-hidden>
           {initialsOf(patient.full_name)}
         </span>
         <div className="min-w-0">
           <p className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
-            <span className="truncate text-lg font-bold">{name}</span>
+            <span className="truncate text-lg font-medium">{name}</span>
             <span className="font-mono text-xs text-muted-foreground">MR {patient.mrn}</span>
           </p>
           <p className="text-sm text-muted-foreground">{patientFacts(patient).join(" · ")}</p>

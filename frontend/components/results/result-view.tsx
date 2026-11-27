@@ -47,7 +47,7 @@ export function ResultView() {
         {role !== "operator" && (
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg font-bold">Next steps</CardTitle>
+              <CardTitle className="text-lg font-medium">Next steps</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">
               <Button asChild>
@@ -72,14 +72,14 @@ export function ResultView() {
       </div>
 
       <div className="space-y-6">
-        <section aria-label="Retina and AI attention" className="rounded-[1.75rem] border border-white/[0.07] bg-surface p-5 sm:p-6">
+        <section aria-label="Retina and AI attention" className="rounded-[20px] border border-white/[0.07] bg-surface p-5 sm:p-6">
           <RetinaViewer screeningId={s.id} images={images} />
           <div className="mt-6">
             <GradeDetails s={graded} />
           </div>
         </section>
 
-        <details className="group rounded-3xl border border-white/[0.07] bg-surface p-5 text-sm">
+        <details className="group rounded-[20px] border border-white/[0.07] bg-surface p-5 text-sm">
           <summary className="flex cursor-pointer list-none items-center gap-2 font-semibold">
             <ShieldCheck className="size-4" /> Technical details
             <span className="ml-auto text-muted-foreground group-open:hidden">Show</span>
@@ -130,7 +130,7 @@ function RetinaViewer({ screeningId, images }: { screeningId: string; images: { 
     <div>
       <div className="relative mx-auto flex aspect-square w-full max-w-[26rem] items-center justify-center">
         <div className="aperture-ring absolute inset-0" />
-        <Link href={`/screenings/${screeningId}/explain`} className="retina-glow relative block size-[86%] overflow-hidden rounded-full bg-black" aria-label="Open the explainability view">
+        <Link href={`/screenings/${screeningId}/explain`} className="relative block size-[86%] overflow-hidden rounded-full bg-black" aria-label="Open the explainability view">
           {/* eslint-disable-next-line @next/next/no-img-element -- session-only data URL */}
           <img src={images.display} alt="Processed retina photo" className="absolute inset-0 size-full" />
           {images.heatmap && (
@@ -144,7 +144,7 @@ function RetinaViewer({ screeningId, images }: { screeningId: string; images: { 
           )}
         </Link>
         {images.heatmap && (
-          <div className="glass absolute bottom-1 left-1 flex gap-1 rounded-full bg-black/40 p-1 text-xs font-bold" role="group" aria-label="Overlay">
+          <div className="absolute bottom-1 start-1 flex gap-1 rounded-full border border-white/10 bg-[#121418] p-1 text-xs font-medium" role="group" aria-label="Overlay">
             <button type="button" onClick={() => setHeat(false)} aria-pressed={!showHeat} className={cn("rounded-full px-3 py-1.5", !showHeat ? "bg-primary text-primary-foreground" : "text-ink-muted")}>
               Photo
             </button>

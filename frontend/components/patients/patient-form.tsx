@@ -56,7 +56,7 @@ export function PatientRecordForm({ action, defaults, mode, cancelHref }: {
       <FormMessage error={state.error} />
 
       <section className="space-y-4">
-        <h2 className="text-base font-bold text-foreground">Identity</h2>
+        <h2 className="text-base font-medium text-foreground">Identity</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           {field("fullName", "Full name", <Input id="fullName" name="fullName" required maxLength={100} autoComplete="off" defaultValue={v("fullName")} key={`n${v("fullName")}`} className="h-10" {...a11y("fullName")} />)}
           {field(
@@ -80,7 +80,7 @@ export function PatientRecordForm({ action, defaults, mode, cancelHref }: {
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-base font-bold text-foreground">Diabetes</h2>
+        <h2 className="text-base font-medium text-foreground">Diabetes</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           {field(
             "diabetesType",
@@ -103,7 +103,7 @@ export function PatientRecordForm({ action, defaults, mode, cancelHref }: {
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-base font-bold text-foreground">Contact</h2>
+        <h2 className="text-base font-medium text-foreground">Contact</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           {field(
             "phone",

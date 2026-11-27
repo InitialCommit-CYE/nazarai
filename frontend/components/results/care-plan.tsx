@@ -30,7 +30,7 @@ export function CarePlan({ screening: s, urgency, onChange }: { screening: Scree
   return (
     <Card className="gap-4">
       <CardHeader>
-        <CardTitle className="flex flex-wrap items-center justify-between gap-2 text-xl font-bold tracking-tight">
+        <CardTitle className="flex flex-wrap items-center justify-between gap-2 text-xl font-medium tracking-tight">
           Before the patient leaves
           {referral && <ReferralStatusBadge status={s.referral_status} />}
         </CardTitle>
@@ -94,7 +94,7 @@ function Step({ n, title, done, children }: { n: number; title: string; done?: b
     <li className="grid grid-cols-[2rem_1fr] gap-4 border-t border-white/[0.07] pt-5 first:border-0 first:pt-0">
       <span
         className={cn(
-          "flex size-8 items-center justify-center rounded-full text-sm font-bold",
+          "flex size-8 items-center justify-center rounded-full text-sm font-medium",
           done ? "bg-foreground text-background" : "border-2 border-white/20 bg-transparent text-foreground",
         )}
         aria-hidden
@@ -102,7 +102,7 @@ function Step({ n, title, done, children }: { n: number; title: string; done?: b
         {done ? <Check className="size-4" /> : n}
       </span>
       <div className="min-w-0 pt-0.5">
-        <h3 className="text-base font-bold">
+        <h3 className="text-base font-medium">
           {title}
           {done && <span className="sr-only"> (done)</span>}
         </h3>

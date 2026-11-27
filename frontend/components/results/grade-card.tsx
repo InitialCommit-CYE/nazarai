@@ -12,9 +12,9 @@ type Graded = ScreeningRecord & { grade: number; urgency: Urgency };
 
 /** The instruction itself, written as a sentence the health worker can act on. */
 export const DECISION_HEADLINE: Record<Urgency, string> = {
-  routine: "No referral. Rescreen in 12 months.",
-  refer: "Refer to an eye specialist.",
-  urgent: "Refer urgently. Risk to sight.",
+  routine: "No referral. Rescreen in 12 months",
+  refer: "Refer to an eye specialist",
+  urgent: "Refer urgently. Risk to sight",
 };
 
 /** The decision floods a full-colour card: the one moment colour appears on the dark screen. */
@@ -25,25 +25,25 @@ export function GradeCard({ s }: { s: Graded }) {
 
   return (
     <section aria-labelledby="decision-title" className="space-y-3">
-      <div className={cn("flood-in rounded-[1.75rem] px-6 py-7 sm:px-9 sm:py-9", style.solid)}>
-        <p className="text-sm font-semibold opacity-80">Referral decision</p>
-        <h2 id="decision-title" className="mt-3 font-display text-[clamp(2.3rem,4.6vw,4.4rem)] leading-[0.92]">
+      <div className={cn("flood-in rounded-[20px] px-6 py-8 sm:px-10 sm:py-10", style.solid)}>
+        <p className="text-[0.8125rem] font-medium opacity-75">Referral decision</p>
+        <h2 id="decision-title" className="mt-4 font-display text-[clamp(2.3rem,4.4vw,4.25rem)] leading-[1] tracking-[-0.045em]">
           {DECISION_HEADLINE[s.urgency]}
         </h2>
         <p dir="rtl" lang="ur" className="urdu mt-2 text-xl font-semibold sm:text-2xl">
           {URGENCY_INFO[s.urgency].action.ur}
         </p>
-        <ul className="mt-5 flex flex-wrap gap-2 text-sm font-bold">
-          <li className={cn("rounded-full px-4 py-2", style.inkChip)}>
+        <p className="mt-7 flex flex-wrap gap-x-6 gap-y-1 border-t border-current/15 pt-5 text-[0.9375rem]">
+          <span className="font-medium">
             Grade {s.grade} · {g.short}
-          </li>
-          <li className="glass-light rounded-full px-4 py-2">Confidence: {level ? CONFIDENCE_LABEL[level].toLowerCase() : "–"}</li>
-          <li className="glass-light rounded-full px-4 py-2">Photo quality passed</li>
-        </ul>
+          </span>
+          <span className="opacity-80">Confidence {level ? CONFIDENCE_LABEL[level].toLowerCase() : "–"}</span>
+          <span className="opacity-80">Photo quality passed</span>
+        </p>
       </div>
 
       {level === "low" && (
-        <div className="glass rounded-2xl p-4 text-sm">
+        <div className="rounded-2xl border border-white/10 bg-[#121418] p-4 text-sm">
           <p className="font-semibold text-refer">{LOW_CONFIDENCE_NOTE.en}</p>
           <p dir="rtl" lang="ur" className="urdu text-muted-foreground">
             {LOW_CONFIDENCE_NOTE.ur}
@@ -51,7 +51,7 @@ export function GradeCard({ s }: { s: Graded }) {
         </div>
       )}
       {s.borderline && (
-        <div className="glass rounded-2xl p-4 text-sm">
+        <div className="rounded-2xl border border-white/10 bg-[#121418] p-4 text-sm">
           <p className="font-semibold text-refer">{BORDERLINE_NOTE.en}</p>
           <p dir="rtl" lang="ur" className="urdu text-muted-foreground">
             {BORDERLINE_NOTE.ur}
@@ -70,7 +70,7 @@ export function GradeDetails({ s }: { s: Graded }) {
   return (
     <div className="space-y-4">
       <div className="flex items-baseline justify-between gap-3">
-        <p className="text-xl font-bold tracking-tight">
+        <p className="text-xl font-medium tracking-tight">
           Grade {s.grade} · {g.short}
         </p>
         <p className="text-sm text-muted-foreground">{g.label.en}</p>
