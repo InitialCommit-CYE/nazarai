@@ -49,7 +49,7 @@ export function ScreeningShell({ children, role }: { children: React.ReactNode; 
 
   const tabs = [
     { href: `/screenings/${id}`, label: "Result", short: "Result", icon: Stethoscope },
-    { href: `/screenings/${id}/explain`, label: "Explainability", short: "Grad-CAM", icon: Layers },
+    { href: `/screenings/${id}/explain`, label: "Explainability", short: "Heatmap", icon: Layers },
     { href: `/screenings/${id}/report`, label: "Patient report", short: "Report", icon: FileText },
   ];
 

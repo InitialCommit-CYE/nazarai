@@ -40,7 +40,8 @@ export function ResultView() {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-      <div className="space-y-6">
+      {/* min-w-0: grid items default to their content's min width, which pushed phones into sideways scroll */}
+      <div className="min-w-0 space-y-6">
         <GradeCard s={graded} />
         {role === "operator" && <CarePlan screening={s} urgency={graded.urgency} onChange={update} />}
         {specialist && s.referral_status !== "not_required" && <ReferralPanel screening={s} onChange={update} />}
@@ -71,7 +72,7 @@ export function ResultView() {
         <SafetyDisclaimer />
       </div>
 
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         <section aria-label="Retina and AI attention" className="rounded-[20px] border border-white/[0.07] bg-surface p-5 sm:p-6">
           <RetinaViewer screeningId={s.id} images={images} />
           <div className="mt-6">
