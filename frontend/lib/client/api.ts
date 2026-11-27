@@ -77,10 +77,11 @@ export async function uploadImage(file: File, onProgress: (pct: number) => void)
   return signed.path;
 }
 
-export function runScreening(uploadPath: string, imageSource: ImageSource, patientId: string) {
+/** Screen an uploaded photo (its temporary storage path) or one of the bundled sample photos (its id). */
+export function runScreening(image: { uploadPath: string } | { sampleId: string }, imageSource: ImageSource, patientId: string) {
   return request<ScreenResponse>("/api/screen", {
     method: "POST",
-    body: JSON.stringify({ uploadPath, imageSource, patientId }),
+    body: JSON.stringify({ ...image, imageSource, patientId }),
   });
 }
 

@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowChip } from "@/components/ui/arrow-link";
 import { ApiError, runScreening, uploadImage } from "@/lib/client/api";
+import { primeScreening } from "@/lib/client/screening-cache";
 import { saveSessionImages } from "@/lib/client/session-images";
 import { publishScreenState } from "@/components/site/demo-guide";
 import type { ImageSource, QualityIssue } from "@/lib/types";
@@ -81,17 +82,20 @@ export function ScreeningWorkspace({ initialPatient }: { initialPatient: PickedP
     setError(null);
     setRejected(null);
     setUploadPct(0);
-    setPhase("uploading");
+    // A sample photo is already on the server, so it skips the upload and goes straight to the model.
+    const sampleId = selection.source === "sample" ? selection.sampleId : null;
+    setPhase(sampleId ? "analyzing" : "uploading");
     try {
-      const path = await uploadImage(selection.file, setUploadPct);
+      const image = sampleId ? { sampleId } : { uploadPath: await uploadImage(selection.file, setUploadPct) };
       setPhase("analyzing");
-      const res = await runScreening(path, selection.source, patient.id);
+      const res = await runScreening(image, selection.source, patient.id);
       if (!res.screening.quality_ok) {
         setPhase("idle");
         setRejected(res.screening.quality_issues);
         return;
       }
       if (res.images) saveSessionImages(res.screening.id, res.images);
+      primeScreening(res.screening);
       setPhase("done");
       router.push(`/screenings/${res.screening.id}`);
     } catch (e) {
@@ -168,7 +172,7 @@ export function ScreeningWorkspace({ initialPatient }: { initialPatient: PickedP
         <div className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <section data-tour="run" className="rounded-[20px] border border-white/[0.07] bg-surface p-5 sm:p-6">
             {running && selection ? (
-              <ScanStage previewUrl={selection.previewUrl} phase={phase} />
+              <ScanStage previewUrl={selection.previewUrl} phase={phase} sample={selection.source === "sample"} />
             ) : (
               <>
                 <h2 className="text-xl font-medium tracking-tight">
@@ -214,13 +218,15 @@ function useStageClock(active: boolean) {
 
 type RowState = "wait" | "busy" | "done";
 
-function ScanStage({ previewUrl, phase }: { previewUrl: string; phase: Phase }) {
+function ScanStage({ previewUrl, phase, sample }: { previewUrl: string; phase: Phase; sample: boolean }) {
   const t = useStageClock(phase === "analyzing");
   const done = phase === "done";
   const qualityDone = done || (phase === "analyzing" && t > 1800);
   const mapping = phase === "analyzing" && t > 4200;
   const rows: { label: string; state: RowState; value: string }[] = [
-    { label: "Secure upload", state: phase === "uploading" ? "busy" : "done", value: phase === "uploading" ? "sending" : "done" },
+    sample
+      ? { label: "Sample photo", state: "done", value: "ready" }
+      : { label: "Secure upload", state: phase === "uploading" ? "busy" : "done", value: phase === "uploading" ? "sending" : "done" },
     { label: "Photo quality", state: phase === "uploading" ? "wait" : qualityDone ? "done" : "busy", value: qualityDone ? "passed" : phase === "uploading" ? "–" : "checking" },
     { label: "Grade 0–4", state: done ? "done" : qualityDone ? "busy" : "wait", value: done ? "ready" : qualityDone ? "reading" : "–" },
     { label: "Where it looked", state: done ? "done" : mapping ? "busy" : "wait", value: done ? "ready" : mapping ? "mapping" : "–" },
