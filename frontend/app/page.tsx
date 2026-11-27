@@ -1,7 +1,8 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { ArrowLink, QuietLink } from "@/components/ui/arrow-link";
 import { DISCLAIMER } from "@/lib/clinical";
 import retinaHeat from "@/public/landing/retina-heat.jpg";
 import retina from "@/public/landing/retina.jpg";
@@ -12,9 +13,9 @@ import retina from "@/public/landing/retina.jpg";
    The retina images are a public IDRiD photo (CC BY 4.0) and the app's own Grad-CAM output for it. */
 
 const STEPS = [
-  { n: "01", title: "Quality gate.", body: "Blurry, dark or not a retina? It asks for a retake instead of guessing." },
-  { n: "02", title: "Grade 0 to 4.", body: "The international diabetic retinopathy scale, as a continuous score." },
-  { n: "03", title: "Where it looked.", body: "A heatmap a human can check before trusting the result." },
+  { n: "01", title: "Quality gate", body: "Blurry, dark or not a retina? It asks for a retake instead of guessing." },
+  { n: "02", title: "Grade 0 to 4", body: "The international diabetic retinopathy scale, as a continuous score." },
+  { n: "03", title: "Where it looked", body: "A heatmap a human can check before trusting the result." },
 ];
 
 const GRADES = [
@@ -43,7 +44,7 @@ const SAFETY = [
 
 function Retina({ heat, size, scan, priority }: { heat?: boolean; size: string; scan?: boolean; priority?: boolean }) {
   return (
-    <div className={`retina-glow relative shrink-0 overflow-hidden rounded-full bg-black ${size}`}>
+    <div className={`relative shrink-0 overflow-hidden rounded-full bg-black ${size}`}>
       <Image
         src={heat ? retinaHeat : retina}
         alt={heat ? "Retina photo with the AI attention heatmap over it" : "A colour retina (fundus) photo"}
@@ -53,84 +54,87 @@ function Retina({ heat, size, scan, priority }: { heat?: boolean; size: string; 
         placeholder="blur"
         priority={priority}
       />
-      {scan && <div className="scan-line" aria-hidden="true" />}
+      {scan && <div className="scan-line scan-once" aria-hidden="true" />}
     </div>
   );
 }
 
-function GlassReading({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) {
+function Reading({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) {
   return (
-    <div className={`glass absolute flex flex-col gap-0.5 rounded-2xl px-4 py-2.5 ${className ?? ""}`}>
+    <div className={`absolute flex flex-col gap-0.5 rounded-2xl border border-white/10 bg-[#121418] px-4 py-3 ${className ?? ""}`}>
       <span className="text-xs text-muted-foreground">{label}</span>
-      <span className="text-base font-bold">{children}</span>
+      <span className="text-[0.9375rem] font-medium">{children}</span>
+    </div>
+  );
+}
+
+function SectionIntro({ label, title, muted, children, centered }: { label: string; title: string; muted?: string; children?: React.ReactNode; centered?: boolean }) {
+  return (
+    <div className={centered ? "mx-auto max-w-4xl text-center" : "max-w-3xl"}>
+      <p className="eyebrow">{label}</p>
+      <h2 className="font-display mt-5 text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.1] text-balance">
+        {title}
+        {muted && (
+          <>
+            <br />
+            <span className="text-[#6b7178]">{muted}</span>
+          </>
+        )}
+      </h2>
+      {children && <div className={`mt-6 max-w-[34rem] text-[1.0625rem] leading-[1.7] text-ink-muted ${centered ? "mx-auto" : ""}`}>{children}</div>}
     </div>
   );
 }
 
 export default function Home() {
   return (
-    <div className="-mt-[4.25rem] overflow-x-clip">
+    <div className="-mt-[4.75rem] overflow-x-clip">
       {/* 1 · The front door */}
-      <section className="relative mx-auto grid min-h-[100svh] max-w-7xl items-center gap-12 px-4 pt-28 pb-16 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:pt-24">
-        <div className="relative z-10">
-          <h1 className="font-display text-[clamp(2.8rem,6vw,5.2rem)] leading-[0.95]">Every diabetic eye, screened at the clinic.</h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-muted sm:text-xl">
+      <section className="relative mx-auto grid min-h-[100svh] max-w-7xl items-center gap-12 px-5 pt-32 pb-28 sm:px-8 lg:grid-cols-[1.15fr_1fr] lg:pt-28">
+        <div className="relative z-10 max-w-[46rem]">
+          <p className="flex items-center gap-3 text-[0.8125rem] text-ink-muted">
+            <span className="size-2 rounded-full border-2 border-foreground" aria-hidden />
+            Diabetic eye screening for Pakistan’s clinics
+          </p>
+          <h1 className="font-display mt-6 text-[clamp(2.75rem,5vw,4.5rem)] leading-[1.04] tracking-[-0.045em]">
+            Every diabetic eye,
+            <br />
+            screened at the clinic
+          </h1>
+          <p className="mt-7 max-w-[27.5rem] text-[1.0625rem] leading-[1.7] text-ink-muted">
             A health worker takes one retina photo. NazarAI checks it, grades diabetic retinopathy and says who must see an eye
             specialist, in Urdu and English.
           </p>
-
-          <div className="mt-10 flex max-w-2xl flex-col gap-3">
-            <Link
-              href="/auth/sign-in?demo=health-worker"
-              className="group grid grid-cols-[1fr_auto] items-center gap-6 rounded-3xl bg-primary px-6 py-5 text-primary-foreground transition-transform hover:-translate-y-0.5 focus-visible:ring-3 focus-visible:ring-ring/60 focus-visible:outline-none"
-            >
-              <span>
-                <span className="block text-xl font-extrabold tracking-[-0.015em] sm:text-2xl">Start as the health worker</span>
-                <span className="mt-1 block text-[0.95rem] text-[#3b3f45]">Pick a patient, add a retina photo, get the decision. About a minute.</span>
-              </span>
-              <span className="flex size-12 items-center justify-center rounded-full bg-[#060708] text-white transition-transform group-hover:translate-x-1">
-                <ArrowRight className="size-5" aria-hidden />
-              </span>
-            </Link>
-            <Link
-              href="/auth/sign-in?demo=eye-specialist"
-              className="glass group grid grid-cols-[1fr_auto] items-center gap-6 rounded-3xl px-6 py-5 transition-colors hover:bg-white/10 focus-visible:ring-3 focus-visible:ring-ring/60 focus-visible:outline-none"
-            >
-              <span>
-                <span className="block text-lg font-bold sm:text-xl">Start as the eye specialist</span>
-                <span className="mt-1 block text-[0.95rem] text-ink-muted">Open the referral worklist, urgent cases first, and record the outcome.</span>
-              </span>
-              <span className="flex size-12 items-center justify-center rounded-full border border-white/20 transition-transform group-hover:translate-x-1">
-                <ArrowRight className="size-5" aria-hidden />
-              </span>
-            </Link>
-            <p className="mt-1 text-sm text-muted-foreground">One click, no sign-up. A short guide walks you through. Public dataset images, synthetic patients.</p>
+          <div className="mt-8 flex flex-wrap items-center gap-x-7 gap-y-3">
+            <ArrowLink href="/auth/sign-in?demo=health-worker">Try it as the health worker</ArrowLink>
+            <QuietLink href="/auth/sign-in?demo=eye-specialist">Or as the eye specialist</QuietLink>
           </div>
+          <p className="mt-5 max-w-[24rem] text-xs leading-relaxed text-muted-foreground">
+            One click, no sign-up. A short guide walks you through. Public dataset images, synthetic patients.
+          </p>
         </div>
 
-        <div className="relative mx-auto flex aspect-square w-full max-w-[34rem] items-center justify-center">
+        <div className="relative mx-auto flex aspect-square w-full max-w-[32rem] items-center justify-center">
           <div className="aperture-ring absolute inset-0" />
           <div className="aperture-ring absolute inset-[9%] border-white/10" />
           <Retina size="size-[64%]" scan priority />
-          <div className="absolute -bottom-2 left-1/2 flex -translate-x-1/2 gap-6 text-sm whitespace-nowrap text-muted-foreground">
-            <span>
-              <strong className="text-lg text-foreground">99.4%</strong> referable eyes caught
-            </span>
-            <span>
-              <strong className="text-lg text-foreground">516</strong> unseen test photos
-            </span>
-          </div>
         </div>
+
+        <a href="#how-it-works" className="absolute bottom-8 left-5 flex min-h-11 items-center gap-3 text-xs text-ink-muted hover:text-foreground sm:left-8">
+          <ArrowDown className="size-4" strokeWidth={1.5} aria-hidden /> How a screening works
+        </a>
+        <Link href="/performance" className="absolute right-5 bottom-8 hidden min-h-11 items-center gap-3 text-xs text-ink-muted hover:text-foreground sm:right-8 sm:flex">
+          99.4% of referable eyes caught on 516 unseen photos <ArrowUpRight className="size-4" strokeWidth={1.5} aria-hidden />
+        </Link>
       </section>
 
       {/* 2 · Why, and how it works */}
-      <section id="how-it-works" className="scroll-mt-24 border-t border-white/[0.06]">
-        <div id="why-it-matters" className="mx-auto grid max-w-7xl gap-14 px-4 py-24 sm:px-6 lg:grid-cols-[1fr_1fr] lg:py-32">
-          <div>
-            <p className="text-[clamp(1.7rem,3vw,2.5rem)] leading-[1.18] font-bold tracking-[-0.025em] text-[#6b7178]">
-              Pakistan has <span className="text-foreground">34.5 million</span> adults with diabetes. Each needs{" "}
-              <span className="text-foreground">a retina check every year.</span> There are{" "}
-              <span className="text-foreground">15 eye doctors</span> per million people.
+      <section id="how-it-works" className="scroll-mt-28 border-t border-white/[0.06]">
+        <div id="why-it-matters" className="mx-auto max-w-7xl px-5 py-24 sm:px-8 lg:py-28">
+          <SectionIntro label="Why it matters" title="34.5 million adults in Pakistan have diabetes." muted="There are 15 eye doctors per million people." centered>
+            <p>
+              Each of them needs a retina check every year. Diabetic retinopathy causes no symptoms until sight is lost, and it is
+              treatable if caught early.
             </p>
             <p className="mt-4 text-xs text-muted-foreground">
               <a className="underline-offset-2 hover:underline" href="https://diabetesatlas.org/data-by-location/country/pakistan/" target="_blank" rel="noreferrer">
@@ -141,64 +145,69 @@ export default function Home() {
                 Express Tribune, Aug 2026
               </a>
             </p>
+          </SectionIntro>
 
-            <h2 className="mt-14 text-xl font-bold">So the photo is read at the clinic.</h2>
-            <ol className="mt-4">
-              {STEPS.map((s) => (
-                <li key={s.n} className="flex gap-5 border-t border-white/[0.07] py-5 last:border-b">
-                  <span className="font-mono text-muted-foreground">{s.n}</span>
-                  <p className="text-lg leading-snug">
-                    <strong>{s.title}</strong> <span className="text-ink-muted">{s.body}</span>
-                  </p>
-                </li>
-              ))}
-            </ol>
-          </div>
+          <div className="mt-24 grid items-center gap-16 lg:grid-cols-2">
+            <div>
+              <h3 className="font-display text-3xl tracking-[-0.03em] sm:text-4xl">
+                So the photo is read
+                <br />
+                <span className="text-[#6b7178]">at the clinic</span>
+              </h3>
+              <ol className="mt-10">
+                {STEPS.map((s) => (
+                  <li key={s.n} className="grid grid-cols-[2.5rem_1fr] gap-4 border-t border-white/[0.07] py-6 last:border-b">
+                    <span className="pt-1 font-mono text-xs text-muted-foreground">{s.n}</span>
+                    <div>
+                      <p className="text-xl font-medium tracking-[-0.02em]">{s.title}</p>
+                      <p className="mt-2 text-[0.9375rem] leading-relaxed text-ink-muted">{s.body}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
 
-          <div className="relative mx-auto flex aspect-square w-full max-w-[36rem] items-center justify-center">
-            <div className="aperture-ring absolute inset-0" />
-            <Retina heat size="size-[76%]" />
-            <GlassReading label="Photo quality" className="top-[14%] left-0">
-              <span className="flex items-center gap-2">
-                <span className="size-2 rounded-full bg-routine" aria-hidden /> Passed
-              </span>
-            </GlassReading>
-            <GlassReading label="Grade" className="right-0 bottom-[16%]">
-              <span className="font-mono">2.05</span> · Moderate
-            </GlassReading>
+            <div className="relative mx-auto flex aspect-square w-full max-w-[34rem] items-center justify-center">
+              <div className="aperture-ring absolute inset-0" />
+              <Retina heat size="size-[76%]" />
+              <Reading label="Photo quality" className="top-[14%] left-0">
+                <span className="flex items-center gap-2">
+                  <span className="size-2 rounded-full bg-routine" aria-hidden /> Passed
+                </span>
+              </Reading>
+              <Reading label="Grade" className="right-0 bottom-[16%]">
+                <span className="font-mono">2.05</span> · Moderate
+              </Reading>
+            </div>
           </div>
         </div>
       </section>
 
       {/* 2b · All five stages of the disease, as the model sees them */}
       <section aria-labelledby="grades-title" className="border-t border-white/[0.06]">
-        <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:py-32">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <h2 id="grades-title" className="font-display max-w-2xl text-4xl sm:text-5xl">
-              Five grades. Three actions.
+        <div className="mx-auto max-w-7xl px-5 py-24 sm:px-8 lg:py-28">
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <h2 id="grades-title" className="font-display text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.1]">
+              Five grades
+              <br />
+              <span className="text-[#6b7178]">Three actions</span>
             </h2>
-            <p className="text-sm text-muted-foreground">IDRiD photos with their published reference grades · CC BY 4.0</p>
+            <p className="text-xs text-muted-foreground">IDRiD photos with their published reference grades · CC BY 4.0</p>
           </div>
           <ul className="mt-14 grid grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-3 lg:grid-cols-5">
             {GRADES.map((g) => (
-              <li key={g.g} className="group">
+              <li key={g.g}>
                 <div className="relative aspect-square">
-                  <div className="aperture-ring absolute inset-0 transition-colors group-hover:border-white/20" />
-                  <div className="absolute inset-[8%] overflow-hidden rounded-full bg-black shadow-[0_0_60px_2px_rgb(255_120_40/0.1)]">
-                    <Image
-                      src={`/demo/${g.file}`}
-                      alt={`Retina photo, reference grade ${g.g} (${g.label})`}
-                      fill
-                      sizes="(min-width: 1024px) 220px, 45vw"
-                      className="scale-[1.3] object-cover transition-transform duration-700 group-hover:scale-[1.38]"
-                    />
+                  <div className="aperture-ring absolute inset-0" />
+                  <div className="absolute inset-[8%] overflow-hidden rounded-full bg-black">
+                    <Image src={`/demo/${g.file}`} alt={`Retina photo, reference grade ${g.g} (${g.label})`} fill sizes="(min-width: 1024px) 220px, 45vw" className="scale-[1.3] object-cover" />
                   </div>
                 </div>
-                <p className="font-display mt-6 text-2xl">
-                  {g.g} <span className="text-lg font-semibold text-muted-foreground">{g.label}</span>
+                <p className="mt-6 text-lg font-medium tracking-[-0.01em]">
+                  {g.g} <span className="text-muted-foreground">{g.label}</span>
                 </p>
-                <p className="mt-2 flex items-center gap-2 text-sm font-semibold">
-                  <span className={`size-2.5 rounded-full ${g.dot}`} aria-hidden="true" />
+                <p className="mt-2 flex items-center gap-2 text-[0.8125rem] text-ink-muted">
+                  <span className={`size-1.5 rounded-full ${g.dot}`} aria-hidden="true" />
                   {g.action}
                 </p>
               </li>
@@ -207,20 +216,20 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3 · The decision, the evidence, safety */}
-      <section id="evidence" className="scroll-mt-24 px-3 sm:px-5">
-        <div className="relative mx-auto max-w-[88rem] overflow-hidden rounded-[2rem] bg-primary px-6 py-12 text-primary-foreground sm:px-12 sm:py-16">
-          <p className="flex items-center gap-2.5 text-base font-semibold text-[#3b3f45]">
-            <span className="size-2.5 rounded-full bg-refer ring-4 ring-refer/25" aria-hidden="true" />
+      {/* 3 · The decision, the evidence */}
+      <section id="evidence" className="scroll-mt-28 px-3 sm:px-5">
+        <div className="mx-auto max-w-[88rem] rounded-[28px] bg-primary px-6 py-12 text-primary-foreground sm:px-12 sm:py-16">
+          <p className="flex items-center gap-3 text-[0.8125rem] text-[#4b4f55]">
+            <span className="size-2 rounded-full bg-refer" aria-hidden="true" />
             Then one clear instruction
           </p>
-          <h2 className="mt-3 font-display text-[clamp(2.6rem,7vw,6rem)] leading-[0.9]">Refer to an eye specialist.</h2>
-          <p dir="rtl" lang="ur" className="urdu mt-2 text-right text-2xl font-semibold sm:text-left sm:text-3xl">
+          <h2 className="font-display mt-5 text-[clamp(2.6rem,6.5vw,5.5rem)] leading-[1] tracking-[-0.045em]">Refer to an eye specialist</h2>
+          <p dir="rtl" lang="ur" className="urdu mt-3 text-start text-2xl sm:text-3xl">
             آنکھوں کے ماہر ڈاکٹر کو دکھائیں
           </p>
-          <ul className="mt-7 flex flex-wrap gap-2 text-sm font-bold">
+          <ul className="mt-8 flex flex-wrap gap-x-8 gap-y-3 border-t border-black/10 pt-6 text-sm text-[#3b3f45]">
             {OUTCOMES.map((o) => (
-              <li key={o.label} className="flex items-center gap-2 rounded-full border border-black/10 bg-black/[0.04] px-4 py-2">
+              <li key={o.label} className="flex items-center gap-2.5">
                 <span className={`size-2 rounded-full ${o.dot}`} aria-hidden="true" />
                 {o.label}
               </li>
@@ -228,43 +237,45 @@ export default function Home() {
           </ul>
         </div>
 
-        <div className="mx-auto flex max-w-7xl flex-col gap-10 px-1 py-20 sm:px-3 lg:flex-row lg:items-end lg:justify-between">
+        <div className="mx-auto flex max-w-7xl flex-col gap-10 px-2 py-24 sm:px-3 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl">
-            <p className="font-display text-[clamp(4rem,10vw,7.5rem)] leading-[0.9]">99.4%</p>
-            <p className="mt-4 text-xl leading-relaxed text-ink-muted">
+            <p className="eyebrow">Evidence, openly shared</p>
+            <p className="font-display mt-6 text-[clamp(4.5rem,10vw,7rem)] leading-none tracking-[-0.06em] tabular-nums">
+              99.4<span className="text-[0.5em] tracking-[-0.03em]">%</span>
+            </p>
+            <p className="mt-6 text-[1.0625rem] leading-[1.7] text-ink-muted">
               of eyes that needed a specialist were caught (321 of 323) on 516 photos from IDRiD, an Indian dataset the model never
               saw. It over-refers on purpose: an extra visit costs less than an eye.
             </p>
-            <p className="mt-4 text-sm text-muted-foreground">
+            <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
               Specificity 61.7%, AUC 0.984 on the same test. Reference point, not head-to-head: IDx-DR reported 87% sensitivity in
               its trial.
             </p>
           </div>
-          <div className="flex shrink-0 flex-col gap-3 lg:items-end">
-            <Link
-              href="/auth/sign-in?demo=health-worker"
-              className="rounded-full bg-primary px-7 py-4 text-lg font-bold text-primary-foreground transition-transform hover:-translate-y-0.5"
-            >
-              Start as the health worker
-            </Link>
-            <Link href="/performance" className="glass rounded-full px-6 py-3 text-center font-semibold hover:bg-white/10">
-              Model performance
-            </Link>
+          <div className="flex shrink-0 flex-col items-start gap-3 lg:items-end">
+            <ArrowLink href="/auth/sign-in?demo=health-worker">Try it as the health worker</ArrowLink>
+            <QuietLink href="/performance">See the full results</QuietLink>
           </div>
         </div>
       </section>
 
-      <section id="safety" className="scroll-mt-24 border-t border-white/[0.06]">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-24 sm:px-6 lg:grid-cols-[1fr_2fr]">
+      {/* 4 · Safety */}
+      <section id="safety" className="scroll-mt-28 border-t border-white/[0.06]">
+        <div className="mx-auto grid max-w-7xl gap-12 px-5 py-24 sm:px-8 lg:grid-cols-[1fr_2fr]">
           <div>
-            <h2 className="font-display text-4xl sm:text-5xl">Built to fail safe.</h2>
-            <p className="mt-4 max-w-sm text-ink-muted">{DISCLAIMER.en}</p>
+            <p className="eyebrow">Safety</p>
+            <h2 className="font-display mt-5 text-4xl leading-[1.1] sm:text-5xl">
+              Built to
+              <br />
+              <span className="text-[#6b7178]">fail safe</span>
+            </h2>
+            <p className="mt-6 max-w-sm text-[0.9375rem] leading-relaxed text-ink-muted">{DISCLAIMER.en}</p>
           </div>
           <dl className="grid gap-x-12 sm:grid-cols-2">
             {SAFETY.map(([t, d]) => (
-              <div key={t} className="border-t border-white/[0.07] py-5">
-                <dt className="text-lg font-bold">{t}</dt>
-                <dd className="mt-1 text-ink-muted">{d}</dd>
+              <div key={t} className="border-t border-white/[0.07] py-6">
+                <dt className="text-lg font-medium tracking-[-0.01em]">{t}</dt>
+                <dd className="mt-2 text-[0.9375rem] leading-relaxed text-ink-muted">{d}</dd>
               </div>
             ))}
           </dl>
