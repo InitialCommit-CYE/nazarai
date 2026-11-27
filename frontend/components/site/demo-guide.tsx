@@ -4,6 +4,7 @@ import { Compass, X } from "lucide-react";
 import Link from "next/link";
 import { useSyncExternalStore } from "react";
 
+import { ArrowChip, arrowPillClasses } from "@/components/ui/arrow-link";
 import type { AppRole } from "@/lib/roles";
 import { cn } from "@/lib/utils";
 
@@ -85,7 +86,7 @@ function stepFor(role: AppRole, path: string, screen: string): Step | null {
         of,
         title: "Read the decision",
         body: "The colour says what to do, in English and Urdu. The checklist covers the rest: the patient report, booking the specialist, the slip. Then see the other side.",
-        action: { label: "Switch to the eye specialist", switchTo: "eye-specialist" },
+        action: { label: "Switch to specialist", switchTo: "eye-specialist" },
       };
     return null;
   }
@@ -99,7 +100,7 @@ function stepFor(role: AppRole, path: string, screen: string): Step | null {
         of,
         title: "Record the outcome",
         body: "Check the heatmap, add your note and mark the patient as seen. That closes the loop. Close this guide to explore freely.",
-        action: { label: "Back to the health worker", switchTo: "health-worker" },
+        action: { label: "Back to health worker", switchTo: "health-worker" },
       };
     return null;
   }
@@ -119,7 +120,7 @@ export function DemoGuide({ role, email, pathname }: { role: AppRole; email: str
       <button
         type="button"
         onClick={() => setGuide("open")}
-        className="glass fixed right-4 bottom-4 z-50 flex items-center gap-2 rounded-full bg-[#0b0c0e]/70 px-4 py-2.5 text-sm font-semibold shadow-lg hover:bg-white/10"
+        className="liquid press fixed right-4 bottom-4 z-50 flex min-h-11 items-center gap-2 rounded-full px-4 text-sm font-medium transition-[border-color,box-shadow,transform,font-weight] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:font-semibold"
       >
         <Compass className="size-4" aria-hidden /> Show guide
       </button>
@@ -129,7 +130,7 @@ export function DemoGuide({ role, email, pathname }: { role: AppRole; email: str
   return (
     <aside
       aria-label="Guided demo"
-      className="glass-strong rise-in fixed right-3 bottom-3 left-3 z-50 flex flex-col gap-3 rounded-[1.75rem] bg-[#0b0c0e]/75 p-5 sm:right-5 sm:bottom-5 sm:left-auto sm:w-[23rem]"
+      className="glass-strong rise-in fixed right-3 bottom-3 left-3 z-50 flex flex-col gap-3 rounded-[24px] p-5 sm:right-5 sm:bottom-5 sm:left-auto sm:w-[23rem]"
     >
       <div className="flex items-center justify-between gap-3 text-xs text-ink-muted">
         <span>
@@ -141,22 +142,24 @@ export function DemoGuide({ role, email, pathname }: { role: AppRole; email: str
           ))}
         </span>
       </div>
-      <h2 className="text-2xl leading-tight font-extrabold tracking-[-0.02em]">{step.title}</h2>
+      <h2 className="text-2xl leading-tight font-medium tracking-[-0.02em]">{step.title}</h2>
       <p className="text-[0.95rem] leading-relaxed text-[#d5d8dc]">{step.body}</p>
       <div className="mt-1 flex items-center justify-between gap-2">
-        <button type="button" onClick={() => setGuide("closed")} className="flex items-center gap-1.5 text-sm text-ink-muted hover:text-foreground">
+        <button type="button" onClick={() => setGuide("closed")} className="flex min-h-11 items-center gap-1.5 text-sm whitespace-nowrap text-ink-muted hover:text-foreground">
           <X className="size-3.5" aria-hidden /> Close guide
         </button>
         {step.action?.href && (
-          <Link href={step.action.href} className="rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground hover:bg-primary/85">
-            {step.action.label}
+          <Link href={step.action.href} className={arrowPillClasses("light", "min-h-11 gap-3 ps-4 pe-1 text-sm whitespace-nowrap")}>
+            <span>{step.action.label}</span>
+            <ArrowChip />
           </Link>
         )}
         {step.action?.switchTo && (
           <form action="/auth/sign-out" method="post">
             <input type="hidden" name="switch" value={step.action.switchTo} />
-            <button type="submit" className="rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground hover:bg-primary/85">
-              {step.action.label}
+            <button type="submit" className={arrowPillClasses("light", "min-h-11 gap-3 ps-4 pe-1 text-sm whitespace-nowrap")}>
+              <span>{step.action.label}</span>
+              <ArrowChip />
             </button>
           </form>
         )}

@@ -78,7 +78,7 @@ function NavbarView({ viewer, loading, pathname }: { viewer: NavViewer | null; l
     <header className="sticky top-0 z-40 px-3 pt-3 text-foreground sm:px-5">
       <form ref={signOutRef} action="/auth/sign-out" method="post" className="hidden" />
       {viewer && !loading && <DemoGuide role={viewer.role} email={viewer.email} pathname={pathname} />}
-      <nav className="glass mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 rounded-full bg-[#0b0c0e]/70 pr-2 pl-5" aria-label="Main">
+      <nav className="glass mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 rounded-full ps-5 pe-2.5" aria-label="Main">
         <div className="flex min-w-0 items-center gap-8">
           <Link href={viewer ? (viewer.role === "patient" ? "/my" : "/dashboard") : "/"} className="shrink-0 rounded-md focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none">
             <Logo />
@@ -90,7 +90,7 @@ function NavbarView({ viewer, loading, pathname }: { viewer: NavViewer | null; l
                 href={l.href}
                 aria-current={isActive(l.href) ? "page" : undefined}
                 className={cn(
-                  "rounded-full px-3.5 py-2 text-[0.94rem] text-ink-muted transition-colors hover:text-white",
+                  "rounded-full px-3.5 py-2.5 text-sm text-ink-muted transition-colors duration-150 hover:text-white",
                   isActive(l.href) && "bg-white/10 text-white",
                 )}
               >
@@ -106,7 +106,7 @@ function NavbarView({ viewer, loading, pathname }: { viewer: NavViewer | null; l
           ) : viewer ? (
             <>
               {clinical && (
-                <Button asChild size="sm" className="mr-1 hidden h-10 px-4 sm:inline-flex">
+                <Button asChild size="sm" className="mr-1 hidden sm:inline-flex">
                   <Link href="/screen">
                     <ScanEye /> Screen
                   </Link>
@@ -116,7 +116,7 @@ function NavbarView({ viewer, loading, pathname }: { viewer: NavViewer | null; l
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
-                    className="ml-1 hidden size-10 items-center justify-center rounded-full bg-white/10 text-xs font-semibold text-white transition-shadow hover:ring-2 hover:ring-white/30 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none md:flex"
+                    className="ml-1 hidden size-11 items-center justify-center rounded-full bg-white/10 text-xs font-medium text-white transition-shadow hover:ring-2 hover:ring-white/30 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none md:flex"
                     aria-label="Account menu"
                   >
                     {initials(viewer)}
@@ -151,10 +151,10 @@ function NavbarView({ viewer, loading, pathname }: { viewer: NavViewer | null; l
             </>
           ) : (
             <>
-              <Button asChild variant="ghost" size="sm" className="hidden h-10 px-4 text-ink-foreground hover:bg-white/10 hover:text-white sm:inline-flex">
+              <Button asChild variant="ghost" size="sm" className="hidden text-ink-foreground hover:bg-white/10 hover:text-white sm:inline-flex">
                 <Link href="/auth/sign-in">Sign in</Link>
               </Button>
-              <Button asChild size="sm" className="h-10 px-5">
+              <Button asChild>
                 <Link href="/auth/sign-in?demo=health-worker">
                   Try the demo
                 </Link>
@@ -176,7 +176,7 @@ function NavbarView({ viewer, loading, pathname }: { viewer: NavViewer | null; l
       </nav>
 
       {open && (
-        <div id="mobile-nav" className="glass-strong mx-auto mt-2 max-w-7xl rounded-3xl bg-[#0b0c0e]/90 px-4 pb-4 text-foreground md:hidden">
+        <div id="mobile-nav" className="glass-strong rise-in mx-auto mt-2 max-w-7xl rounded-[24px] px-4 pb-4 text-foreground md:hidden">
           {viewer && (
             <div className="border-b border-border py-3">
               <p className="truncate font-medium">{viewer.fullName || viewer.email}</p>
