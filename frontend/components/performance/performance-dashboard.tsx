@@ -114,10 +114,10 @@ export function PerformanceDashboard() {
 
       {v && t && v.referable.specificity != null && t.referable.specificity != null &&
         v.referable.specificity - t.referable.specificity > 0.1 && (
-          <div className="flex gap-2 rounded-xl border border-refer/40 bg-refer-soft p-4 text-sm">
-            <Info className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+          <div className="flex gap-2.5 rounded-[20px] border border-white/10 bg-[#121418] p-4 text-sm leading-relaxed text-ink-muted">
+            <Info className="mt-0.5 size-4 shrink-0 text-refer" aria-hidden="true" />
             <p>
-              <strong>Specificity drops on the external set</strong> ({pct(v.referable.specificity)} validation →{" "}
+              <strong className="font-medium text-foreground">Specificity drops on the external set</strong> ({pct(v.referable.specificity)} validation →{" "}
               {pct(t.referable.specificity)} {t.name}) while sensitivity is {pct(t.referable.sensitivity)}. The referral
               cut-off was fixed on validation data from different cameras and was not re-tuned on the test set; the
               confusion matrix shows where the extra referrals come from. Each new site or camera needs threshold

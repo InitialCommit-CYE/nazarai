@@ -55,11 +55,12 @@ export function ExplainView() {
             <p>The heatmap is computed at 384 × 384 px from the final convolutional block, so it is coarse by design.</p>
           </CardContent>
         </Card>
-        <div className="flex gap-2 rounded-xl border border-refer/40 bg-refer-soft p-4 text-sm">
-          <TriangleAlert className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+        <div className="flex gap-2.5 rounded-[20px] border border-white/10 bg-[#121418] p-4 text-sm leading-relaxed text-ink-muted">
+          <TriangleAlert className="mt-0.5 size-4 shrink-0 text-refer" aria-hidden="true" />
           <p>
-            A heatmap explains what influenced the model. It is <strong>not proof that the result is clinically correct</strong>,
-            and it is not a lesion segmentation.
+            A heatmap explains what influenced the model. It is{" "}
+            <strong className="font-medium text-foreground">not proof that the result is clinically correct</strong>, and it is not a
+            lesion segmentation.
           </p>
         </div>
       </div>
