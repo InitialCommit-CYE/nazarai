@@ -114,7 +114,7 @@ function Step({ n, title, done, children }: { n: number; title: string; done?: b
 
 function Booking({ screening: s, urgent, onChange }: { screening: ScreeningRecord; urgent: boolean; onChange: (s: Partial<ScreeningRecord>) => void }) {
   const [pending, start] = useTransition();
-  const [when, setWhen] = useState(toPktInput(s.appointment_at));
+  const [when, setWhen] = useState(toPktInput(s.appointment_at, urgent ? 1 : 2));
   const [editing, setEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -152,7 +152,7 @@ function Booking({ screening: s, urgent, onChange }: { screening: ScreeningRecor
       <Label htmlFor="appt" className="text-xs text-muted-foreground">
         Appointment (Pakistan time)
       </Label>
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row">
         <Input id="appt" type="datetime-local" value={when} onChange={(e) => setWhen(e.target.value)} className="h-11 rounded-2xl bg-white/[0.05]" disabled={pending} />
         <Button className="h-11 shrink-0 px-6" disabled={pending} onClick={book}>
           {pending ? <Loader2 className="animate-spin" /> : <CalendarCheck />} Book
