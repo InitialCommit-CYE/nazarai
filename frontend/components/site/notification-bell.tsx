@@ -36,14 +36,14 @@ export function NotificationBell({ userId, pathname }: { userId: string; pathnam
   return (
     <Link
       href="/notifications"
-      className="relative flex size-8 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+      className="relative flex size-11 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
       aria-label={unread ? `Notifications: ${unread} unread` : "Notifications"}
     >
       <Bell className="size-[18px]" />
       {unread > 0 && (
         <span
           className={cn(
-            "absolute top-0.5 right-0.5 flex min-w-4 items-center justify-center rounded-full bg-urgent px-1 text-[10px] leading-4 font-semibold text-white",
+            "absolute top-1.5 right-1.5 flex min-w-4 items-center justify-center rounded-full bg-urgent px-1 text-[10px] leading-4 font-semibold text-white",
           )}
           aria-hidden
         >

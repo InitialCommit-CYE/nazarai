@@ -83,7 +83,7 @@ export function GradeDetails({ s }: { s: Graded }) {
             Confidence
             <Tooltip>
               <TooltipTrigger asChild>
-                <button type="button" aria-label="How confidence is calculated" className="rounded text-muted-foreground hover:text-foreground">
+                <button type="button" aria-label="How confidence is calculated" className="-m-1.5 flex size-7 items-center justify-center rounded-full text-muted-foreground hover:text-foreground">
                   <Info className="size-3.5" />
                 </button>
               </TooltipTrigger>
