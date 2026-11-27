@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle, ArrowRight, Check, RefreshCcw } from "lucide-react";
+import { AlertCircle, Check, RefreshCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -9,7 +9,7 @@ import { PatientBanner } from "@/components/clinical/patient-banner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { LogoMark } from "@/components/site/logo";
+import { ArrowChip } from "@/components/ui/arrow-link";
 import { ApiError, runScreening, uploadImage } from "@/lib/client/api";
 import { saveSessionImages } from "@/lib/client/session-images";
 import { publishScreenState } from "@/components/site/demo-guide";
@@ -122,7 +122,7 @@ export function ScreeningWorkspace({ initialPatient }: { initialPatient: PickedP
           ) : (
             <Card data-tour="patient">
               <CardHeader>
-                <CardTitle className="text-xl font-bold tracking-tight">
+                <CardTitle className="text-xl font-medium tracking-tight">
                   <StepNumber n={1} /> Who are you screening?
                 </CardTitle>
                 <CardDescription>Search the clinic register by name or MR number, or register a new patient.</CardDescription>
@@ -136,7 +136,7 @@ export function ScreeningWorkspace({ initialPatient }: { initialPatient: PickedP
           {/* Step 2: the retina photo (locked until the patient is confirmed) */}
           <Card data-tour="photo" aria-disabled={!patient} className={cn("transition-opacity", !patient && "pointer-events-none opacity-40 select-none")}>
             <CardHeader>
-              <CardTitle className="text-xl font-bold tracking-tight">
+              <CardTitle className="text-xl font-medium tracking-tight">
                 <StepNumber n={2} /> Retina photo
               </CardTitle>
               <CardDescription>
@@ -166,12 +166,12 @@ export function ScreeningWorkspace({ initialPatient }: { initialPatient: PickedP
 
         {/* Step 3: review and run. While it runs, this panel becomes the scan stage. */}
         <div className="space-y-4 lg:sticky lg:top-24 lg:self-start">
-          <section data-tour="run" className="rounded-[1.75rem] border border-white/[0.07] bg-surface p-5 sm:p-6">
+          <section data-tour="run" className="rounded-[20px] border border-white/[0.07] bg-surface p-5 sm:p-6">
             {running && selection ? (
               <ScanStage previewUrl={selection.previewUrl} phase={phase} />
             ) : (
               <>
-                <h2 className="text-xl font-bold tracking-tight">
+                <h2 className="text-xl font-medium tracking-tight">
                   <StepNumber n={3} /> Check and run
                 </h2>
                 <ul className="mt-5 space-y-3 text-sm">
@@ -229,7 +229,7 @@ function ScanStage({ previewUrl, phase }: { previewUrl: string; phase: Phase }) 
     <div aria-live="polite">
       <div className="relative mx-auto aspect-square w-full max-w-[17rem]">
         <div className="aperture-ring absolute inset-0" />
-        <div className="retina-glow absolute inset-[7%] overflow-hidden rounded-full bg-black">
+        <div className="absolute inset-[7%] overflow-hidden rounded-full bg-black">
           {/* eslint-disable-next-line @next/next/no-img-element -- local object URL of the photo being screened */}
           <img src={previewUrl} alt="The retina photo being screened" className="size-full object-cover" />
           <div className="scan-line" aria-hidden="true" />
@@ -254,7 +254,7 @@ function ScanStage({ previewUrl, phase }: { previewUrl: string; phase: Phase }) 
   );
 }
 
-/** "Run screening" stretches into its own progress bar: one continuous motion, no spinner. */
+/** "Run screening" stretches into its own progress bar: one continuous motion, no spinner. The fill moves with transform. */
 function RunButton({ phase, uploadPct, disabled, onClick }: { phase: Phase; uploadPct: number; disabled: boolean; onClick: () => void }) {
   const running = phase === "uploading" || phase === "analyzing" || phase === "done";
   const pct = phase === "uploading" ? 4 + uploadPct * 0.26 : phase === "analyzing" ? 92 : phase === "done" ? 100 : 0;
@@ -267,26 +267,27 @@ function RunButton({ phase, uploadPct, disabled, onClick }: { phase: Phase; uplo
       disabled={disabled}
       aria-busy={running}
       className={cn(
-        "relative mt-6 flex h-16 w-full items-center justify-center overflow-hidden rounded-full text-lg font-extrabold tracking-[-0.01em] transition-[background-color,box-shadow,color] duration-500 focus-visible:ring-3 focus-visible:ring-ring/60 focus-visible:outline-none",
+        "group/arrow press relative mt-6 flex h-14 w-full items-center overflow-hidden rounded-full border text-base font-medium transition-[background-color,color,border-color,box-shadow,transform,font-weight] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:ring-3 focus-visible:ring-ring/60 focus-visible:outline-none",
         running
-          ? "bg-white/[0.07] text-foreground"
-          : "bg-primary text-primary-foreground shadow-[0_0_0_6px_rgb(244_243_239/0.1)] hover:shadow-[0_0_0_8px_rgb(244_243_239/0.14)] disabled:bg-white/10 disabled:text-muted-foreground disabled:shadow-none",
+          ? "justify-center border-transparent bg-white/[0.07] text-foreground"
+          : "liquid-light justify-between border-white/70 ps-6 pe-1.5 text-primary-foreground hover:font-semibold disabled:pointer-events-none disabled:opacity-40",
       )}
     >
       <span
         aria-hidden
-        className="absolute inset-y-0 left-0 rounded-full bg-primary"
+        className="absolute inset-0 origin-left bg-primary"
         style={{
-          width: running ? `${pct}%` : "0%",
+          transform: `scaleX(${running ? pct / 100 : 0})`,
           opacity: running ? 1 : 0,
-          transition: phase === "analyzing" ? "width 9s cubic-bezier(0.1, 0.6, 0.2, 1), opacity .3s" : "width .5s ease, opacity .3s",
+          transition: phase === "analyzing" ? "transform 9s cubic-bezier(0.1, 0.6, 0.2, 1), opacity .3s" : "transform .5s cubic-bezier(0.22, 1, 0.36, 1), opacity .3s",
         }}
       />
-      <span className={cn("relative flex items-center gap-3", running && "text-white mix-blend-difference")}>
-        {!running && <LogoMark className="size-6" />}
-        {label}
-        {!running && <ArrowRight className="size-5" aria-hidden />}
-      </span>
+      <span className={cn("relative", running && "text-white mix-blend-difference")}>{label}</span>
+      {!running && (
+        <span className={cn("relative", disabled && "opacity-40")}>
+          <ArrowChip />
+        </span>
+      )}
     </button>
   );
 }
@@ -301,21 +302,21 @@ function StepIndicator({ current }: { current: number }) {
           const n = i + 1;
           const active = n === current;
           return (
-            <li key={label} aria-current={active ? "step" : undefined} className={cn(n <= current ? "text-foreground" : "text-muted-foreground", active && "font-bold")}>
+            <li key={label} aria-current={active ? "step" : undefined} className={cn(n <= current ? "text-foreground" : "text-muted-foreground", active && "font-medium")}>
               {n} · {label}
             </li>
           );
         })}
       </ol>
       <div className="mt-2.5 h-[3px] rounded-full bg-white/[0.08]" aria-hidden>
-        <div className="h-full rounded-full bg-foreground transition-[width] duration-700" style={{ width: `${current === 1 ? 12 : current === 2 ? 50 : 86}%` }} />
+        <div className="h-full origin-left rounded-full bg-foreground transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" style={{ transform: `scaleX(${current === 1 ? 0.12 : current === 2 ? 0.5 : 0.86})` }} />
       </div>
     </div>
   );
 }
 
 function StepNumber({ n }: { n: number }) {
-  return <span className="mr-2 inline-flex size-7 items-center justify-center rounded-full border-2 border-white/20 align-[3px] text-sm font-bold">{n}</span>;
+  return <span className="mr-2 inline-flex size-7 items-center justify-center rounded-full border-2 border-white/20 align-[3px] text-sm font-medium">{n}</span>;
 }
 
 function CheckRow({ done, label, value }: { done: boolean; label: string; value: string }) {
