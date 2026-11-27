@@ -6,6 +6,7 @@ import { useParams, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { DevModelBanner } from "@/components/clinical/notices";
+import { PatientBanner } from "@/components/clinical/patient-banner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -49,45 +50,49 @@ export function ScreeningShell({ children, role }: { children: React.ReactNode; 
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-sm font-semibold tracking-wide text-primary uppercase">Screening result</p>
-          {state ? (
-            <div className="mt-1 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1.5 text-base font-semibold text-foreground">
-                <UserRound className="size-4" />
-                {staff && state.screening.patient_id ? (
-                  <Link href={`/patients/${state.screening.patient_id}`} className="hover:underline">
-                    {state.screening.demo_patient_code ?? "Patient record"}
-                  </Link>
-                ) : (
-                  (state.screening.demo_patient_code ?? "No reference")
-                )}
-              </span>
-              {state.screening.age != null && <span>Age {state.screening.age}</span>}
-              {state.screening.diabetes_duration_years != null && <span>{state.screening.diabetes_duration_years} yrs diabetes</span>}
-              <span className="flex items-center gap-1.5">
-                <CalendarClock className="size-4" /> {formatDateTime(state.screening.created_at)}
-              </span>
-            </div>
-          ) : (
-            !error && <Skeleton className="mt-2 h-6 w-72" />
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="eyebrow text-primary">
+          Screening result
+          {state && (
+            <span className="flex items-center gap-1.5 font-normal text-muted-foreground">
+              <CalendarClock className="size-4" aria-hidden /> {formatDateTime(state.screening.created_at)}
+            </span>
           )}
-        </div>
+        </p>
         {staff ? (
-          <Button asChild variant="outline">
+          <Button asChild variant="outline" size="sm">
             <Link href={state?.screening.patient_id ? `/screen?patient=${state.screening.patient_id}` : "/screen"}>
-              <Plus /> New screening
+              <Plus /> Screen again
             </Link>
           </Button>
         ) : (
-          <Button asChild variant="outline">
+          <Button asChild variant="outline" size="sm">
             <Link href="/my">My results</Link>
           </Button>
         )}
       </div>
 
-      <nav aria-label="Screening sections" className="mt-6 flex gap-1 overflow-x-auto border-b border-border">
+      <div className="mt-3">
+        {state?.screening.patient ? (
+          <PatientBanner
+            patient={state.screening.patient}
+            href={staff && state.screening.patient_id ? `/patients/${state.screening.patient_id}` : undefined}
+          />
+        ) : state ? (
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1 rounded-xl border border-border bg-card px-4 py-3 text-sm text-muted-foreground">
+            <span className="flex items-center gap-1.5 text-base font-semibold text-foreground">
+              <UserRound className="size-4" />
+              {state.screening.demo_patient_code ?? "No reference"}
+            </span>
+            {state.screening.age != null && <span>Age {state.screening.age}</span>}
+            {state.screening.diabetes_duration_years != null && <span>{state.screening.diabetes_duration_years} yrs diabetes</span>}
+          </div>
+        ) : (
+          !error && <Skeleton className="h-[62px] w-full rounded-xl" />
+        )}
+      </div>
+
+      <nav aria-label="Screening sections" className="mt-4 flex gap-1 overflow-x-auto border-b border-border">
         {tabs.map((t) => {
           const active = pathname === t.href;
           return (

@@ -16,8 +16,8 @@ export default function ScreenPage(props: PageProps<"/screen">) {
     <PageContainer>
       <PageHeader
         eyebrow="Screening"
-        title="Screen a retina photo"
-        description="The image is checked for quality, graded on the International Clinical DR scale, explained with Grad-CAM, and then deleted. Only the result is saved to the patient's record."
+        title="Screen a patient"
+        description="Confirm the patient, add a retina photo, and get a referral decision in seconds. The photo is deleted after grading; only the result is saved."
       />
       <Suspense fallback={<WorkspaceSkeleton />}>
         <Workspace searchParams={props.searchParams} />
@@ -32,7 +32,7 @@ async function Workspace({ searchParams }: { searchParams: PageProps<"/screen">[
   const { db } = await requireViewer({ next: pid ? `/screen?patient=${pid}` : "/screen", roles: CLINICAL_ROLES });
   let initial: PickedPatient | null = null;
   if (pid) {
-    const { data } = await db.from("patients").select("id, full_name, mrn, birth_year").eq("id", pid).maybeSingle<PickedPatient>();
+    const { data } = await db.from("patients").select("id, full_name, mrn, sex, birth_year, diabetes_type, diabetes_since_year").eq("id", pid).maybeSingle<PickedPatient>();
     initial = data ?? null;
   }
   return <ScreeningWorkspace key={pid ?? "none"} initialPatient={initial} />;

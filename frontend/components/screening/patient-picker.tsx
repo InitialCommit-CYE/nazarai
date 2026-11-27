@@ -7,14 +7,14 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabaseBrowser } from "@/lib/supabase/browser";
+import type { PatientSummary } from "@/lib/types";
 import { cleanSearch } from "@/lib/validation/patient";
 
-export interface PickedPatient {
-  id: string;
-  full_name: string;
-  mrn: string;
-  birth_year: number;
-}
+import { patientFacts } from "@/components/clinical/patient-banner";
+
+export type PickedPatient = PatientSummary;
+
+const COLUMNS = "id, full_name, mrn, sex, birth_year, diabetes_type, diabetes_since_year";
 
 /** Search the clinic's patients (RLS-scoped browser query, debounced) or register a new one. */
 export function PatientPicker({ value, onChange, disabled }: { value: PickedPatient | null; onChange: (p: PickedPatient | null) => void; disabled?: boolean }) {
@@ -30,7 +30,7 @@ export function PatientPicker({ value, onChange, disabled }: { value: PickedPati
       const sb = supabaseBrowser();
       if (!sb) return;
       setLoading(true);
-      let query = sb.from("patients").select("id, full_name, mrn, birth_year").order("created_at", { ascending: false }).limit(6);
+      let query = sb.from("patients").select(COLUMNS).order("created_at", { ascending: false }).limit(6);
       if (term) query = query.or(`full_name.ilike."%${term}%",mrn.ilike."%${term}%"`);
       const { data, error: err } = await query;
       setLoading(false);
@@ -74,7 +74,7 @@ export function PatientPicker({ value, onChange, disabled }: { value: PickedPati
         <Input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Search name or reference"
+          placeholder="Search by name or MR number"
           aria-label="Search patients"
           className="h-10 pl-9"
           disabled={disabled}
@@ -88,10 +88,13 @@ export function PatientPicker({ value, onChange, disabled }: { value: PickedPati
               type="button"
               onClick={() => onChange(p)}
               disabled={disabled}
-              className="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+              className="flex w-full items-center justify-between gap-3 rounded-lg border border-transparent px-3 py-2.5 text-left text-sm transition-colors hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
             >
-              <span className="truncate font-medium">{p.full_name}</span>
-              <span className="shrink-0 font-mono text-xs text-muted-foreground">{p.mrn}</span>
+              <span className="min-w-0">
+                <span className="block truncate font-medium">{p.full_name}</span>
+                <span className="block truncate text-xs text-muted-foreground">{patientFacts(p).join(" · ")}</span>
+              </span>
+              <span className="shrink-0 font-mono text-xs text-muted-foreground">MR {p.mrn}</span>
             </button>
           </li>
         ))}

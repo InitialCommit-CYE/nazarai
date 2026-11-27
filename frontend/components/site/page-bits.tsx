@@ -11,11 +11,11 @@ export function PageHeader({ eyebrow, title, description, actions }: {
   actions?: React.ReactNode;
 }) {
   return (
-    <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div className="max-w-2xl">
         {eyebrow && <p className="eyebrow text-primary">{eyebrow}</p>}
-        <h1 className="font-display mt-2 text-3xl sm:text-4xl">{title}</h1>
-        {description && <p className="mt-2 text-muted-foreground">{description}</p>}
+        <h1 className="font-display mt-1.5 text-2xl sm:text-3xl">{title}</h1>
+        {description && <p className="mt-1.5 text-sm text-muted-foreground sm:text-base">{description}</p>}
       </div>
       {actions && <div className="flex shrink-0 flex-wrap gap-2">{actions}</div>}
     </div>
@@ -23,7 +23,7 @@ export function PageHeader({ eyebrow, title, description, actions }: {
 }
 
 export function PageContainer({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={cn("mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10", className)}>{children}</div>;
+  return <div className={cn("mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8", className)}>{children}</div>;
 }
 
 export function EmptyState({ title, description, action, icon: Icon = Inbox }: {
