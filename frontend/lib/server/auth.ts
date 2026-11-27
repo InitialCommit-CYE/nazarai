@@ -1,6 +1,7 @@
 import "server-only";
 
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { cache } from "react";
 
 import { homeFor, type AppRole } from "@/lib/roles";
@@ -36,6 +37,8 @@ type ProfileRow = {
  * their own profile and colleagues). Deduplicated per request with React cache().
  */
 export const getViewer = cache(async (): Promise<Viewer | null> => {
+  // Who is signed in is per-request (the auth check reads the clock), so never prerender past this point.
+  await connection();
   let sb;
   try {
     sb = await supabaseServer();

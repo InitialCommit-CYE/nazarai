@@ -5,7 +5,7 @@ import { CLINICAL_ROLES } from "@/lib/roles";
 import { requireApiViewer } from "@/lib/server/auth";
 import { handleRouteError, HttpError } from "@/lib/server/http";
 import { rateLimit } from "@/lib/server/rate-limit";
-import { SCREENING_COLUMNS } from "@/lib/server/supabase";
+import { SCREENING_WITH_PATIENT } from "@/lib/server/supabase";
 
 /** Start of "today" in Pakistan Standard Time (UTC+5, no DST), as an ISO timestamp. */
 function startOfTodayPKT(): string {
@@ -30,7 +30,7 @@ export async function GET(req: Request) {
     const openOnly = params.get("referral") === "open";
     let q = db
       .from("screenings")
-      .select(SCREENING_COLUMNS)
+      .select(SCREENING_WITH_PATIENT)
       .order("urgency_rank", { ascending: true })
       .order("created_at", { ascending: false })
       .limit(300);
@@ -39,7 +39,7 @@ export async function GET(req: Request) {
     const { data, error } = await q;
     if (error) throw new HttpError(502, "Could not load the screening queue.", "db_error");
 
-    const rows = (data ?? []) as ScreeningRecord[];
+    const rows = (data ?? []) as unknown as ScreeningRecord[];
     const graded = rows.filter((r) => r.quality_ok);
     const body: QueueResponse = {
       scope,

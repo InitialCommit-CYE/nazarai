@@ -57,6 +57,20 @@ export interface MlPredictResponse {
 }
 
 /** Row of public.screenings */
+export type PatientSex = "female" | "male" | "other";
+export type DiabetesType = "type1" | "type2" | "gestational" | "other" | "unknown";
+
+/** Who the patient is: shown in the patient banner and the worklist. */
+export interface PatientSummary {
+  id: string;
+  full_name: string;
+  mrn: string;
+  sex: PatientSex | null;
+  birth_year: number;
+  diabetes_type: DiabetesType;
+  diabetes_since_year: number | null;
+}
+
 export interface ScreeningRecord {
   id: string;
   created_at: string;
@@ -84,6 +98,8 @@ export interface ScreeningRecord {
   appointment_at: string | null;
   specialist_note: string | null;
   reviewed_at: string | null;
+  /** Present on routes that select SCREENING_WITH_PATIENT; null if the patient is not visible. */
+  patient?: PatientSummary | null;
 }
 
 export type ReferralStatus = "not_required" | "pending" | "scheduled" | "seen" | "closed";

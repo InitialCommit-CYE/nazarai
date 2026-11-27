@@ -7,7 +7,7 @@ import { env } from "@/lib/server/env";
 import { handleRouteError, HttpError } from "@/lib/server/http";
 import { mlPredict } from "@/lib/server/ml-client";
 import { rateLimit } from "@/lib/server/rate-limit";
-import { SCREENING_COLUMNS, supabaseAdmin } from "@/lib/server/supabase";
+import { SCREENING_WITH_PATIENT, supabaseAdmin } from "@/lib/server/supabase";
 
 /**
  * POST /api/screen
@@ -102,7 +102,7 @@ export async function POST(req: Request) {
     const { data: saved, error: insErr } = await supabaseAdmin()
       .from("screenings")
       .insert(row)
-      .select(SCREENING_COLUMNS)
+      .select(SCREENING_WITH_PATIENT)
       .single();
     if (insErr || !saved) {
       console.error("[screen] insert failed:", insErr?.message);
@@ -111,7 +111,7 @@ export async function POST(req: Request) {
 
     const img = result.images;
     const response: ScreenResponse = {
-      screening: saved as ScreeningRecord,
+      screening: saved as unknown as ScreeningRecord,
       images: img
         ? {
             display: `data:image/png;base64,${img.display_png_base64}`,
