@@ -27,7 +27,7 @@
 - `ML_SERVICE_API_KEY.txt` and `HF_TOKEN.txt`: in the parent folder `Desktop/Nazar-ai/`, outside the repo.
 
 ### Accounts and demo
-- Seeded demo clinic (`cd frontend && npm run seed:demo`): health worker, eye specialist, clinic admin, patient + 5 synthetic patients. Sign-in page shows **2 one-click buttons** (health worker, eye specialist). `/auth/sign-in?demo=health-worker` or `?demo=eye-specialist` signs in immediately (used by landing CTAs).
+- Seeded demo clinic (`cd frontend && npm run seed:demo`): health worker, eye specialist, clinic admin, patient + 5 synthetic patients. Sign-in page shows **2 one-click buttons** (health worker, eye specialist). Landing CTAs use `/auth/demo?as=health-worker|eye-specialist` (server-side sign-in, lands on `/screen` or `/queue`); `/auth/sign-in?demo=…` still signs in from the browser and lands on the dashboard. The five seeded patients are read-only for demo accounts.
 - Admin `clinic.admin@demo.nazarai.app` uses the private `DEMO_ADMIN_PASSWORD` (the shared demo password is public via the buttons, so it must never open the admin).
 - Six real screenings of DEMO-1005 exist from the live test (2 urgent / 1 refer / 2 routine / 1 rejected). Clear before the finale if wanted: `delete from public.screenings;`.
 
