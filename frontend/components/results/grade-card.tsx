@@ -2,8 +2,7 @@ import { Info } from "lucide-react";
 
 import { URGENCY_STYLE } from "@/components/clinical/referral-badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { BORDERLINE_NOTE, GRADES, URGENCY_INFO } from "@/lib/clinical";
-import { pct } from "@/lib/format";
+import { BORDERLINE_NOTE, CONFIDENCE_LABEL, confidenceLevel, GRADES, LOW_CONFIDENCE_NOTE, URGENCY_INFO } from "@/lib/clinical";
 import type { ScreeningRecord, Urgency } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -13,6 +12,7 @@ export function GradeCard({ s }: { s: ScreeningRecord & { grade: number; urgency
   const style = URGENCY_STYLE[s.urgency];
   const Icon = style.icon;
   const g = GRADES[s.grade];
+  const level = confidenceLevel(s.confidence);
 
   return (
     <section
@@ -58,12 +58,12 @@ export function GradeCard({ s }: { s: ScreeningRecord & { grade: number; urgency
                     </button>
                   </TooltipTrigger>
                   <TooltipContent className="max-w-64">
-                    Heuristic, not a calibrated probability: combines distance from the nearest grade boundary with agreement
-                    between four flipped views of the image.
+                    A heuristic, not a probability. High means the score sits well inside one grade and four flipped views of
+                    the image agree. Low means those views gave different readings.
                   </TooltipContent>
                 </Tooltip>
               </dt>
-              <dd className="mt-0.5 text-lg font-semibold">{pct(s.confidence, 0)}</dd>
+              <dd className={cn("mt-0.5 text-lg font-semibold", level === "low" && "text-refer")}>{level ? CONFIDENCE_LABEL[level] : "–"}</dd>
             </div>
             <div className="rounded-xl bg-muted/60 p-3">
               <dt className="text-xs text-muted-foreground">Referable DR (grade ≥ 2)</dt>
@@ -72,6 +72,15 @@ export function GradeCard({ s }: { s: ScreeningRecord & { grade: number; urgency
           </dl>
         </div>
       </div>
+
+      {level === "low" && (
+        <div className="mx-5 mb-5 rounded-xl border border-refer/40 bg-refer-soft p-3 text-sm sm:mx-6">
+          <p className="font-medium">{LOW_CONFIDENCE_NOTE.en}</p>
+          <p dir="rtl" lang="ur" className="urdu text-muted-foreground">
+            {LOW_CONFIDENCE_NOTE.ur}
+          </p>
+        </div>
+      )}
 
       {s.borderline && (
         <div className="mx-5 mb-5 rounded-xl border border-refer/40 bg-refer-soft p-3 text-sm sm:mx-6">

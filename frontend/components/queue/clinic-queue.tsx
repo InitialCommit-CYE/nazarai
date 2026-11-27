@@ -14,8 +14,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ApiError, getQueue } from "@/lib/client/api";
 import { subscribeToQueue, type RealtimeStatus } from "@/lib/client/realtime";
-import { GRADES } from "@/lib/clinical";
-import { formatDateTime, formatTime, pct } from "@/lib/format";
+import { CONFIDENCE_LABEL, confidenceLevel, GRADES } from "@/lib/clinical";
+import { formatDateTime, formatTime } from "@/lib/format";
 import type { QueueResponse } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -190,7 +190,7 @@ export function ClinicQueue() {
                     {r.quality_ok && r.referral_status !== "not_required" ? (
                       <ReferralStatusBadge status={r.referral_status} />
                     ) : (
-                      <span className="text-xs text-muted-foreground">{r.quality_ok ? `Confidence ${pct(r.confidence, 0)}` : "–"}</span>
+                      <span className="text-xs text-muted-foreground">{r.quality_ok && confidenceLevel(r.confidence) ? `${CONFIDENCE_LABEL[confidenceLevel(r.confidence)!]} confidence` : "–"}</span>
                     )}
                   </TableCell>
                   <TableCell className="text-muted-foreground" title={formatDateTime(r.created_at)}>

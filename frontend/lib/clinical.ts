@@ -87,6 +87,24 @@ export const URGENCY_INFO: Record<Urgency, { title: Record<Language, string>; ac
   },
 };
 
+export type ConfidenceLevel = "high" | "moderate" | "low";
+
+/**
+ * Words instead of a raw percentage: the confidence is a heuristic (see ml decision.py), not a probability.
+ * With the four flipped views agreeing it is always >= 50%, so "low" only happens when the views disagree.
+ */
+export function confidenceLevel(c: number | null | undefined): ConfidenceLevel | null {
+  if (c == null) return null;
+  return c >= 0.75 ? "high" : c >= 0.5 ? "moderate" : "low";
+}
+
+export const CONFIDENCE_LABEL: Record<ConfidenceLevel, string> = { high: "High", moderate: "Moderate", low: "Low" };
+
+export const LOW_CONFIDENCE_NOTE: Record<Language, string> = {
+  en: "Flipped views of this image gave different readings. Specialist review of the photo is advised.",
+  ur: "اس تصویر کے مختلف رخ سے مختلف نتائج آئے۔ ماہر ڈاکٹر سے تصویر کا جائزہ لینے کا مشورہ دیا جاتا ہے۔",
+};
+
 export const BORDERLINE_NOTE: Record<Language, string> = {
   en: "The result was close to the referral threshold, so referral is recommended as a safety precaution.",
   ur: "نتیجہ ریفرل کی حد کے قریب تھا، اس لیے احتیاطاً ماہر ڈاکٹر کو دکھانے کا مشورہ دیا گیا ہے۔",
