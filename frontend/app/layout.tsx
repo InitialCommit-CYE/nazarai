@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
-import { Atkinson_Hyperlegible_Mono, Atkinson_Hyperlegible_Next, Noto_Nastaliq_Urdu } from "next/font/google";
+import { Archivo, IBM_Plex_Mono, Noto_Nastaliq_Urdu } from "next/font/google";
 
 import { CompactFooter, Footer } from "@/components/site/footer";
 import { FooterGate } from "@/components/site/footer-gate";
@@ -9,8 +9,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 import "./globals.css";
 
-const atkinson = Atkinson_Hyperlegible_Next({ variable: "--font-atkinson", subsets: ["latin"] });
-const atkinsonMono = Atkinson_Hyperlegible_Mono({ variable: "--font-atkinson-mono", subsets: ["latin"] });
+const archivo = Archivo({ variable: "--font-archivo", subsets: ["latin"], axes: ["wdth"] });
+const plexMono = IBM_Plex_Mono({ variable: "--font-plex-mono", subsets: ["latin"], weight: ["400", "500"] });
 const nastaliq = Noto_Nastaliq_Urdu({ variable: "--font-nastaliq", subsets: ["arabic"], weight: ["400", "600", "700"] });
 
 export const metadata: Metadata = {
@@ -24,7 +24,7 @@ export const viewport: Viewport = { themeColor: "#060708", width: "device-width"
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`dark ${atkinson.variable} ${atkinsonMono.variable} ${nastaliq.variable} h-full antialiased`}>
+    <html lang="en" className={`dark ${archivo.variable} ${plexMono.variable} ${nastaliq.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-background">
         <TooltipProvider delayDuration={150}>
           <a

@@ -28,7 +28,7 @@ export function Logo({ className, scan }: { className?: string; scan?: string; i
   return (
     <span className={cn("flex items-center gap-2.5 text-foreground", className)}>
       <LogoMark scan={scan} className="size-7" />
-      <span className="text-[1.3rem] leading-none font-bold tracking-[-0.025em]">NazarAI</span>
+      <span className="text-[1.25rem] leading-none font-semibold tracking-[-0.025em]">NazarAI</span>
     </span>
   );
 }
