@@ -218,19 +218,19 @@ export default function Home() {
 
       {/* 3 · The decision, the evidence */}
       <section id="evidence" className="scroll-mt-28 px-3 sm:px-5">
-        <div className="mx-auto max-w-[88rem] rounded-[28px] bg-primary px-6 py-12 text-primary-foreground sm:px-12 sm:py-16">
-          <p className="flex items-center gap-3 text-[0.8125rem] text-[#4b4f55]">
-            <span className="size-2 rounded-full bg-refer" aria-hidden="true" />
+        <div className="mx-auto max-w-[88rem] rounded-[28px] bg-[#d6d1c6] px-6 py-12 text-[#14110d] sm:px-12 sm:py-16">
+          <p className="flex items-center gap-3 text-[0.8125rem] text-[#4a4339]">
+            <span className="size-2 rounded-full bg-refer ring-[1.5px] ring-black/25" aria-hidden="true" />
             Then one clear instruction
           </p>
           <h2 className="font-display mt-5 text-[clamp(2.6rem,6.5vw,5.5rem)] leading-[1] tracking-[-0.045em]">Refer to an eye specialist</h2>
           <p dir="rtl" lang="ur" className="urdu mt-3 text-start text-2xl sm:text-3xl">
             آنکھوں کے ماہر ڈاکٹر کو دکھائیں
           </p>
-          <ul className="mt-8 flex flex-wrap gap-x-8 gap-y-3 border-t border-black/10 pt-6 text-sm text-[#3b3f45]">
+          <ul className="mt-8 flex flex-wrap gap-x-8 gap-y-3 border-t border-black/[0.12] pt-6 text-sm text-[#4a4339]">
             {OUTCOMES.map((o) => (
               <li key={o.label} className="flex items-center gap-2.5">
-                <span className={`size-2 rounded-full ${o.dot}`} aria-hidden="true" />
+                <span className={`size-2 rounded-full ring-[1.5px] ring-black/25 ${o.dot}`} aria-hidden="true" />
                 {o.label}
               </li>
             ))}
