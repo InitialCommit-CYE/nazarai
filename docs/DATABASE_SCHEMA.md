@@ -56,4 +56,4 @@ Trigger: `screenings_notify_created` (AFTER INSERT) → `realtime.send({id, urge
 - Storage bucket `retina-uploads`: `public = false`, 10 MB limit, JPEG/PNG/WebP only, no `storage.objects` policies for browser roles. Uploads use signed upload URLs minted server-side.
 
 ## Seed data
-`supabase/seed.sql` is intentionally empty: every screening row must come from a real model run. Populate a demo queue by screening the bundled images (or run `npm run smoke:e2e`).
+`supabase/seed.sql` is intentionally empty: every screening row must come from a real model run. Populate a demo queue by screening the bundled images (or run `KEEP=1 npm run smoke:e2e`, which otherwise deletes its rows).

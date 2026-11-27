@@ -88,8 +88,10 @@ Live project: `nazarai` (Mohid's Vercel account) → https://nazarai-jade.vercel
 
 ## 5. Verify
 - `https://<app>/api/health` → every check `ok: true`.
-- `cd frontend && BASE_URL=https://<app> SUPABASE_PUBLISHABLE_KEY=sb_publishable_... npm run smoke:e2e`
-  screens all six demo images, checks rejection of the unsuitable one, both reports, the Urdu PDF, queue order and metrics.
+- `cd frontend && BASE_URL=https://<app> npm run smoke:e2e` (reads `.env.local`; needs `npm run seed:demo` first).
+  Signs in as the demo health worker and screens all six demo images: signed upload, temporary upload deleted,
+  rejection of the unsuitable one, both reports, the Urdu PDF and the result page. Then the demo eye specialist must see
+  every screening in today's queue, sorted by urgency. It deletes its own rows at the end (`KEEP=1` keeps them).
 - Supabase Storage `retina-uploads/incoming` should be empty after the run (uploads are deleted).
 - Open `/queue` in a second tab while screening: the new row appears without refresh.
 

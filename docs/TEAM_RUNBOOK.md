@@ -31,7 +31,7 @@ laptops pull it from there if needed. Never pass weights around on WhatsApp or U
 3. **HF Space** (Hassan): `scripts/deploy_hf_space.py`, then set `ML_SERVICE_API_KEY`, `HF_MODEL_REPO`, `HF_TOKEN` (§3).
    Done when `https://<hf-user>-nazarai-ml.hf.space/health` shows `"trained": true`.
 4. **Vercel** (Mohid): import `InitialCommit-CYE/nazarai`, root `frontend`, add the env vars (§4).
-5. **Smoke test** (anyone): `npm run smoke:e2e` against the live URL (§5). Then F tests it by hand like a real user.
+5. **Smoke test** (anyone): `BASE_URL=<live URL> npm run smoke:e2e` in `frontend/` (§5). Then F tests it by hand like a real user.
 
 ## 3. Day-to-day: how each person tests
 

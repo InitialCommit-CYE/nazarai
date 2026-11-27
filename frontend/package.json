@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
-    "smoke:e2e": "node scripts/smoke-e2e.mjs",
+    "smoke:e2e": "node --env-file=.env.local scripts/smoke-e2e.mjs",
     "seed:demo": "node --env-file=.env.local scripts/seed_demo.mjs",
     "test:db": "node --test tests/db/rls.test.mjs",
     "test:e2e": "node --env-file=.env.local tests/e2e/flows.mjs"
