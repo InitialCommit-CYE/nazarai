@@ -141,12 +141,12 @@ export function PatientReport() {
 
         <div className={cn("space-y-6 px-6 py-6", rtl && "urdu text-lg")}>
           <section>
-            <h3 className={cn("text-sm font-semibold tracking-wide text-primary", !rtl && "uppercase")}>{t.result}</h3>
+            <h3 className={cn("text-sm font-semibold text-muted-foreground")}>{t.result}</h3>
             <p className="mt-1 text-lg font-semibold">{g.label[lang]}</p>
           </section>
 
           <section>
-            <h3 className={cn("text-sm font-semibold tracking-wide text-primary", !rtl && "uppercase")}>{t.meaning}</h3>
+            <h3 className={cn("text-sm font-semibold text-muted-foreground")}>{t.meaning}</h3>
             {loading && !report ? (
               <div className="mt-2 space-y-2" aria-label="Generating report">
                 <Skeleton className="h-4 w-full" />

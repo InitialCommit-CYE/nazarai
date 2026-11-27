@@ -4,25 +4,28 @@ import { URGENCY_INFO } from "@/lib/clinical";
 import type { Language, Urgency } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-export const URGENCY_STYLE: Record<Urgency, { icon: typeof Siren; chip: string; solid: string; ring: string; text: string }> = {
+export const URGENCY_STYLE: Record<Urgency, { icon: typeof Siren; chip: string; solid: string; inkChip: string; ring: string; text: string }> = {
   routine: {
     icon: CheckCircle2,
     chip: "bg-routine-soft text-routine border-routine/25",
-    solid: "bg-routine text-white",
+    solid: "bg-routine text-routine-ink",
+    inkChip: "bg-routine-ink text-routine",
     ring: "ring-routine/30",
     text: "text-routine",
   },
   refer: {
     icon: AlertTriangle,
-    chip: "bg-refer-soft text-[oklch(0.45_0.12_60)] border-refer/30",
-    solid: "bg-refer text-white",
+    chip: "bg-refer-soft text-refer border-refer/30",
+    solid: "bg-refer text-refer-ink",
+    inkChip: "bg-refer-ink text-refer",
     ring: "ring-refer/30",
-    text: "text-[oklch(0.45_0.12_60)]",
+    text: "text-refer",
   },
   urgent: {
     icon: Siren,
     chip: "bg-urgent-soft text-urgent border-urgent/25",
-    solid: "bg-urgent text-white",
+    solid: "bg-urgent-flood text-urgent-ink",
+    inkChip: "bg-[#3a0a0c] text-white",
     ring: "ring-urgent/30",
     text: "text-urgent",
   },
