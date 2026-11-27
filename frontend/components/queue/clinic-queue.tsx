@@ -1,10 +1,11 @@
 "use client";
 
-import { AlertCircle, CameraOff, CheckCircle2, ChevronRight, Inbox, Radio, RefreshCcw, Siren, TriangleAlert, Users } from "lucide-react";
+import { AlertCircle, CameraOff, ChevronRight, Inbox, Radio, RefreshCcw } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { patientFacts } from "@/components/clinical/patient-banner";
 import { ReferralBadge } from "@/components/clinical/referral-badge";
 import { ReferralStatusBadge } from "@/components/clinical/referral-status";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -18,18 +19,6 @@ import { CONFIDENCE_LABEL, confidenceLevel, GRADES } from "@/lib/clinical";
 import { formatDateTime, formatTime } from "@/lib/format";
 import type { QueueResponse } from "@/lib/types";
 import { cn } from "@/lib/utils";
-
-function StatCard({ label, value, icon: Icon, tone }: { label: string; value: number | undefined; icon: typeof Siren; tone?: string }) {
-  return (
-    <div className="rounded-2xl border border-border bg-card p-4 sm:p-5">
-      <div className="flex items-center justify-between text-sm text-muted-foreground">
-        {label}
-        <Icon className={cn("size-4", tone)} aria-hidden="true" />
-      </div>
-      {value == null ? <Skeleton className="mt-2 h-9 w-12" /> : <p className="mt-1 text-3xl font-semibold tracking-tight">{value}</p>}
-    </div>
-  );
-}
 
 const LIVE_LABEL: Record<RealtimeStatus, string> = { connecting: "Connecting…", live: "Live updates", offline: "Auto-refresh every 30 s" };
 
@@ -116,12 +105,17 @@ export function ClinicQueue() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-        <StatCard label="Screened" value={c?.total} icon={Users} tone="text-primary" />
-        <StatCard label="Urgent referrals" value={c?.urgent} icon={Siren} tone="text-urgent" />
-        <StatCard label="Specialist referrals" value={c?.refer} icon={TriangleAlert} tone="text-refer" />
-        <StatCard label="Routine (12 months)" value={c?.routine} icon={CheckCircle2} tone="text-routine" />
-        <StatCard label="Retake needed" value={c?.rejected} icon={CameraOff} />
+      <div className="text-lg text-ink-muted sm:text-xl" aria-live="polite">
+        {c == null ? (
+          <Skeleton className="h-7 w-80" />
+        ) : (
+          <p>
+            <strong className="text-urgent">{c.urgent} urgent</strong> and <strong className="text-refer">{c.refer} refer</strong>, urgent first.{" "}
+            <span className="text-base text-muted-foreground">
+              {c.total} screened · {c.routine} routine · {c.rejected} retake{c.rejected === 1 ? "" : "s"}
+            </span>
+          </p>
+        )}
       </div>
 
       {error && (
@@ -139,7 +133,7 @@ export function ClinicQueue() {
             <TableHeader>
               <TableRow className="bg-muted/50">
                 <TableHead className="pl-5">Priority</TableHead>
-                <TableHead>Patient ref.</TableHead>
+                <TableHead>Patient</TableHead>
                 <TableHead>AI grade</TableHead>
                 <TableHead>Follow-up</TableHead>
                 <TableHead>Screened</TableHead>
@@ -182,7 +176,16 @@ export function ClinicQueue() {
                     )}
                   </TableCell>
                   <TableCell className="font-medium">
-                    {r.demo_patient_code ?? <span className="text-muted-foreground">–</span>}
+                    {r.patient ? (
+                      <>
+                        <span className="block">{r.patient.full_name}</span>
+                        <span className="block font-mono text-xs font-normal text-muted-foreground">
+                          MR {r.patient.mrn} · {patientFacts(r.patient)[0]}
+                        </span>
+                      </>
+                    ) : (
+                      (r.demo_patient_code ?? <span className="text-muted-foreground">–</span>)
+                    )}
                     {!r.model_trained && <Badge variant="destructive" className="ml-2">dev model</Badge>}
                   </TableCell>
                   <TableCell>{r.grade != null ? `${r.grade} · ${GRADES[r.grade].short}` : "Not graded"}</TableCell>
@@ -197,7 +200,7 @@ export function ClinicQueue() {
                     {scope === "today" ? formatTime(r.created_at) : formatDateTime(r.created_at)}
                   </TableCell>
                   <TableCell className="pr-5 text-right">
-                    <Link href={`/screenings/${r.id}`} aria-label={`Open screening ${r.demo_patient_code ?? r.id.slice(0, 8)}`} onClick={(e) => e.stopPropagation()} className="inline-flex rounded-md p-1 text-muted-foreground hover:text-foreground">
+                    <Link href={`/screenings/${r.id}`} aria-label={`Open screening for ${r.patient?.full_name ?? r.demo_patient_code ?? r.id.slice(0, 8)}`} onClick={(e) => e.stopPropagation()} className="inline-flex rounded-md p-1 text-muted-foreground hover:text-foreground">
                       <ChevronRight className="size-4" />
                     </Link>
                   </TableCell>
