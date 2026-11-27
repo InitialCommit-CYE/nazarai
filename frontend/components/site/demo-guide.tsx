@@ -50,6 +50,7 @@ export function publishScreenState(patient: boolean, photo: boolean) {
 }
 
 interface Step {
+  /** 0 = an orientation card outside the numbered flow (the dashboard). */
   n: number;
   of: number;
   title: string;
@@ -59,10 +60,11 @@ interface Step {
 
 function stepFor(role: AppRole, path: string, screen: string): Step | null {
   if (role === "operator") {
-    const of = 5;
+    // One-click visitors land on /screen, so the numbered flow starts there; the dashboard is an orientation card.
+    const of = 4;
     if (path === "/dashboard")
       return {
-        n: 1,
+        n: 0,
         of,
         title: "Today’s clinic",
         body: "These are the clinic’s patients and who is due for their yearly eye check. Press Screen next to a patient to begin.",
@@ -70,19 +72,24 @@ function stepFor(role: AppRole, path: string, screen: string): Step | null {
       };
     if (path === "/screen") {
       if (screen[0] === "0")
-        return { n: 2, of, title: "Pick the patient", body: "Search by name or MR number, for example “Tariq”, and choose them. The photo can never land on the wrong record." };
+        return {
+          n: 1,
+          of,
+          title: "Pick the patient",
+          body: "You are the health worker at a diabetes clinic. Choose a patient, for example Tariq Mehmood. The photo can never land on the wrong record.",
+        };
       if (screen[1] === "0")
         return {
-          n: 3,
+          n: 2,
           of,
           title: "Add a retina photo",
           body: "There’s no camera here, so tap a sample photo from a public dataset. Each sample is a different case; one is a poor photo the quality gate will reject.",
         };
-      return { n: 4, of, title: "Run the screening", body: "Press Run screening and watch the photo being checked, graded and explained." };
+      return { n: 3, of, title: "Run the screening", body: "Press Run screening and watch the photo being checked, graded and explained." };
     }
     if (path.startsWith("/screenings/"))
       return {
-        n: 5,
+        n: 4,
         of,
         title: "Read the decision",
         body: "The colour says what to do, in English and Urdu. The checklist covers the rest: the patient report, booking the specialist, the slip. Then see the other side.",
@@ -133,14 +140,14 @@ export function DemoGuide({ role, email, pathname }: { role: AppRole; email: str
       className="glass-strong rise-in fixed right-3 bottom-3 left-3 z-50 flex flex-col gap-3 rounded-[24px] p-5 sm:right-5 sm:bottom-5 sm:left-auto sm:w-[23rem]"
     >
       <div className="flex items-center justify-between gap-3 text-xs text-ink-muted">
-        <span>
-          Guided demo · step {step.n} of {step.of}
-        </span>
-        <span className="flex gap-1" aria-hidden>
-          {Array.from({ length: step.of }).map((_, i) => (
-            <span key={i} className={cn("h-1 w-4 rounded-full", i < step.n ? "bg-foreground" : "bg-white/20")} />
-          ))}
-        </span>
+        <span>{step.n > 0 ? `Guided demo · step ${step.n} of ${step.of}` : "Guided demo"}</span>
+        {step.n > 0 && (
+          <span className="flex gap-1" aria-hidden>
+            {Array.from({ length: step.of }).map((_, i) => (
+              <span key={i} className={cn("h-1 w-4 rounded-full", i < step.n ? "bg-foreground" : "bg-white/20")} />
+            ))}
+          </span>
+        )}
       </div>
       <h2 className="text-2xl leading-tight font-medium tracking-[-0.02em]">{step.title}</h2>
       <p className="text-[0.95rem] leading-relaxed text-[#d5d8dc]">{step.body}</p>
