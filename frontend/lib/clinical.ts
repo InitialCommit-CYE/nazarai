@@ -79,9 +79,9 @@ export const URGENCY_INFO: Record<Urgency, { title: Record<Language, string>; ac
     },
   },
   urgent: {
-    title: { en: "Refer URGENTLY", ur: "فوری ریفرل" },
+    title: { en: "Refer urgently", ur: "فوری ریفرل" },
     action: {
-      en: "Refer URGENTLY to an eye specialist. There may be a risk to sight.",
+      en: "Refer urgently to an eye specialist. There may be a risk to sight.",
       ur: "فوری طور پر آنکھوں کے ماہر ڈاکٹر کے پاس جائیں۔ نظر کو خطرہ ہو سکتا ہے۔",
     },
   },

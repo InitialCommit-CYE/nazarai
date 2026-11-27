@@ -4,7 +4,7 @@ import { URGENCY_INFO } from "@/lib/clinical";
 import type { Language, Urgency } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-export const URGENCY_STYLE: Record<Urgency, { icon: typeof Siren; chip: string; solid: string; inkChip: string; ring: string; text: string }> = {
+export const URGENCY_STYLE: Record<Urgency, { icon: typeof Siren; chip: string; solid: string; inkChip: string; ring: string; text: string; dot: string }> = {
   routine: {
     icon: CheckCircle2,
     chip: "bg-routine-soft text-routine border-routine/25",
@@ -12,6 +12,7 @@ export const URGENCY_STYLE: Record<Urgency, { icon: typeof Siren; chip: string; 
     inkChip: "bg-routine-ink text-routine",
     ring: "ring-routine/30",
     text: "text-routine",
+    dot: "bg-routine",
   },
   refer: {
     icon: AlertTriangle,
@@ -20,6 +21,7 @@ export const URGENCY_STYLE: Record<Urgency, { icon: typeof Siren; chip: string; 
     inkChip: "bg-refer-ink text-refer",
     ring: "ring-refer/30",
     text: "text-refer",
+    dot: "bg-refer",
   },
   urgent: {
     icon: Siren,
@@ -28,23 +30,17 @@ export const URGENCY_STYLE: Record<Urgency, { icon: typeof Siren; chip: string; 
     inkChip: "bg-[#3a0a0c] text-white",
     ring: "ring-urgent/30",
     text: "text-urgent",
+    dot: "bg-urgent",
   },
 };
 
 /** Colour + icon + text: urgency is never communicated by colour alone. */
 export function ReferralBadge({ urgency, lang = "en", className }: { urgency: Urgency; lang?: Language; className?: string }) {
   const s = URGENCY_STYLE[urgency];
-  const Icon = s.icon;
+
   return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold whitespace-nowrap",
-        s.chip,
-        lang === "ur" && "urdu py-0 text-sm font-normal",
-        className,
-      )}
-    >
-      <Icon className="size-3.5 shrink-0" aria-hidden="true" />
+    <span className={cn("inline-flex items-center gap-2 text-[0.8125rem] font-medium whitespace-nowrap", s.text, lang === "ur" && "urdu text-sm font-normal", className)}>
+      <span className={cn("size-2 shrink-0 rounded-full", s.dot)} aria-hidden="true" />
       {URGENCY_INFO[urgency].title[lang]}
     </span>
   );
