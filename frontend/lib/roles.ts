@@ -24,15 +24,15 @@ export function navFor(role: AppRole | null): NavLink[] {
   switch (role) {
     case "operator":
       return [
-        { href: "/dashboard", label: "Dashboard" },
+        { href: "/dashboard", label: "Today" },
         { href: "/patients", label: "Patients" },
         { href: "/queue", label: "Referrals" },
       ];
     case "specialist":
       return [
-        { href: "/dashboard", label: "Dashboard" },
         { href: "/queue", label: "Referrals" },
         { href: "/patients", label: "Patients" },
+        { href: "/performance", label: "Model performance" },
       ];
     case "admin":
       return [
@@ -48,10 +48,10 @@ export function navFor(role: AppRole | null): NavLink[] {
       ];
     default:
       return [
-        { href: "/#problem", label: "The problem" },
         { href: "/#how-it-works", label: "How it works" },
-        { href: "/performance", label: "Evidence" },
-        { href: "/about", label: "Safety" },
+        { href: "/#safety", label: "Safety" },
+        { href: "/performance", label: "Model performance" },
+        { href: "/about", label: "About" },
       ];
   }
 }

@@ -1,9 +1,11 @@
 import { ArrowRight, ClipboardList, Plus, ScanEye, ScrollText, ShieldCheck, UsersRound } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 import { ReferralBadge } from "@/components/clinical/referral-badge";
+import { TodaysClinic } from "@/components/dashboard/todays-clinic";
 import { ReferralStatusBadge } from "@/components/clinical/referral-status";
 import { EmptyState, PageContainer, StatsSkeleton, TableSkeleton } from "@/components/site/page-bits";
 import { Button } from "@/components/ui/button";
@@ -53,6 +55,9 @@ function StatTile({ label, value, note }: { label: string; value: number; note?:
 
 async function Dashboard() {
   const { viewer, db } = await requireViewer({ next: "/dashboard", roles: STAFF_ROLES });
+  if (viewer.role === "operator") return <TodaysClinic viewer={viewer} />;
+  // The eye specialist works from the referral worklist.
+  if (viewer.role === "specialist") redirect("/queue");
   const { data } = await db.rpc("clinic_stats", { p_days: 30 });
   const stats = (data ?? null) as Stats | null;
   const hour = Number(new Intl.DateTimeFormat("en-GB", { hour: "numeric", hourCycle: "h23", timeZone: "Asia/Karachi" }).format(new Date()));
