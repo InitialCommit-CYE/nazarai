@@ -17,11 +17,19 @@ const STEPS = [
   { n: "03", title: "Where it looked.", body: "A heatmap a human can check before trusting the result." },
 ];
 
+const GRADES = [
+  { file: "grade0-no-dr.jpg", g: 0, label: "No DR", action: "Rescreen in 12 months", dot: "bg-routine" },
+  { file: "grade1-mild.jpg", g: 1, label: "Mild", action: "Rescreen in 12 months", dot: "bg-routine" },
+  { file: "grade2-moderate.jpg", g: 2, label: "Moderate", action: "Refer", dot: "bg-refer" },
+  { file: "grade3-severe.jpg", g: 3, label: "Severe", action: "Refer urgently", dot: "bg-urgent" },
+  { file: "grade4-proliferative.jpg", g: 4, label: "Proliferative", action: "Refer urgently", dot: "bg-urgent" },
+] as const;
+
 const OUTCOMES = [
-  { label: "Green: rescreen in 12 months", tone: "glass-light" },
-  { label: "Amber: refer to an eye specialist", tone: "bg-refer-ink text-refer" },
-  { label: "Red: refer urgently", tone: "glass-light" },
-  { label: "Grey: retake the photo", tone: "glass-light" },
+  { label: "Rescreen in 12 months", dot: "bg-routine" },
+  { label: "Refer to an eye specialist", dot: "bg-refer" },
+  { label: "Refer urgently", dot: "bg-urgent" },
+  { label: "Retake the photo", dot: "bg-[#9ba1a9]" },
 ];
 
 const SAFETY = [
@@ -162,17 +170,58 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 2b · All five stages of the disease, as the model sees them */}
+      <section aria-labelledby="grades-title" className="border-t border-white/[0.06]">
+        <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:py-32">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <h2 id="grades-title" className="font-display max-w-2xl text-4xl sm:text-5xl">
+              Five grades. Three actions.
+            </h2>
+            <p className="text-sm text-muted-foreground">IDRiD photos with their published reference grades · CC BY 4.0</p>
+          </div>
+          <ul className="mt-14 grid grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-3 lg:grid-cols-5">
+            {GRADES.map((g) => (
+              <li key={g.g} className="group">
+                <div className="relative aspect-square">
+                  <div className="aperture-ring absolute inset-0 transition-colors group-hover:border-white/20" />
+                  <div className="absolute inset-[8%] overflow-hidden rounded-full bg-black shadow-[0_0_60px_2px_rgb(255_120_40/0.1)]">
+                    <Image
+                      src={`/demo/${g.file}`}
+                      alt={`Retina photo, reference grade ${g.g} (${g.label})`}
+                      fill
+                      sizes="(min-width: 1024px) 220px, 45vw"
+                      className="scale-[1.3] object-cover transition-transform duration-700 group-hover:scale-[1.38]"
+                    />
+                  </div>
+                </div>
+                <p className="font-display mt-6 text-2xl">
+                  {g.g} <span className="text-lg font-semibold text-muted-foreground">{g.label}</span>
+                </p>
+                <p className="mt-2 flex items-center gap-2 text-sm font-semibold">
+                  <span className={`size-2.5 rounded-full ${g.dot}`} aria-hidden="true" />
+                  {g.action}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
       {/* 3 · The decision, the evidence, safety */}
       <section id="evidence" className="scroll-mt-24 px-3 sm:px-5">
-        <div className="relative mx-auto max-w-[88rem] overflow-hidden rounded-[2rem] bg-refer px-6 py-12 text-refer-ink sm:px-12 sm:py-16">
-          <p className="text-base font-semibold">Then one clear instruction</p>
+        <div className="relative mx-auto max-w-[88rem] overflow-hidden rounded-[2rem] bg-primary px-6 py-12 text-primary-foreground sm:px-12 sm:py-16">
+          <p className="flex items-center gap-2.5 text-base font-semibold text-[#3b3f45]">
+            <span className="size-2.5 rounded-full bg-refer ring-4 ring-refer/25" aria-hidden="true" />
+            Then one clear instruction
+          </p>
           <h2 className="mt-3 font-display text-[clamp(2.6rem,7vw,6rem)] leading-[0.9]">Refer to an eye specialist.</h2>
           <p dir="rtl" lang="ur" className="urdu mt-2 text-right text-2xl font-semibold sm:text-left sm:text-3xl">
             آنکھوں کے ماہر ڈاکٹر کو دکھائیں
           </p>
           <ul className="mt-7 flex flex-wrap gap-2 text-sm font-bold">
             {OUTCOMES.map((o) => (
-              <li key={o.label} className={`rounded-full px-4 py-2 ${o.tone}`}>
+              <li key={o.label} className="flex items-center gap-2 rounded-full border border-black/10 bg-black/[0.04] px-4 py-2">
+                <span className={`size-2 rounded-full ${o.dot}`} aria-hidden="true" />
                 {o.label}
               </li>
             ))}
