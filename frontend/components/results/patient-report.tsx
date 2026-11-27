@@ -104,9 +104,12 @@ export function PatientReport() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <LanguageSwitcher value={lang} onChange={setLang} />
         <div className="flex flex-wrap gap-2">
-          <Button variant="outline" onClick={regenerate} disabled={loading}>
-            <RefreshCcw className={loading ? "animate-spin" : undefined} /> Regenerate
-          </Button>
+          {/* Only reworded reports can be regenerated; the fixed template would come back identical. */}
+          {report?.generator === "claude" && (
+            <Button variant="outline" onClick={regenerate} disabled={loading}>
+              <RefreshCcw className={loading ? "animate-spin" : undefined} /> Regenerate
+            </Button>
+          )}
           <Button asChild>
             <a href={pdfUrl(s.id, lang)} download>
               <Download /> Download PDF referral slip
@@ -181,8 +184,9 @@ export function PatientReport() {
             <Badge variant="secondary" className="gap-1"><FileText className="size-3" /> Standard approved template</Badge>
           ) : null}
           <span>
-            The explanation is generated only from the stored model result. The grade, referral and disclaimer are fixed
-            texts and cannot be changed by the language model.
+            {report?.generator === "claude"
+              ? "The explanation is generated only from the stored model result. The grade, referral and disclaimer are fixed texts and cannot be changed by the language model."
+              : "Fixed wording in English and Urdu, filled in only from the stored model result."}
           </span>
         </footer>
       </article>
