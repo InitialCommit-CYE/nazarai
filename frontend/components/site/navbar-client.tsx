@@ -18,6 +18,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { navFor, ROLE_LABEL, type AppRole } from "@/lib/roles";
 import { cn } from "@/lib/utils";
 
+import { DemoGuide } from "./demo-guide";
 import { Logo } from "./logo";
 import { NotificationBell } from "./notification-bell";
 
@@ -71,25 +72,26 @@ function NavbarView({ viewer, loading, pathname }: { viewer: NavViewer | null; l
     pathname != null &&
     (pathname === href ||
       (href !== "/" && pathname.startsWith(`${href}/`) && href !== "/my") ||
-      (href === "/queue" && pathname.startsWith("/screenings")));
+      (href === "/queue" && viewer?.role === "specialist" && pathname.startsWith("/screenings")));
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-abyss text-ink-foreground">
+    <header className="sticky top-0 z-40 px-3 pt-3 text-foreground sm:px-5">
       <form ref={signOutRef} action="/auth/sign-out" method="post" className="hidden" />
-      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6" aria-label="Main">
+      {viewer && !loading && <DemoGuide role={viewer.role} email={viewer.email} pathname={pathname} />}
+      <nav className="glass mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 rounded-full bg-[#0b0c0e]/70 pr-2 pl-5" aria-label="Main">
         <div className="flex min-w-0 items-center gap-8">
           <Link href={viewer ? (viewer.role === "patient" ? "/my" : "/dashboard") : "/"} className="shrink-0 rounded-md focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none">
-            <Logo inverted />
+            <Logo />
           </Link>
-          <div className="hidden h-16 items-stretch gap-6 md:flex">
+          <div className="hidden items-center gap-1 md:flex">
             {links.map((l) => (
               <Link
                 key={l.href}
                 href={l.href}
                 aria-current={isActive(l.href) ? "page" : undefined}
                 className={cn(
-                  "flex items-center border-b-2 border-transparent pt-0.5 text-sm font-medium text-ink-muted transition-colors hover:text-white",
-                  isActive(l.href) && "border-signal text-white",
+                  "rounded-full px-3.5 py-2 text-[0.94rem] text-ink-muted transition-colors hover:text-white",
+                  isActive(l.href) && "bg-white/10 text-white",
                 )}
               >
                 {l.label}
@@ -100,11 +102,11 @@ function NavbarView({ viewer, loading, pathname }: { viewer: NavViewer | null; l
 
         <div className="flex items-center gap-1.5">
           {loading ? (
-            <Skeleton className="size-8 rounded-full" />
+            <Skeleton className="size-9 rounded-full" />
           ) : viewer ? (
             <>
               {clinical && (
-                <Button asChild size="sm" className="mr-1 hidden h-9 bg-signal px-3.5 text-abyss hover:bg-signal/90 sm:inline-flex">
+                <Button asChild size="sm" className="mr-1 hidden h-10 px-4 sm:inline-flex">
                   <Link href="/screen">
                     <ScanEye /> Screen
                   </Link>
@@ -114,7 +116,7 @@ function NavbarView({ viewer, loading, pathname }: { viewer: NavViewer | null; l
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
-                    className="ml-1 hidden size-8 items-center justify-center rounded-full bg-white/10 text-xs font-semibold text-white ring-offset-2 ring-offset-abyss transition-shadow hover:ring-2 hover:ring-signal/50 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none md:flex"
+                    className="ml-1 hidden size-10 items-center justify-center rounded-full bg-white/10 text-xs font-semibold text-white transition-shadow hover:ring-2 hover:ring-white/30 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none md:flex"
                     aria-label="Account menu"
                   >
                     {initials(viewer)}
@@ -149,12 +151,12 @@ function NavbarView({ viewer, loading, pathname }: { viewer: NavViewer | null; l
             </>
           ) : (
             <>
-              <Button asChild variant="ghost" size="sm" className="hidden h-9 px-3 text-ink-foreground hover:bg-white/10 hover:text-white sm:inline-flex">
+              <Button asChild variant="ghost" size="sm" className="hidden h-10 px-4 text-ink-foreground hover:bg-white/10 hover:text-white sm:inline-flex">
                 <Link href="/auth/sign-in">Sign in</Link>
               </Button>
-              <Button asChild size="sm" className="h-9 bg-signal px-4 text-abyss hover:bg-signal/90">
+              <Button asChild size="sm" className="h-10 px-5">
                 <Link href="/auth/sign-in?demo=health-worker">
-                  <ScanEye /> Try the demo
+                  Try the demo
                 </Link>
               </Button>
             </>
@@ -174,7 +176,7 @@ function NavbarView({ viewer, loading, pathname }: { viewer: NavViewer | null; l
       </nav>
 
       {open && (
-        <div id="mobile-nav" className="border-t border-white/10 bg-background px-4 pb-4 text-foreground md:hidden">
+        <div id="mobile-nav" className="glass-strong mx-auto mt-2 max-w-7xl rounded-3xl bg-[#0b0c0e]/90 px-4 pb-4 text-foreground md:hidden">
           {viewer && (
             <div className="border-b border-border py-3">
               <p className="truncate font-medium">{viewer.fullName || viewer.email}</p>
