@@ -12,6 +12,8 @@ export interface SampleImage {
   file: string;
   reference_grade: number;
   expected_quality_ok: boolean;
+  /** 1-based position in the gallery; set by the gallery, not the manifest. */
+  number?: number;
 }
 
 interface Manifest {
@@ -19,9 +21,17 @@ interface Manifest {
   images: SampleImage[];
 }
 
-function label(s: SampleImage) {
-  if (!s.expected_quality_ok) return { title: "Unsuitable photo", sub: "Low quality: should be rejected" };
-  return { title: `Dataset label: grade ${s.reference_grade}`, sub: ["No DR", "Mild NPDR", "Moderate NPDR", "Severe NPDR", "Proliferative DR"][s.reference_grade] };
+/* Samples are shown as "Sample 1-6" in a fixed mixed order, so neither the label nor the position gives away
+   the dataset grade before the model has read the photo. Presenter key:
+   1 = grade 3 · 2 = grade 0 · 3 = unsuitable photo · 4 = grade 2 · 5 = grade 4 · 6 = grade 1 */
+const DISPLAY_ORDER = ["grade3-severe", "grade0-no-dr", "unsuitable-low-quality", "grade2-moderate", "grade4-proliferative", "grade1-mild"];
+
+function ordered(images: SampleImage[]): SampleImage[] {
+  const rank = (s: SampleImage) => {
+    const i = DISPLAY_ORDER.indexOf(s.id);
+    return i === -1 ? DISPLAY_ORDER.length : i;
+  };
+  return [...images].sort((a, b) => rank(a) - rank(b)).map((s, i) => ({ ...s, number: i + 1 }));
 }
 
 export function SampleGallery({ selectedId, disabled, onSelect }: { selectedId: string | null; disabled?: boolean; onSelect: (s: SampleImage) => void }) {
@@ -45,15 +55,15 @@ export function SampleGallery({ selectedId, disabled, onSelect }: { selectedId: 
 
   return (
     <div>
-      <ul className="grid grid-cols-3 gap-2 sm:grid-cols-6 lg:grid-cols-3 xl:grid-cols-6">
+      <ul className="grid grid-cols-3 gap-4 sm:grid-cols-6 lg:grid-cols-3 xl:grid-cols-6">
         {!manifest &&
           Array.from({ length: 6 }).map((_, i) => (
             <li key={i}>
-              <Skeleton className="aspect-square rounded-xl" />
+              <Skeleton className="aspect-square rounded-full" />
             </li>
           ))}
-        {manifest?.images.map((s) => {
-          const l = label(s);
+        {manifest &&
+          ordered(manifest.images).map((s) => {
           const selected = selectedId === s.id;
           return (
             <li key={s.id}>
@@ -62,22 +72,22 @@ export function SampleGallery({ selectedId, disabled, onSelect }: { selectedId: 
                 disabled={disabled}
                 onClick={() => onSelect(s)}
                 aria-pressed={selected}
-                aria-label={`Use sample image: ${l.title}, ${l.sub}`}
+                aria-label={`Use sample photo ${s.number}`}
+                data-sample={s.id}
                 className={cn(
-                  "group relative block w-full overflow-hidden rounded-xl border bg-black text-left transition outline-none focus-visible:ring-3 focus-visible:ring-ring/60 disabled:opacity-60",
-                  selected ? "border-primary ring-2 ring-primary" : "border-border hover:border-primary/60",
+                  "group relative block w-full rounded-full text-center transition outline-none focus-visible:ring-3 focus-visible:ring-ring/60 disabled:opacity-50",
                 )}
               >
-                <span className="relative block aspect-square">
+                <span className={cn("relative block aspect-square overflow-hidden rounded-full bg-black ring-offset-4 ring-offset-[#0c0e11] transition", selected ? "ring-2 ring-foreground" : "ring-1 ring-white/10 group-hover:ring-white/40")}>
                   <Image src={`/demo/${s.file}`} alt="" fill sizes="120px" className="object-cover transition-transform group-hover:scale-105" />
                 </span>
                 {selected && (
-                  <span className="absolute top-1.5 right-1.5 flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                  <span className="absolute top-0 right-0 flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
                     <Check className="size-3.5" />
                   </span>
                 )}
-                <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent px-1.5 pt-4 pb-1.5 text-[10px] leading-tight font-medium text-white">
-                  {s.expected_quality_ok ? `Grade ${s.reference_grade}` : "Unsuitable"}
+                <span className={cn("mt-2 block text-xs font-semibold", selected ? "text-foreground" : "text-muted-foreground")}>
+                  Sample {s.number}
                 </span>
               </button>
             </li>
