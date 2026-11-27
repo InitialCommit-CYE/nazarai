@@ -22,7 +22,8 @@ export async function POST(request: NextRequest) {
     /* not configured: nothing to sign out of */
   }
   const to = request.nextUrl.clone();
-  to.pathname = "/auth/sign-in";
-  to.search = switchTo ? `?demo=${switchTo}` : "?signed_out=1";
+  // Switching demo roles goes straight through the one-click route: no sign-in form in between.
+  to.pathname = switchTo ? "/auth/demo" : "/auth/sign-in";
+  to.search = switchTo ? `?as=${switchTo}` : "?signed_out=1";
   return NextResponse.redirect(to, { status: 303 });
 }

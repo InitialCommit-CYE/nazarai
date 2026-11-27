@@ -36,24 +36,37 @@ export function ArrowLink({
   children,
   tone = "light",
   className,
+  plain = false,
 }: {
   href: string;
   children: React.ReactNode;
   tone?: "light" | "dark";
   className?: string;
+  /** A plain <a> (no prefetch, full navigation): for routes that act, like the one-click demo sign-in. */
+  plain?: boolean;
 }) {
-  return (
-    <Link href={href} className={arrowPillClasses(tone, className)}>
+  const inner = (
+    <>
       <span>{children}</span>
       <ArrowChip tone={tone} />
+    </>
+  );
+  return plain ? (
+    <a href={href} className={arrowPillClasses(tone, className)}>
+      {inner}
+    </a>
+  ) : (
+    <Link href={href} className={arrowPillClasses(tone, className)}>
+      {inner}
     </Link>
   );
 }
 
 /** The secondary action: plain text and an arrow, underlined on hover. */
-export function QuietLink({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) {
+export function QuietLink({ href, children, className, plain = false }: { href: string; children: React.ReactNode; className?: string; plain?: boolean }) {
+  const Tag = plain ? "a" : Link;
   return (
-    <Link
+    <Tag
       href={href}
       className={cn(
         "group/quiet inline-flex min-h-11 items-center gap-3 text-[0.9375rem] font-medium underline-offset-[6px] transition-[color,font-weight] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:font-semibold hover:underline focus-visible:ring-3 focus-visible:ring-ring/60 focus-visible:outline-none",
@@ -62,6 +75,6 @@ export function QuietLink({ href, children, className }: { href: string; childre
     >
       {children}
       <ArrowRight className="size-4 transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover/quiet:translate-x-1" strokeWidth={1.5} aria-hidden />
-    </Link>
+    </Tag>
   );
 }

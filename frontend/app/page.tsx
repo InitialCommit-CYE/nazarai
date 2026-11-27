@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { ArrowLink, QuietLink } from "@/components/ui/arrow-link";
 import { DISCLAIMER } from "@/lib/clinical";
+import { demoHref } from "@/lib/demo";
 import retinaHeat from "@/public/landing/retina-heat.jpg";
 import retina from "@/public/landing/retina.jpg";
 
@@ -106,8 +107,8 @@ export default function Home() {
             specialist, in Urdu and English.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-x-7 gap-y-3">
-            <ArrowLink href="/auth/sign-in?demo=health-worker">Try it as the health worker</ArrowLink>
-            <QuietLink href="/auth/sign-in?demo=eye-specialist">Or as the eye specialist</QuietLink>
+            <ArrowLink href={demoHref("health-worker")} plain>Try it as the health worker</ArrowLink>
+            <QuietLink href={demoHref("eye-specialist")} plain>Or as the eye specialist</QuietLink>
           </div>
           <p className="mt-5 max-w-[24rem] text-xs leading-relaxed text-muted-foreground">
             One click, no sign-up. A short guide walks you through. Public dataset images, synthetic patients.
@@ -253,7 +254,7 @@ export default function Home() {
             </p>
           </div>
           <div className="flex shrink-0 flex-col items-start gap-3 lg:items-end">
-            <ArrowLink href="/auth/sign-in?demo=health-worker">Try it as the health worker</ArrowLink>
+            <ArrowLink href={demoHref("health-worker")} plain>Try it as the health worker</ArrowLink>
             <QuietLink href="/performance">See the full results</QuietLink>
           </div>
         </div>

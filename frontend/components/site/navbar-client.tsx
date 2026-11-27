@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
+import { demoHref } from "@/lib/demo";
 import { navFor, ROLE_LABEL, type AppRole } from "@/lib/roles";
 import { cn } from "@/lib/utils";
 
@@ -155,9 +156,8 @@ function NavbarView({ viewer, loading, pathname }: { viewer: NavViewer | null; l
                 <Link href="/auth/sign-in">Sign in</Link>
               </Button>
               <Button asChild>
-                <Link href="/auth/sign-in?demo=health-worker">
-                  Try the demo
-                </Link>
+                {/* Plain <a>: the one-click route signs in, so it must never be prefetched */}
+                <a href={demoHref("health-worker")}>Try the demo</a>
               </Button>
             </>
           )}
