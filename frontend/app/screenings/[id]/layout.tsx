@@ -1,3 +1,4 @@
+import { after } from "next/server";
 import { Suspense } from "react";
 
 import { ScreeningShell } from "@/components/results/screening-shell";
@@ -28,6 +29,7 @@ export default function ScreeningLayout({ children, params }: LayoutProps<"/scre
 async function Shell({ children, params }: { children: React.ReactNode; params: LayoutProps<"/screenings/[id]">["params"] }) {
   const { id } = await params;
   const { viewer, db } = await requireViewer({ next: `/screenings/${id}` });
-  if (viewer.role !== "patient") await db.rpc("log_record_access", { p_entity: "screening", p_id: id });
+  // The access log is written alongside the render rather than before it, so the result is not held up.
+  if (viewer.role !== "patient") after(Promise.resolve(db.rpc("log_record_access", { p_entity: "screening", p_id: id })));
   return <ScreeningShell role={viewer.role}>{children}</ScreeningShell>;
 }

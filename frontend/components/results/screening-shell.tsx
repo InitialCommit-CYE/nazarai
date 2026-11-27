@@ -11,6 +11,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ApiError, getScreening } from "@/lib/client/api";
+import { primedScreening } from "@/lib/client/screening-cache";
 import { loadSessionImages } from "@/lib/client/session-images";
 import { formatDateTime } from "@/lib/format";
 import type { AppRole } from "@/lib/roles";
@@ -23,7 +24,11 @@ export function ScreeningShell({ children, role }: { children: React.ReactNode; 
   const { id } = useParams<{ id: string }>();
   const pathname = usePathname();
   // Results are keyed by id, so navigating to another screening never shows stale data.
-  const [loaded, setLoaded] = useState<{ id: string; value?: Omit<ScreeningContextValue, "role" | "update">; error?: string } | null>(null);
+  // Straight after a screening the record is already in memory, so the result renders on arrival.
+  const [loaded, setLoaded] = useState<{ id: string; value?: Omit<ScreeningContextValue, "role" | "update">; error?: string } | null>(() => {
+    const primed = primedScreening(id);
+    return primed ? { id, value: { screening: primed, images: loadSessionImages(id) } } : null;
+  });
   const update = (patch: Partial<ScreeningRecord>) =>
     setLoaded((l) => (l?.value ? { ...l, value: { ...l.value, screening: { ...l.value.screening, ...patch } } } : l));
 
