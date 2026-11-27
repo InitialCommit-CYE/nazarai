@@ -1,11 +1,14 @@
 "use client";
 
-import { LogIn, UserRound } from "lucide-react";
+import { Loader2, LogIn } from "lucide-react";
 import Link from "next/link";
 import { useActionState, useEffect, useRef } from "react";
 
 import { requestPasswordReset, signIn, signUp, updatePassword, type FormState } from "@/app/auth/actions";
+import { ArrowChip, arrowPillClasses } from "@/components/ui/arrow-link";
 import { Input } from "@/components/ui/input";
+import { demoSlug } from "@/lib/demo";
+import { cn } from "@/lib/utils";
 
 import { Field, FormMessage, PasswordInput, SubmitButton } from "./form-bits";
 
@@ -17,16 +20,17 @@ export interface DemoAccount {
   password: string;
 }
 
-/** "Health worker" -> "health-worker": the value used in /auth/sign-in?demo=… one-click links. */
-export function demoSlug(role: string): string {
-  return role.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-}
-
 const DEMO_HINT: Record<string, string> = {
   "health-worker": "Screens patients, sends referrals",
   "eye-specialist": "Reviews referrals, urgent first",
   patient: "Sees own results and report",
 };
+
+/** Same rules as the server: same-site relative paths only, never back into /auth. */
+function safeNext(next?: string): string | null {
+  if (!next || !next.startsWith("/") || next.startsWith("//") || next.startsWith("/\\") || next.startsWith("/auth")) return null;
+  return next;
+}
 
 export function SignInForm({ next, notice, demo, autoDemo }: {
   next?: string;
@@ -38,25 +42,64 @@ export function SignInForm({ next, notice, demo, autoDemo }: {
   const [state, action] = useActionState(signIn, initial);
   const formRef = useRef<HTMLFormElement>(null);
   const autoTried = useRef(false);
+  const auto = autoDemo ? demo.find((a) => demoSlug(a.role) === autoDemo) : undefined;
 
   useEffect(() => {
-    if (!autoDemo || autoTried.current) return;
-    const account = demo.find((a) => demoSlug(a.role) === autoDemo);
-    if (!account) return;
+    if (!auto || autoTried.current) return;
     autoTried.current = true;
-    fill(account);
-  }, [autoDemo, demo]);
-
-  function fill(a: DemoAccount) {
     const f = formRef.current;
     if (!f) return;
-    (f.elements.namedItem("email") as HTMLInputElement).value = a.email;
-    (f.elements.namedItem("password") as HTMLInputElement).value = a.password;
+    (f.elements.namedItem("email") as HTMLInputElement).value = auto.email;
+    (f.elements.namedItem("password") as HTMLInputElement).value = auto.password;
     f.requestSubmit();
-  }
+  }, [auto]);
+
+  // The shared demo accounts come first: almost everyone who opens this page is here to try the demo.
+  const oneClick = demo.filter((a) => a.role.toLowerCase() !== "patient");
+  const back = safeNext(next);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-7">
+      {auto && !state.error && (
+        <p role="status" className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="size-4 animate-spin" aria-hidden /> Opening the demo clinic as {auto.role.toLowerCase()}
+        </p>
+      )}
+      {oneClick.length > 0 && (
+        <div className="space-y-3">
+          <p className="text-sm font-medium">Try the demo clinic</p>
+          <div className="grid gap-2.5">
+            {oneClick.map((a, i) => {
+              const slug = demoSlug(a.role);
+              const tone = i === 0 ? "light" : "dark";
+              return (
+                // A plain link, never next/link: the one-click route must not be prefetched.
+                <a
+                  key={a.email}
+                  href={`/auth/demo?as=${slug}${back ? `&next=${encodeURIComponent(back)}` : ""}`}
+                  className={arrowPillClasses(tone, "min-h-14 w-full")}
+                >
+                  <span className="flex flex-col text-start leading-snug">
+                    <span>Continue as {a.role.toLowerCase()}</span>
+                    {DEMO_HINT[slug] && <span className={cn("text-xs font-normal", tone === "light" ? "text-black/60" : "text-muted-foreground")}>{DEMO_HINT[slug]}</span>}
+                  </span>
+                  <ArrowChip tone={tone} />
+                </a>
+              );
+            })}
+          </div>
+          <p className="text-xs leading-relaxed text-muted-foreground">One click, no sign-up. Synthetic patients only: never enter real patient data.</p>
+        </div>
+      )}
+
+      {oneClick.length > 0 && (
+        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+          <span className="h-px flex-1 bg-border" />
+          <span>or sign in with your account</span>
+          <span className="h-px flex-1 bg-border" />
+        </div>
+      )}
+
       <form ref={formRef} action={action} className="space-y-4" noValidate>
         <input type="hidden" name="next" value={next ?? ""} />
         <FormMessage error={state.error ?? notice?.error} ok={state.error ? undefined : notice?.ok} />
@@ -74,42 +117,10 @@ export function SignInForm({ next, notice, demo, autoDemo }: {
         >
           <PasswordInput id="password" name="password" autoComplete="current-password" />
         </Field>
-        <SubmitButton pendingText="Signing in…">
+        <SubmitButton pendingText="Signing in…" variant="outline">
           <LogIn /> Sign in
         </SubmitButton>
       </form>
-
-      {demo.length > 0 && (
-        <div className="space-y-3">
-          <div className="flex items-center gap-3 text-xs text-muted-foreground">
-            <span className="h-px flex-1 bg-border" />
-            <span>or try the demo clinic</span>
-            <span className="h-px flex-1 bg-border" />
-          </div>
-          <div className="grid gap-2">
-            {demo.map((a) => (
-              <button
-                key={a.email}
-                type="button"
-                onClick={() => fill(a)}
-                className="group flex items-center gap-3 rounded-md border border-border bg-card px-3.5 py-3 text-left transition-colors hover:border-primary/50 hover:bg-secondary/60 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
-              >
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary text-primary">
-                  <UserRound className="size-4" />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-semibold">Continue as {a.role.toLowerCase()}</span>
-                  {DEMO_HINT[demoSlug(a.role)] && (
-                    <span className="block text-xs text-muted-foreground">{DEMO_HINT[demoSlug(a.role)]}</span>
-                  )}
-                </span>
-                <LogIn className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
-              </button>
-            ))}
-          </div>
-          <p className="text-xs leading-relaxed text-muted-foreground">One click, no sign-up. Synthetic patients only: never enter real patient data.</p>
-        </div>
-      )}
     </div>
   );
 }

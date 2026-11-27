@@ -15,11 +15,11 @@ export function AuthShell({ title, subtitle, children, footer }: {
 }) {
   return (
     <div className="mx-auto grid min-h-[calc(100dvh-4rem)] max-w-7xl lg:grid-cols-[1.05fr_1fr] lg:gap-12 lg:px-6 lg:py-8">
-      <aside className="relative hidden overflow-hidden rounded-lg bg-ink px-10 py-12 text-ink-foreground lg:flex lg:flex-col lg:justify-between">
+      <aside className="relative hidden overflow-hidden rounded-[20px] bg-ink px-10 py-12 text-ink-foreground lg:flex lg:flex-col lg:justify-between">
         <div className="relative z-10">
           <p className="eyebrow text-signal">NazarAI clinic workspace</p>
           <h2 className="font-display mt-6 max-w-md text-4xl leading-[1.1] text-balance">
-            Retinal screening that sends the right patients to the eye specialist.
+            Retinal screening that sends the right patients to the eye specialist
           </h2>
         </div>
 
@@ -27,7 +27,7 @@ export function AuthShell({ title, subtitle, children, footer }: {
         <div className="pointer-events-none absolute top-[38%] -right-52 size-[28rem] -translate-y-1/2 opacity-80" aria-hidden="true">
           <div className="absolute inset-0 rounded-full ring-1 ring-white/10" />
           <div className="absolute inset-[7%] overflow-hidden rounded-full bg-black">
-            <Image src="/demo/grade2-moderate.jpg" alt="" fill sizes="420px" className="scale-[1.3] object-cover" />
+            <Image src="/demo/grade2-moderate.jpg" alt="" fill sizes="420px" loading="eager" className="scale-[1.3] object-cover" />
           </div>
         </div>
 

@@ -4,10 +4,12 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 import { AuthShell } from "@/components/auth/auth-shell";
-import { SignInForm, type DemoAccount } from "@/components/auth/auth-forms";
+import { SignInForm } from "@/components/auth/auth-forms";
 import { FormSkeleton } from "@/components/site/page-bits";
+import { demoSlug } from "@/lib/demo";
 import { homeFor } from "@/lib/roles";
 import { getViewer } from "@/lib/server/auth";
+import { demoAccounts } from "@/lib/server/demo-accounts";
 
 export const metadata: Metadata = { title: "Sign in" };
 
@@ -15,15 +17,6 @@ const NOTICES: Record<string, { error?: string; ok?: string }> = {
   inactive: { error: "This account has been deactivated. Contact your clinic administrator." },
   link: { error: "That link is invalid or has expired. Please request a new one." },
 };
-
-/** Demo-clinic logins (synthetic data only), configured server-side: DEMO_ACCOUNTS="Role|email|password;…" */
-function demoAccounts(): DemoAccount[] {
-  return (process.env.DEMO_ACCOUNTS ?? "")
-    .split(";")
-    .map((s) => s.split("|"))
-    .filter((p) => p.length === 3 && p.every(Boolean))
-    .map(([role, email, password]) => ({ role, email, password }));
-}
 
 export default function SignInPage(props: PageProps<"/auth/sign-in">) {
   return (
@@ -55,5 +48,8 @@ async function SignInContent({ searchParams }: { searchParams: PageProps<"/auth/
   const errorKey = typeof sp.error === "string" ? sp.error : "";
   const notice = sp.signed_out ? { ok: "You have been signed out." } : NOTICES[errorKey];
   const autoDemo = typeof sp.demo === "string" && !sp.signed_out ? sp.demo : undefined;
-  return <SignInForm next={next} notice={notice} demo={demoAccounts()} autoDemo={autoDemo} />;
+  // The demo links go through /auth/demo on the server, so the browser only ever needs the password of an
+  // account it is auto-signing into (the ?demo= fallback).
+  const demo = demoAccounts().map((a) => ({ ...a, password: demoSlug(a.role) === autoDemo ? a.password : "" }));
+  return <SignInForm next={next} notice={notice} demo={demo} autoDemo={autoDemo} />;
 }
