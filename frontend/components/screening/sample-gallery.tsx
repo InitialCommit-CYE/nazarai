@@ -75,11 +75,11 @@ export function SampleGallery({ selectedId, disabled, onSelect }: { selectedId: 
                 aria-label={`Use sample photo ${s.number}`}
                 data-sample={s.id}
                 className={cn(
-                  "group relative block w-full rounded-full text-center transition outline-none focus-visible:ring-3 focus-visible:ring-ring/60 disabled:opacity-50",
+                  "group relative block w-full rounded-full text-center outline-none focus-visible:ring-3 focus-visible:ring-ring/60 disabled:opacity-50",
                 )}
               >
-                <span className={cn("relative block aspect-square overflow-hidden rounded-full bg-black ring-offset-4 ring-offset-[#0c0e11] transition", selected ? "ring-2 ring-foreground" : "ring-1 ring-white/10 group-hover:ring-white/40")}>
-                  <Image src={`/demo/${s.file}`} alt="" fill sizes="120px" className="object-cover transition-transform group-hover:scale-105" />
+                <span className={cn("relative block aspect-square overflow-hidden rounded-full bg-black ring-offset-4 ring-offset-[#0c0e11] transition-shadow duration-200", selected ? "ring-2 ring-foreground" : "ring-1 ring-white/10 group-hover:ring-white/40")}>
+                  <Image src={`/demo/${s.file}`} alt="" fill sizes="120px" className="object-cover transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105" />
                 </span>
                 {selected && (
                   <span className="absolute top-0 right-0 flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
