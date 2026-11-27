@@ -38,6 +38,15 @@ DISCLAIMER_UR = "یہ اے آئی اسکریننگ کا نتیجہ ہے، طبی
 URDU_WIDTH = 168 * mm
 
 
+def confidence_text(c: float) -> str:
+    """Words, not a percentage: the value is a heuristic. Matches frontend lib/clinical.ts confidenceLevel."""
+    if c >= 0.75:
+        return "High"
+    if c >= 0.5:
+        return "Moderate"
+    return "Low - flipped views of the image gave different readings; specialist review of the photo advised"
+
+
 def urdu(text: str, font: str = "NotoNaskh", size: float = 11, width: float = URDU_WIDTH) -> str:
     """Shape + reorder Urdu for PDF drawing.
 
@@ -97,7 +106,7 @@ def build_referral_pdf(req: PdfRequest) -> bytes:
         ["Age", str(req.age) if req.age is not None else "-"],
         ["Years with diabetes", str(req.diabetes_duration_years) if req.diabetes_duration_years is not None else "-"],
         ["AI-estimated DR grade", f"{req.grade} - {req.grade_label}"],
-        ["Model confidence (heuristic)", f"{req.confidence * 100:.0f}%"],
+        ["Model confidence (heuristic)", confidence_text(req.confidence)],
         ["Referable DR", "Yes" if req.referable else "No"],
         ["Model version", req.model_version],
     ]
