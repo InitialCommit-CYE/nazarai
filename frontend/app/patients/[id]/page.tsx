@@ -2,6 +2,7 @@ import { ArrowLeft, CheckCircle2, ChevronRight, Link2, Pencil, ScanEye } from "l
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { after } from "next/server";
 import { Suspense } from "react";
 
 import { ReferralBadge } from "@/components/clinical/referral-badge";
@@ -78,7 +79,8 @@ async function PatientDetail({ params, searchParams }: { params: PageProps<"/pat
     searchParams,
   ]);
   if (!p) notFound();
-  await db.rpc("log_record_access", { p_entity: "patient", p_id: id });
+  // Logged alongside the render rather than before it, so the record is not held up.
+  after(Promise.resolve(db.rpc("log_record_access", { p_entity: "patient", p_id: id })));
 
   const year = new Date().getUTCFullYear();
   const rows = (screenings ?? []) as ScreeningRow[];
