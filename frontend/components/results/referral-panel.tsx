@@ -11,22 +11,21 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { formatDateTime } from "@/lib/format";
-import type { AppRole } from "@/lib/roles";
 import type { ReferralStatus, ScreeningRecord } from "@/lib/types";
 
 /** Datetime-local value in Pakistan time (UTC+5) for an ISO timestamp. */
-function toPktInput(iso: string | null): string {
+export function toPktInput(iso: string | null): string {
   const d = iso ? new Date(iso) : new Date(Date.now() + 2 * 86_400_000);
   return new Date(d.getTime() + 5 * 3_600_000).toISOString().slice(0, 16);
 }
 
-export function ReferralPanel({ screening, role, onChange }: { screening: ScreeningRecord; role: AppRole; onChange: (s: Partial<ScreeningRecord>) => void }) {
+/** The eye specialist's side of a referral: appointment, clinical note, and the outcome (seen / closed). */
+export function ReferralPanel({ screening, onChange }: { screening: ScreeningRecord; onChange: (s: Partial<ScreeningRecord>) => void }) {
   const [pending, start] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
   const [when, setWhen] = useState(toPktInput(screening.appointment_at));
   const [note, setNote] = useState("");
-  const specialist = role === "specialist";
 
   function submit(status: Exclude<ReferralStatus, "not_required">, msg: string) {
     setError(null);
@@ -49,12 +48,12 @@ export function ReferralPanel({ screening, role, onChange }: { screening: Screen
     <Card>
       <CardHeader>
         <CardTitle className="flex flex-wrap items-center justify-between gap-2 text-base">
-          Referral follow-up <ReferralStatusBadge status={screening.referral_status} />
+          Specialist review <ReferralStatusBadge status={screening.referral_status} />
         </CardTitle>
         <CardDescription>
           {screening.referral_status === "scheduled" && screening.appointment_at
             ? `Appointment: ${formatDateTime(screening.appointment_at)}`
-            : "Track the patient through to the eye specialist. The AI result cannot be edited."}
+            : "Record your findings and the outcome after examining the patient. The AI result cannot be edited."}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -73,17 +72,15 @@ export function ReferralPanel({ screening, role, onChange }: { screening: Screen
             </Button>
           </div>
         </div>
-        {specialist && (
-          <div className="space-y-1.5">
-            <Label htmlFor="note">Clinical note</Label>
-            <Textarea id="note" value={note} onChange={(e) => setNote(e.target.value)} maxLength={2000} placeholder="Findings and plan after examination" disabled={pending} className="min-h-20" />
-          </div>
-        )}
+        <div className="space-y-1.5">
+          <Label htmlFor="note">Clinical note</Label>
+          <Textarea id="note" value={note} onChange={(e) => setNote(e.target.value)} maxLength={2000} placeholder="Findings and plan after examination" disabled={pending} className="min-h-20" />
+        </div>
         <div className="flex flex-wrap gap-2">
           <Button disabled={pending} onClick={() => submit("seen", "Marked as seen by the specialist.")} className="h-9">
-            {pending ? <Loader2 className="animate-spin" /> : <CheckCheck />} Seen by specialist
+            {pending ? <Loader2 className="animate-spin" /> : <CheckCheck />} Mark as seen
           </Button>
-          {specialist && note.trim() && (
+          {note.trim() && (
             <Button variant="outline" disabled={pending} onClick={() => submit(screening.referral_status === "not_required" ? "pending" : (screening.referral_status as Exclude<ReferralStatus, "not_required">), "Note saved.")} className="h-9">
               <Save /> Save note only
             </Button>

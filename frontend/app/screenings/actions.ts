@@ -18,9 +18,13 @@ const Input = z.object({
  * clinical notes, and that the AI result itself can never be changed.
  */
 export async function reviewReferral(input: z.input<typeof Input>): Promise<{ error?: string }> {
-  const { db } = await requireApiViewer(CLINICAL_ROLES);
+  const { db, viewer } = await requireApiViewer(CLINICAL_ROLES);
   const p = Input.safeParse(input);
   if (!p.success) return { error: p.error.issues[0]?.message ?? "Invalid input." };
+  // Health workers book the appointment; only the eye specialist records the outcome (seen / closed).
+  if (viewer.role !== "specialist" && p.data.status !== "scheduled") {
+    return { error: "Only eye specialists can record the outcome of a referral." };
+  }
   let appointment: string | null = null;
   if (p.data.status === "scheduled") {
     // <input type="datetime-local"> gives wall-clock time; clinics run on Pakistan time (UTC+5).
