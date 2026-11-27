@@ -29,7 +29,7 @@ async function Settings() {
     <div className="space-y-6">
       {viewer.mustChangePassword && (
         <Alert className="border-refer/40 bg-refer-soft">
-          <ShieldAlert className="text-[oklch(0.45_0.12_60)]" />
+          <ShieldAlert className="text-refer" />
           <AlertTitle>Choose your own password to continue</AlertTitle>
           <AlertDescription>Your account was set up with a temporary password. Pick a new one before using NazarAI.</AlertDescription>
         </Alert>

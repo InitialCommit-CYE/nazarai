@@ -131,7 +131,7 @@ export function StaffRow({ member, isSelf }: { member: StaffMember; isSelf: bool
           {isSelf && <span className="ml-2 text-xs font-normal text-muted-foreground">(you)</span>}
         </p>
         <p className="truncate text-sm text-muted-foreground">{member.email}</p>
-        {member.must_change_password && <p className="mt-0.5 text-xs text-[oklch(0.45_0.12_60)]">Has not set their own password yet</p>}
+        {member.must_change_password && <p className="mt-0.5 text-xs text-refer">Has not set their own password yet</p>}
         {error && (
           <p className="mt-1 text-xs text-destructive" role="alert">
             {error}

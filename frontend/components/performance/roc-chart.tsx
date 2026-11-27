@@ -5,8 +5,8 @@ import { CartesianGrid, ComposedChart, Legend, Line, ResponsiveContainer, Scatte
 import type { MetricsComplete } from "@/lib/types";
 
 // Validated with the dataviz palette validator (light surface): all checks pass, tritan dE 11.6.
-export const SERIES_COLORS = { validation: "#009e8f", external_test: "#2f5fd0" } as const;
-const INK = "oklch(0.3 0.02 235)";
+export const SERIES_COLORS = { validation: "#3ddc97", external_test: "#6cb6ff" } as const;
+const INK = "#b7bcc3";
 
 export function RocChart({ metrics }: { metrics: MetricsComplete }) {
   const splits = (["validation", "external_test"] as const).flatMap((k) => {

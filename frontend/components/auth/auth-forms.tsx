@@ -83,7 +83,7 @@ export function SignInForm({ next, notice, demo, autoDemo }: {
         <div className="space-y-3">
           <div className="flex items-center gap-3 text-xs text-muted-foreground">
             <span className="h-px flex-1 bg-border" />
-            <span className="font-mono tracking-wider uppercase">or try the demo clinic</span>
+            <span>or try the demo clinic</span>
             <span className="h-px flex-1 bg-border" />
           </div>
           <div className="grid gap-2">

@@ -16,10 +16,15 @@
   --font-urdu: var(--font-nastaliq);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-archivo);
-  --font-mono: var(--font-plex-mono);
-  --font-heading: var(--font-archivo);
-  --font-display: var(--font-archivo);
+  --font-sans: var(--font-atkinson);
+  --font-mono: var(--font-atkinson-mono);
+  --font-heading: var(--font-atkinson);
+  --font-display: var(--font-atkinson);
+  --color-routine-ink: var(--routine-ink);
+  --color-refer-ink: var(--refer-ink);
+  --color-urgent-flood: var(--urgent-flood);
+  --color-urgent-ink: var(--urgent-ink);
+  --color-surface: var(--surface);
   --color-abyss: var(--abyss);
   --color-ink: var(--ink);
   --color-ink-foreground: var(--ink-foreground);
@@ -64,59 +69,65 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+
 :root {
-  /* NazarAI palette: petrol ink on warm clinical paper. One saturated signal colour, used sparingly. */
-  --background: oklch(0.985 0.004 85);        /* warm paper */
-  --paper: oklch(0.965 0.008 85);             /* a step darker, for bands */
-  --foreground: oklch(0.21 0.022 235);        /* ink */
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.21 0.022 235);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.21 0.022 235);
-  --primary: oklch(0.43 0.075 210);           /* petrol */
-  --primary-foreground: oklch(0.99 0.004 85);
-  --secondary: oklch(0.955 0.014 210);
-  --secondary-foreground: oklch(0.3 0.055 215);
-  --muted: oklch(0.955 0.006 85);
-  --muted-foreground: oklch(0.47 0.02 235);
-  --accent: oklch(0.95 0.02 210);
-  --accent-foreground: oklch(0.32 0.07 215);
-  --destructive: oklch(0.55 0.2 27);
-  --border: oklch(0.89 0.008 85);
-  --input: oklch(0.86 0.01 85);
-  --ring: oklch(0.6 0.09 210);
-  --ink: oklch(0.24 0.04 225);                /* deep petrol-ink bands (hero, CTA) */
-  --ink-foreground: oklch(0.97 0.006 85);
-  --ink-muted: oklch(0.76 0.025 220);
-  --signal: oklch(0.82 0.11 195);             /* bright clinical cyan */
-  --abyss: oklch(0.16 0.025 230);             /* near-black, for the darkest bands */
-  --chart-1: oklch(0.52 0.09 190);
-  --chart-2: oklch(0.55 0.15 255);
-  --chart-3: oklch(0.7 0.13 75);
-  --chart-4: oklch(0.58 0.19 27);
-  --chart-5: oklch(0.6 0.03 235);
-  --radius: 0.5rem;
+  /* NazarAI "Aperture": near-black instrument, off-white type. The only colours are the retina photo and the
+     triage result (green / amber / red / grey), which floods the screen when a decision is shown. */
+  color-scheme: dark;
+  --background: #060708;
+  --paper: #0a0c0e;                 /* alternate band */
+  --surface: #0c0e11;               /* panels */
+  --foreground: #f4f3ef;
+  --card: #0c0e11;
+  --card-foreground: #f4f3ef;
+  --popover: #121418;
+  --popover-foreground: #f4f3ef;
+  --primary: #f4f3ef;               /* primary action = solid off-white pill */
+  --primary-foreground: #060708;
+  --secondary: #16191e;
+  --secondary-foreground: #f4f3ef;
+  --muted: #16191e;
+  --muted-foreground: #9ba1a9;
+  --accent: #1a1d22;
+  --accent-foreground: #f4f3ef;
+  --destructive: #ff6b5e;
+  --border: rgb(255 255 255 / 0.09);
+  --input: rgb(255 255 255 / 0.16);
+  --ring: rgb(244 243 239 / 0.55);
+  --ink: #0c0e11;
+  --ink-foreground: #f4f3ef;
+  --ink-muted: #b7bcc3;
+  --signal: #f4f3ef;
+  --abyss: #060708;
+  --chart-1: #f4f3ef;
+  --chart-2: #6cb6ff;
+  --chart-3: #ffb547;
+  --chart-4: #ff6b5e;
+  --chart-5: #9ba1a9;
+  --radius: 0.75rem;
+  --brand-blue: #6cb6ff;
+  --brand-teal-deep: #0c0e11;
 
-  /* Medical blue brand accent */
-  --brand-blue: oklch(0.52 0.15 255);
-  --brand-teal-deep: oklch(0.24 0.04 225);
+  /* Triage. Text colours are tuned for the dark ground; *-flood + *-ink is the full-bleed result card. */
+  --routine: #3ddc97;
+  --routine-soft: #0e2219;
+  --routine-ink: #04140d;
+  --refer: #ffb547;
+  --refer-soft: #2a1e0c;
+  --refer-ink: #1f1300;
+  --urgent: #ff6b5e;
+  --urgent-soft: #2e1110;
+  --urgent-flood: #e5484d;
+  --urgent-ink: #ffffff;
 
-  /* Referral semantics (always paired with icon + text, never colour alone) */
-  --routine: oklch(0.52 0.13 155);
-  --routine-soft: oklch(0.965 0.035 155);
-  --refer: oklch(0.6 0.14 65);
-  --refer-soft: oklch(0.97 0.045 80);
-  --urgent: oklch(0.53 0.2 27);
-  --urgent-soft: oklch(0.965 0.03 25);
-
-  --sidebar: oklch(0.985 0.005 200);
-  --sidebar-foreground: oklch(0.22 0.025 230);
-  --sidebar-primary: oklch(0.47 0.085 190);
-  --sidebar-primary-foreground: oklch(0.99 0.005 190);
-  --sidebar-accent: oklch(0.965 0.015 195);
-  --sidebar-accent-foreground: oklch(0.3 0.06 195);
-  --sidebar-border: oklch(0.915 0.012 220);
-  --sidebar-ring: oklch(0.6 0.09 190);
+  --sidebar: #0c0e11;
+  --sidebar-foreground: #f4f3ef;
+  --sidebar-primary: #f4f3ef;
+  --sidebar-primary-foreground: #060708;
+  --sidebar-accent: #16191e;
+  --sidebar-accent-foreground: #f4f3ef;
+  --sidebar-border: rgb(255 255 255 / 0.09);
+  --sidebar-ring: rgb(244 243 239 / 0.55);
 }
 
 @layer base {
@@ -132,6 +143,10 @@
   html {
     @apply font-sans;
   }
+  ::selection {
+    background: rgb(244 243 239 / 0.85);
+    color: #060708;
+  }
 }
 @layer components {
   /* Urdu: Nastaliq needs generous line height; always paired with dir="rtl". */
@@ -140,15 +155,14 @@
     line-height: 2.3;
     word-spacing: 0.05em;
   }
-  /* Editorial display type (headlines only). */
+  /* Headlines: Atkinson Hyperlegible Next, heavy and tight. */
   .font-display {
-    font-family: var(--font-archivo), system-ui, sans-serif;
-    font-variation-settings: "wdth" 112;
+    font-family: var(--font-atkinson), system-ui, sans-serif;
     font-weight: 800;
     letter-spacing: -0.035em;
-    line-height: 1.02;
+    line-height: 1;
   }
-  /* Short section label: bold, sentence case, led by a rule. */
+  /* Short section label: sentence case, led by a hairline. */
   .eyebrow {
     display: inline-flex;
     align-items: center;
@@ -156,20 +170,88 @@
     font-size: 0.875rem;
     font-weight: 600;
     letter-spacing: 0;
+    color: var(--muted-foreground);
   }
   .eyebrow::before {
     content: "";
-    width: 1.5rem;
-    height: 2px;
+    width: 1.25rem;
+    height: 1px;
     background: currentColor;
   }
-  .hero-grid {
-    background-image:
-      radial-gradient(circle at 20% 10%, oklch(0.93 0.05 190 / 0.7), transparent 45%),
-      radial-gradient(circle at 85% 0%, oklch(0.93 0.05 245 / 0.6), transparent 40%);
+  /* Liquid glass: frosted, slightly refracting surface for secondary controls and floating panels. */
+  .glass {
+    background: rgb(255 255 255 / 0.06);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    backdrop-filter: blur(18px) saturate(160%);
+    border: 1px solid rgb(255 255 255 / 0.13);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1);
   }
+  .glass-strong {
+    background: rgb(255 255 255 / 0.08);
+    -webkit-backdrop-filter: blur(24px) saturate(170%);
+    backdrop-filter: blur(24px) saturate(170%);
+    border: 1px solid rgb(255 255 255 / 0.16);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), 0 30px 60px -20px rgb(0 0 0 / 0.7);
+  }
+  /* Glass on a coloured result card. */
+  .glass-light {
+    background: rgb(255 255 255 / 0.3);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgb(255 255 255 / 0.55);
+  }
+  /* Thin concentric rings around a retina: the "aperture". */
+  .aperture-ring {
+    border-radius: 9999px;
+    border: 1px solid rgb(255 255 255 / 0.07);
+  }
+  .retina-glow {
+    box-shadow: 0 0 120px 6px rgb(255 120 40 / 0.15);
+  }
+  .hero-grid {
+    background: none;
+  }
+}
+
+/* Grading scan: a line of light sweeping down the retina. */
+@keyframes scan-sweep {
+  0% { top: -2%; }
+  100% { top: 100%; }
+}
+.scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #fff;
+  box-shadow: 0 0 18px 5px rgb(255 255 255 / 0.55);
+  animation: scan-sweep 1.8s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+.scan-line::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  height: 80px;
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0), rgb(255 255 255 / 0.14));
+}
+@keyframes flood-in {
+  from { clip-path: inset(0 100% 0 0 round 28px); }
+  to { clip-path: inset(0 0 0 0 round 28px); }
+}
+.flood-in {
+  animation: flood-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.rise-in {
+  animation: rise-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .scan-line { animation: none; top: 50%; }
 }

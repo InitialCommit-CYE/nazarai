@@ -40,9 +40,9 @@ export function ConfusionMatrix({ matrix }: { matrix: number[][] }) {
                       title={`Reference ${i} → predicted ${j}: ${v} of ${total} (${(share * 100).toFixed(1)}%)`}
                       className="h-12 rounded-md font-medium tabular-nums outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       style={{
-                        background: `color-mix(in oklch, oklch(0.42 0.09 190) ${Math.round(share * 100)}%, oklch(0.97 0.01 195))`,
-                        color: dark ? "white" : "var(--foreground)",
-                        outline: i === j ? "1.5px solid oklch(0.42 0.09 190 / 0.6)" : undefined,
+                        background: `rgb(244 243 239 / ${(0.04 + share * 0.86).toFixed(3)})`,
+                        color: dark ? "#060708" : "var(--foreground)",
+                        outline: i === j ? "1.5px solid rgb(244 243 239 / 0.5)" : undefined,
                       }}
                     >
                       {v}

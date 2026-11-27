@@ -7,8 +7,9 @@ import { Logo } from "./logo";
 /* Public links only: the footer is shared by signed-out visitors and every role, so it never shows
    role-specific actions (those live in the navbar). */
 const EXPLORE = [
-  { href: "/#problem", label: "The problem" },
+  { href: "/#why-it-matters", label: "Why it matters" },
   { href: "/#how-it-works", label: "How it works" },
+  { href: "/#safety", label: "Safety" },
   { href: "/performance", label: "Model performance" },
   { href: "/about", label: "About & safety" },
   { href: "/about#privacy", label: "Privacy" },
@@ -21,6 +22,25 @@ const CREDITS = [
   "Hosting: Vercel · Supabase · Hugging Face",
 ];
 
+/** One line inside the clinical app: the safety statement and the two links staff may need. */
+export function CompactFooter() {
+  return (
+    <footer className="border-t border-border">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-4 text-xs text-muted-foreground sm:px-6">
+        <p>{DISCLAIMER.en}</p>
+        <nav aria-label="Footer" className="flex gap-4">
+          <Link className="hover:text-foreground hover:underline" href="/performance">
+            Model performance
+          </Link>
+          <Link className="hover:text-foreground hover:underline" href="/about">
+            About &amp; safety
+          </Link>
+        </nav>
+      </div>
+    </footer>
+  );
+}
+
 export function Footer() {
   return (
     <footer className="border-t border-border bg-paper">
@@ -31,7 +51,7 @@ export function Footer() {
             AI screening and triage support for diabetic retinopathy, built for diabetes clinics and Basic Health Units in
             Pakistan. Capital Youth Expo Hackathon 2026, Healthcare track.
           </p>
-          <div className="max-w-md border-l-2 border-primary pl-4">
+          <div className="max-w-md rounded-2xl border border-white/[0.08] p-4">
             <p className="text-xs leading-relaxed text-muted-foreground">{DISCLAIMER.en}</p>
             <p dir="rtl" lang="ur" className="urdu mt-2 text-sm text-muted-foreground">
               {DISCLAIMER.ur}
@@ -60,7 +80,7 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-border">
-        <p className="mx-auto max-w-7xl px-4 py-4 font-mono text-xs text-muted-foreground sm:px-6">
+        <p className="mx-auto max-w-7xl px-4 py-4 text-xs text-muted-foreground sm:px-6">
           Demo deployment · synthetic patient references only · no real patient data is stored
         </p>
       </div>
