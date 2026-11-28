@@ -334,9 +334,9 @@
   position: absolute;
   inset-inline: 0;
   top: 0;
-  height: 2px;
+  height: 3px;
   background: #fff;
-  box-shadow: 0 0 12px 2px rgb(255 255 255 / 0.45);
+  box-shadow: 0 0 16px 3px rgb(255 255 255 / 0.6);
 }
 .scan-line::before {
   content: "";
@@ -363,5 +363,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-  .scan-line { animation: none; transform: translateY(56%); }
+  /* The landing retina rests. The running scan is the screening's progress indicator, so it keeps moving,
+     slower: a thin line inside a small circle, not a full-screen motion. Windows' "Animation effects: off"
+     turns this media query on for many laptops, which froze the line mid-screening. */
+  .scan-line.scan-once { animation: none; transform: translateY(56%); }
+  .scan-line:not(.scan-once) { animation: scan-sweep 2.6s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate !important; }
 }
