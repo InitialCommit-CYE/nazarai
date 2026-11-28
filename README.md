@@ -149,7 +149,7 @@ huggingface_hub, pytest; Next.js, React, Tailwind CSS, shadcn/ui (Radix UI, `cn`
 lucide-react, Recharts, Zod, @supabase/supabase-js, @supabase/ssr, @anthropic-ai/sdk (optional report wording, not enabled in the
 deployment). Testing: Playwright (visual checks), PGlite (embedded Postgres for the RLS test suite), Node test runner.
 
-**Fonts**: Geist (SIL OFL), Noto Nastaliq Urdu (SIL OFL, web), Noto Naskh Arabic (SIL OFL, PDF; licence in `backend/app/fonts/OFL.txt`).
+**Fonts**: Archivo (SIL OFL, web), IBM Plex Mono (SIL OFL, web), both via `next/font/google`, Noto Nastaliq Urdu (SIL OFL, web), Noto Naskh Arabic (SIL OFL, PDF; licence in `backend/app/fonts/OFL.txt`).
 
 **APIs & hosting**: Vercel (frontend) · Supabase (auth, database, storage, realtime) · Hugging Face Spaces (ML service) and
 Hub (model weights) · Kaggle (training GPUs).
