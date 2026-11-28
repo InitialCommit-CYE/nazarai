@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import type { ScreeningRecord, Urgency } from "@/lib/types";
 
 import { CarePlan } from "./care-plan";
+import { DatasetCheck } from "./dataset-check";
 import { GradeCard, GradeDetails } from "./grade-card";
 import { ReferralPanel } from "./referral-panel";
 import { useScreening } from "./screening-context";
@@ -43,6 +44,7 @@ export function ResultView() {
       {/* min-w-0: grid items default to their content's min width, which pushed phones into sideways scroll */}
       <div className="min-w-0 space-y-6">
         <GradeCard s={graded} />
+        <DatasetCheck s={graded} />
         {role === "operator" && <CarePlan screening={s} urgency={graded.urgency} onChange={update} />}
         {specialist && s.referral_status !== "not_required" && <ReferralPanel screening={s} onChange={update} />}
         {role !== "operator" && (
