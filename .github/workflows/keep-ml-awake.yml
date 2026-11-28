@@ -25,4 +25,5 @@ jobs:
           done
           exit 1
       - name: Warm the website too
-        run: curl -s -o /dev/null -w "site: HTTP %{http_code}\n" -m 30 https://nazarai-jade.vercel.app/
+        run: |
+          curl -s -o /dev/null -w "site HTTP %{http_code}\n" -m 30 https://nazarai-jade.vercel.app/
