@@ -14,6 +14,16 @@
 
 Screening / triage support only. **Not a medical diagnosis.**
 
+## For judges: try it in about 60 seconds
+
+**[Open the demo as the health worker](https://nazarai-jade.vercel.app/auth/demo?as=health-worker)**: one click, no sign-up, straight to the screening page.
+
+1. Press **Try a sample case**. It picks a demo patient and a public retina photo, runs the screening, and opens the result: the decision in English and Urdu, the heatmap, and the dataset's own expert label so you can check the model yourself.
+2. Go back to **Screen**, pick any patient and choose **Sample 3**: a blurry photo. The quality gate rejects it with retake advice instead of grading it.
+3. On the result, press **Switch to specialist** in the guide (or open [the specialist view](https://nazarai-jade.vercel.app/auth/demo?as=eye-specialist)) to see the referral arrive in the worklist, urgent first.
+
+Patients are synthetic and photos come from the public IDRiD dataset. The five sample patients cannot be edited or deleted, so the demo stays the same for the next person.
+
 ## The problem
 | Fact | Source |
 |---|---|
