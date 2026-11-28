@@ -76,7 +76,7 @@ function stepFor(role: AppRole, path: string, screen: string): Step | null {
           n: 1,
           of,
           title: "Pick the patient",
-          body: "You are the health worker at a diabetes clinic. Choose a patient, for example Tariq Mehmood. The photo can never land on the wrong record.",
+          body: "You are the health worker at a diabetes clinic. Press Try a sample case to run one in a click, or choose a patient yourself, for example Tariq Mehmood.",
         };
       if (screen[1] === "0")
         return {

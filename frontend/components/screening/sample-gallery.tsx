@@ -26,6 +26,12 @@ interface Manifest {
    1 = grade 3 · 2 = grade 0 · 3 = unsuitable photo · 4 = grade 2 · 5 = grade 4 · 6 = grade 1 */
 const DISPLAY_ORDER = ["grade3-severe", "grade0-no-dr", "unsuitable-low-quality", "grade2-moderate", "grade4-proliferative", "grade1-mild"];
 
+/** "Sample N" for a sample id, as the gallery numbers it. */
+export function sampleNumberOf(id: string): number {
+  const i = DISPLAY_ORDER.indexOf(id);
+  return i === -1 ? DISPLAY_ORDER.length + 1 : i + 1;
+}
+
 function ordered(images: SampleImage[]): SampleImage[] {
   const rank = (s: SampleImage) => {
     const i = DISPLAY_ORDER.indexOf(s.id);

@@ -9,8 +9,9 @@ import { PatientBanner } from "@/components/clinical/patient-banner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowChip } from "@/components/ui/arrow-link";
+import { ArrowChip, arrowPillClasses } from "@/components/ui/arrow-link";
 import { ApiError, runScreening, uploadImage } from "@/lib/client/api";
+import { saveSampleReference, type SampleReference } from "@/lib/client/sample-reference";
 import { primeScreening } from "@/lib/client/screening-cache";
 import { saveSessionImages } from "@/lib/client/session-images";
 import { publishScreenState } from "@/components/site/demo-guide";
@@ -20,7 +21,7 @@ import { cn } from "@/lib/utils";
 import { ImagePicker } from "./image-picker";
 import { PatientPicker, type PickedPatient } from "./patient-picker";
 import { QualityFeedback } from "./quality-feedback";
-import { SampleGallery, type SampleImage } from "./sample-gallery";
+import { SampleGallery, sampleNumberOf, type SampleImage } from "./sample-gallery";
 import { type Phase } from "./screening-progress";
 
 interface Selection {
@@ -29,9 +30,14 @@ interface Selection {
   previewUrl: string;
   label: string;
   sampleId: string | null;
+  /** For a bundled sample: its gallery number and the dataset's expert grade, shown on the result. */
+  reference: SampleReference | null;
 }
 
-export function ScreeningWorkspace({ initialPatient }: { initialPatient: PickedPatient | null }) {
+/** The one-click sample case: a moderate case that shows the referral flow end to end. */
+const SAMPLE_CASE: SampleImage = { id: "grade2-moderate", file: "grade2-moderate.jpg", reference_grade: 2, expected_quality_ok: true };
+
+export function ScreeningWorkspace({ initialPatient, sampleCase = null }: { initialPatient: PickedPatient | null; sampleCase?: PickedPatient | null }) {
   const router = useRouter();
   const [patient, setPatient] = useState<PickedPatient | null>(initialPatient);
   const [selection, setSelection] = useState<Selection | null>(null);
@@ -51,29 +57,47 @@ export function ScreeningWorkspace({ initialPatient }: { initialPatient: PickedP
 
   const busy = phase === "uploading" || phase === "analyzing" || phase === "done" || loadingSample;
 
-  function select(file: File, source: ImageSource, sampleId: string | null = null, label?: string) {
-    setSelection({ file, source, previewUrl: URL.createObjectURL(file), label: label ?? file.name, sampleId });
+  function select(file: File, source: ImageSource, sampleId: string | null = null, label?: string, reference: SampleReference | null = null): Selection {
+    const next = { file, source, previewUrl: URL.createObjectURL(file), label: label ?? file.name, sampleId, reference };
+    setSelection(next);
     setError(null);
     setRejected(null);
     setPhase("idle");
+    return next;
   }
 
-  async function selectSample(s: SampleImage) {
+  async function selectSample(s: SampleImage): Promise<Selection | null> {
     setLoadingSample(true);
     setError(null);
     try {
       const res = await fetch(`/demo/${s.file}`);
       if (!res.ok) throw new Error();
       const blob = await res.blob();
-      select(new File([blob], `sample-${s.number ?? 0}.jpg`, { type: "image/jpeg" }), "sample", s.id, `Sample photo ${s.number ?? ""} (IDRiD, CC BY 4.0)`);
+      const number = s.number ?? sampleNumberOf(s.id);
+      return select(new File([blob], `sample-${number}.jpg`, { type: "image/jpeg" }), "sample", s.id, `Sample photo ${number} (IDRiD, CC BY 4.0)`, {
+        number,
+        grade: s.reference_grade,
+      });
     } catch {
       setError("Could not load the sample image.");
+      return null;
     } finally {
       setLoadingSample(false);
     }
   }
 
-  async function start() {
+  /** One click for a first-time visitor: the demo patient, a sample photo, and run. */
+  async function runSampleCase() {
+    if (!sampleCase) return;
+    setPatient(sampleCase);
+    const sel = await selectSample(SAMPLE_CASE);
+    if (sel) await start(sel, sampleCase);
+  }
+
+  // start() normally reads the current choices; the sample case passes its own before state has updated.
+  const selectionState = selection;
+  const patientState = patient;
+  async function start(selection: Selection | null = selectionState, patient: PickedPatient | null = patientState) {
     if (!selection) return;
     if (!patient) {
       setError("Choose the patient this photo belongs to.");
@@ -95,6 +119,7 @@ export function ScreeningWorkspace({ initialPatient }: { initialPatient: PickedP
         return;
       }
       if (res.images) saveSessionImages(res.screening.id, res.images);
+      if (selection.reference) saveSampleReference(res.screening.id, selection.reference);
       primeScreening(res.screening);
       setPhase("done");
       router.push(`/screenings/${res.screening.id}`);
@@ -109,6 +134,18 @@ export function ScreeningWorkspace({ initialPatient }: { initialPatient: PickedP
 
   return (
     <div className="space-y-6">
+      {sampleCase && !running && (
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-[20px] border border-white/10 bg-[#121418] px-5 py-4">
+          <p className="max-w-xl text-[0.9375rem] text-ink-muted">
+            <span className="font-medium text-foreground">New here?</span> Run a ready-made case in one click: {sampleCase.full_name} with
+            Sample {sampleNumberOf(SAMPLE_CASE.id)} from the public IDRiD dataset.
+          </p>
+          <button type="button" onClick={runSampleCase} disabled={busy} className={arrowPillClasses("light", "min-h-11 gap-3 ps-5 pe-1 text-sm whitespace-nowrap")}>
+            <span>Try a sample case</span>
+            <ArrowChip />
+          </button>
+        </div>
+      )}
       <StepIndicator current={step} />
 
       <div className="grid gap-6 lg:grid-cols-[1fr_400px]">
@@ -184,7 +221,7 @@ export function ScreeningWorkspace({ initialPatient }: { initialPatient: PickedP
                 </ul>
               </>
             )}
-            <RunButton phase={phase} uploadPct={uploadPct} disabled={!selection || !patient || busy} onClick={start} />
+            <RunButton phase={phase} uploadPct={uploadPct} disabled={!selection || !patient || busy} onClick={() => start()} />
             {!running && <p className="mt-3 text-center text-xs text-muted-foreground">Checks photo quality, grades it 0 to 4 and explains the result.</p>}
           </section>
 

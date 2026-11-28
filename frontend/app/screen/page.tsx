@@ -6,6 +6,7 @@ import type { PickedPatient } from "@/components/screening/patient-picker";
 import { PageContainer, PageHeader } from "@/components/site/page-bits";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CLINICAL_ROLES } from "@/lib/roles";
+import { isDemoEmail } from "@/lib/demo";
 import { requireViewer } from "@/lib/server/auth";
 import { UUID_RE } from "@/lib/server/http";
 
@@ -29,13 +30,18 @@ export default function ScreenPage(props: PageProps<"/screen">) {
 async function Workspace({ searchParams }: { searchParams: PageProps<"/screen">["searchParams"] }) {
   const sp = await searchParams;
   const pid = typeof sp.patient === "string" && UUID_RE.test(sp.patient) ? sp.patient : null;
-  const { db } = await requireViewer({ next: pid ? `/screen?patient=${pid}` : "/screen", roles: CLINICAL_ROLES });
+  const { db, viewer } = await requireViewer({ next: pid ? `/screen?patient=${pid}` : "/screen", roles: CLINICAL_ROLES });
+  // Demo accounts get a one-click sample case with a seeded patient (Tariq Mehmood).
+  const sampleCasePromise = isDemoEmail(viewer.email)
+    ? db.from("patients").select("id, full_name, mrn, sex, birth_year, diabetes_type, diabetes_since_year").eq("mrn", "DEMO-1003").maybeSingle<PickedPatient>()
+    : null;
   let initial: PickedPatient | null = null;
   if (pid) {
     const { data } = await db.from("patients").select("id, full_name, mrn, sex, birth_year, diabetes_type, diabetes_since_year").eq("id", pid).maybeSingle<PickedPatient>();
     initial = data ?? null;
   }
-  return <ScreeningWorkspace key={pid ?? "none"} initialPatient={initial} />;
+  const sampleCase = sampleCasePromise ? ((await sampleCasePromise).data ?? null) : null;
+  return <ScreeningWorkspace key={pid ?? "none"} initialPatient={initial} sampleCase={sampleCase} />;
 }
 
 function WorkspaceSkeleton() {
