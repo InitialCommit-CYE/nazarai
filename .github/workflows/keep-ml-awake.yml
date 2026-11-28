@@ -1,0 +1,28 @@
+# The Hugging Face Space sleeps after 48 h without requests, and the first screening after that can take up to a
+# minute while it wakes. Judges review the demo over several days, so this pings the public /health endpoint
+# (no key needed) every 6 hours and once on demand. Remove after the finale (Dec 2, 2026).
+name: Keep the ML service awake
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ping /health (retries while the Space wakes up)
+        run: |
+          for i in 1 2 3 4 5 6; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" -m 60 https://hassanali0987654-nazarai-ml.hf.space/health || true)
+            echo "attempt $i: HTTP $code"
+            [ "$code" = "200" ] && exit 0
+            sleep 20
+          done
+          exit 1
+      - name: Warm the website too
+        run: curl -s -o /dev/null -w "site: HTTP %{http_code}\n" -m 30 https://nazarai-jade.vercel.app/
