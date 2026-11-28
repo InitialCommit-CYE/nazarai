@@ -6,7 +6,7 @@
 
 ---
 
-## Current state (updated 2026-11-26). Read this first in a new chat
+## Current state (updated 2026-11-28). Read this first in a new chat
 
 **Owner:** Mohid Fida (GitHub `M0hid-ai`, org owner of InitialCommit-CYE) owns hosting, frontend/UI and the README. Hassan (ML lead) trains models.
 
@@ -29,13 +29,29 @@
 ### Accounts and demo
 - Seeded demo clinic (`cd frontend && npm run seed:demo`): health worker, eye specialist, clinic admin, patient + 5 synthetic patients. Sign-in page shows **2 one-click buttons** (health worker, eye specialist). Landing CTAs use `/auth/demo?as=health-worker|eye-specialist` (server-side sign-in, lands on `/screen` or `/queue`); `/auth/sign-in?demo=…` still signs in from the browser and lands on the dashboard. The five seeded patients are read-only for demo accounts.
 - Admin `clinic.admin@demo.nazarai.app` uses the private `DEMO_ADMIN_PASSWORD` (the shared demo password is public via the buttons, so it must never open the admin).
-- Six real screenings of DEMO-1005 exist from the live test (2 urgent / 1 refer / 2 routine / 1 rejected). Clear before the finale if wanted: `delete from public.screenings;`.
+- Screenings were cleared on 2026-11-28; any that exist now come from the demo video or from visitors.
 
-### Design system (keep it; the owner rejected the generic "Claude look")
-- Font: **Archivo** (heavy, `wdth` 112 via `.font-display`) for headlines and UI; Plex Mono only for record numbers. **No serif headlines, no tracked mono-caps eyebrows.** `.eyebrow` = bold sentence case led by a short rule.
-- Colours (tokens in `app/globals.css`): `abyss` near-black, `ink` petrol, `paper`/`background` warm off-white, `signal` cyan (accent, one bright band), referral `routine`/`refer`/`urgent`. Dark navbar on every page. Laptop-first.
-- Logo: variation 4 "lens" mark (Urdu ن with an iris dot) as SVG in `components/site/logo.tsx` and `app/icon.svg`; keep both in sync.
-- Landing (`app/page.tsx`): hero → problem (giant cyan stats) → Today vs With NazarAI → how it works + 5 real retina grades → evidence → where it works → cyan CTA.
+### Design system: "Aperture" (redesign of 2026-11-27, owner-approved; keep it)
+- **Identity:** near-black, the retina is the hero, no brand colour. Colour appears only where it means something: the triage
+  decision floods its card (routine green `#3ddc97`, refer amber `#ffb547`, urgent `#e5484d` flood / `#ff6b5e` text).
+  Everything else is near-black `#060708`, surface `#0c0e11`, off-white `#f4f3ef`, muted `#9ba1a9`. The landing's one light
+  band is Bone `#d6d1c6` with ink `#14110d`. Tokens live in `app/globals.css` (`html` has class `dark`). The old token
+  names `ink`, `signal`, `paper` still exist but are remapped to this palette; do not reintroduce petrol or cyan.
+- **Type:** Archivo at weight **500** for headlines and UI (`.font-display`, tight negative tracking), IBM Plex Mono only for
+  record numbers, Noto Nastaliq Urdu for Urdu. Never use AI-default fonts (Inter, Space Grotesk, Bricolage…). No serif
+  headlines, no uppercase tracked labels, no full stops on headlines. `.eyebrow` = sentence case led by a short rule.
+- **Buttons:** pills. Primary = `liquid-light` (off-white liquid glass), secondary = `liquid`; hover goes semibold with a
+  quick sheen; press scales to 0.98. `ArrowLink` / `arrowPillClasses` in `components/ui/arrow-link.tsx` is the primary CTA
+  (label + round arrow chip). Glass (`.glass`, `.glass-strong`) only on floating chrome: navbar, guide.
+- **Shapes and motion:** cards 20px radius with a hairline border; warnings are quiet `#121418` cards with colour only on
+  the icon and title (no tinted amber boxes). One easing curve `cubic-bezier(0.22,1,0.36,1)`; animate only colour,
+  opacity and transform. The scan line (`.scan-line`) is the signature: it sweeps the retina while a screening runs
+  (it keeps moving under reduced motion because it is the progress indicator) and rests once on the landing.
+- **Layout dislikes (owner):** no equal three-column card splits, no glows, no gradient text, no emoji.
+- **Logo:** aperture ring + pupil + off-centre optic disc, cut by a horizontal scan line, in `components/site/logo.tsx`
+  and `app/icon.svg`; keep both in sync.
+- **Landing (`app/page.tsx`):** hero (retina in aperture rings, one-click demo CTA) → why it matters (34.5M / 15 per
+  million, sourced) → how a screening works → five grades → Bone decision band → 99.4% evidence → built to fail safe.
 
 ### Content rules
 - Only sourced or measured claims. Model numbers come from `ml/reports/metrics.json` (also bundled at `frontend/lib/server/data/metrics.json` by `scripts/sync-metrics.mjs` on prebuild, so `/performance` works without the ML service). The 9M figure is labelled an estimate. IDx-DR is a reference point, not head-to-head.
@@ -43,9 +59,11 @@
 
 ### Open items
 - README Team section: real names still missing. Feature freeze **Nov 28, 2026, 11:59 PM PKT**; finale **Dec 2** (arrive 15 min early).
-- Deeper result screens (result / explain / report) inherited the new tokens but never got a dedicated UI pass.
 - Patient self sign-up needs email confirmation; Supabase's built-in mailer is heavily rate-limited (consider turning "Confirm email" off for the demo).
-- Pre-event deck: artifact https://claude.ai/artifact/9yq3mZvhZMHJUyCGDMzLtD and `NazarAI-PreEvent.pptx` in the parent folder (Arial fonts; team names are placeholders).
+- Pitch deck (submission): Slides artifact https://claude.ai/artifact/67xS7rX1zyecb6he44DeK9, in the Aperture look; team names are placeholders. The older pre-event deck (https://claude.ai/artifact/9yq3mZvhZMHJUyCGDMzLtD, `NazarAI-PreEvent.pptx`) uses the old look.
+- Judge path: README "For judges" box; `/screen` has "Try a sample case" for demo accounts; sample results show the IDRiD expert label ("Check it yourself").
+- `.github/workflows/keep-ml-awake.yml` pings the HF Space every 6 h so judges never hit a cold start. **Delete it after the finale (Dec 2).**
+- All screenings were cleared on 2026-11-28 before the demo video.
 - `ONBOARDING.md` is an uncommitted draft.
 
 ### Windows gotchas on this machine
